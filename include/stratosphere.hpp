@@ -16,7 +16,6 @@
  
 #pragma once
 
-#include "stratosphere/version_check.hpp"
 #include "stratosphere/scope_guard.hpp"
 
 #include "stratosphere/hossynch.hpp"
