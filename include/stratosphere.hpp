@@ -18,6 +18,8 @@
 
 #include "stratosphere/scope_guard.hpp"
 
+#include "stratosphere/version_check.hpp"
+
 #include "stratosphere/hossynch.hpp"
 #include "stratosphere/message_queue.hpp"
 #include "stratosphere/iwaitable.hpp"
