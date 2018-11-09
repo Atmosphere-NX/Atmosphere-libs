@@ -48,7 +48,7 @@ class WaitableManager : public SessionManagerBase {
     private:
         /* Domain Manager */
         HosMutex domain_lock;
-        std::array<std::weak_ptr<IDomainObject>, ManagerOptions::MaxDomains> domains;
+        std::array<uintptr_t, ManagerOptions::MaxDomains> domain_keys;
         std::array<bool, ManagerOptions::MaxDomains> is_domain_allocated;
         std::array<DomainEntry, ManagerOptions::MaxDomainObjects> domain_objects;
 
@@ -323,7 +323,7 @@ class WaitableManager : public SessionManagerBase {
             for (size_t i = 0; i < ManagerOptions::MaxDomains; i++) {
                 if (!this->is_domain_allocated[i]) {
                     auto new_domain = std::make_shared<IDomainObject>(this);
-                    this->domains[i] = new_domain;
+                    this->domain_keys[i] = reinterpret_cast<uintptr_t>(new_domain.get());
                     this->is_domain_allocated[i] = true;
                     return new_domain;
                 }
@@ -337,8 +337,7 @@ class WaitableManager : public SessionManagerBase {
                 FreeObject(domain, i+1);
             }
             for (size_t i = 0; i < ManagerOptions::MaxDomains; i++) {
-                auto observe = this->domains[i].lock();
-                if (observe.get() == domain) {
+                if (this->domain_keys[i] == reinterpret_cast<uintptr_t>(domain)) {
                     this->is_domain_allocated[i] = false;
                     break;
                 }
