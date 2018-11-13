@@ -67,13 +67,13 @@ static inline void CheckAtmosphereVersion(u32 expected_major, u32 expected_minor
 #define CURRENT_ATMOSPHERE_VERSION ATMOSPHERE_RELEASE_VERSION_MAJOR, ATMOSPHERE_RELEASE_VERSION_MINOR, ATMOSPHERE_RELEASE_VERSION_MICRO
 
 #ifdef ATMOSPHERE_GIT_BRANCH
-static const char *GetAtmosphereGitBranch() {
+static inline const char *GetAtmosphereGitBranch() {
     return ATMOSPHERE_GIT_BRANCH;
 }
 #endif
 
 #ifdef ATMOSPHERE_GIT_REV
-static const char *GetAtmosphereGitRevision() {
+static inline const char *GetAtmosphereGitRevision() {
     return ATMOSPHERE_GIT_REV;
 }
 #endif
