@@ -188,3 +188,43 @@ Result smMitMUninstall(const char *name) {
 
     return rc;
 }
+
+Result smMitMAcknowledgeSession(Service *srv_out, u64 *pid_out, const char *name) {
+    IpcCommand c;
+    ipcInitialize(&c);
+
+    struct {
+        u64 magic;
+        u64 cmd_id;
+        u64 service_name;
+        u64 reserved;
+    } *raw;
+
+    raw = ipcPrepareHeader(&c, sizeof(*raw));
+
+    raw->magic = SFCI_MAGIC;
+    raw->cmd_id = 65003;
+    raw->service_name = smEncodeName(name);
+
+    Result rc = ipcDispatch(g_smMitmHandle);
+
+    if (R_SUCCEEDED(rc)) {
+        IpcParsedCommand r;
+        ipcParse(&r);
+
+        struct {
+            u64 magic;
+            u64 result;
+            u64 pid;
+        } *resp = r.Raw;
+
+        rc = resp->result;
+        if (R_SUCCEEDED(rc)) {
+            *pid_out = resp->pid;
+            serviceCreate(srv_out, r.Handles[0]);
+        }
+    }
+
+    return rc;
+
+}

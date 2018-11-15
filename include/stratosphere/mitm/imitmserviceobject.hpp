@@ -36,6 +36,11 @@ class IMitmServiceObject : public IServiceObject {
             return this->process_id;
         }
         
+        void SetPidTid(u64 pid, u64 tid) {
+            this->process_id = pid;
+            this->title_id = tid;
+        }
+        
         static bool ShouldMitm(u64 pid, u64 tid);
                 
     protected:

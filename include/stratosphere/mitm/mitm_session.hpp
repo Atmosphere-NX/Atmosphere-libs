@@ -32,13 +32,18 @@ class MitmSession final : public ServiceSession {
         void (*service_post_process_handler)(IMitmServiceObject *, IpcResponseContext *);
         
         /* For cleanup usage. */
+        u64 client_pid;
         u32 num_fwd_copy_hnds = 0;
         Handle fwd_copy_hnds[8];
     public:
         template<typename T>
-        MitmSession(Handle s_h, std::shared_ptr<Service> fs, std::shared_ptr<T> srv) : ServiceSession(s_h) {
+        MitmSession(Handle s_h, u64 pid, std::shared_ptr<Service> fs, std::shared_ptr<T> srv) : ServiceSession(s_h), client_pid(pid) {
             this->forward_service = std::move(fs);
             this->obj_holder = std::move(ServiceObjectHolder(std::move(srv)));
+            
+            u64 tid = 0;
+            MitmQueryUtils::GetAssociatedTidForPid(client_pid, &tid);
+            this->obj_holder.GetServiceObjectUnsafe<IMitmServiceObject>()->SetPidTid(client_pid, tid);
             
             this->service_post_process_handler = T::PostProcess;
             
@@ -51,7 +56,7 @@ class MitmSession final : public ServiceSession {
             this->control_holder = std::move(ServiceObjectHolder(std::move(std::make_shared<IMitmHipcControlService>(this))));
         }
         
-        MitmSession(Handle s_h, std::shared_ptr<Service> fs, ServiceObjectHolder &&h, void (*pph)(IMitmServiceObject *, IpcResponseContext *)) : ServiceSession(s_h) {
+        MitmSession(Handle s_h, u64 pid, std::shared_ptr<Service> fs, ServiceObjectHolder &&h, void (*pph)(IMitmServiceObject *, IpcResponseContext *)) : ServiceSession(s_h), client_pid(pid) {
             this->session_handle = s_h;
             this->forward_service = std::move(fs);
             this->obj_holder = std::move(h);
@@ -277,7 +282,7 @@ class MitmSession final : public ServiceSession {
                     out_h.SetValue(client_h);
                     
                     if (id == serviceGetObjectId(this->session->forward_service.get())) {
-                        this->session->GetSessionManager()->AddWaitable(new MitmSession(server_h, this->session->forward_service, std::move(object->Clone()), this->session->service_post_process_handler));
+                        this->session->GetSessionManager()->AddWaitable(new MitmSession(server_h, this->session->client_pid, this->session->forward_service, std::move(object->Clone()), this->session->service_post_process_handler));
                     } else {
                         this->session->GetSessionManager()->AddSession(server_h, std::move(object->Clone()));
                     }
@@ -291,7 +296,7 @@ class MitmSession final : public ServiceSession {
                         std::abort();
                     }
                     
-                    this->session->GetSessionManager()->AddWaitable(new MitmSession(server_h, this->session->forward_service, std::move(this->session->obj_holder.Clone()), this->session->service_post_process_handler));
+                    this->session->GetSessionManager()->AddWaitable(new MitmSession(server_h, this->session->client_pid, this->session->forward_service, std::move(this->session->obj_holder.Clone()), this->session->service_post_process_handler));
                     out_h.SetValue(client_h);
                 }
                 

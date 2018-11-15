@@ -89,13 +89,15 @@ class MitmServer : public IWaitable {
                 fatalSimple(rc);
             }
             
-            if (R_FAILED(smMitMGetService(forward_service.get(), mitm_name))) {
+            u64 client_pid;
+            
+            if (R_FAILED(smMitMAcknowledgeSession(forward_service.get(), &client_pid, mitm_name))) {
                 /* TODO: Panic. */
             }
             
             smMitMExit();
             
-            this->GetSessionManager()->AddWaitable(new MitmSession(session_h, forward_service, std::make_shared<T>(forward_service)));
+            this->GetSessionManager()->AddWaitable(new MitmSession(session_h, client_pid, forward_service, std::make_shared<T>(forward_service)));
             return 0;
         }
 

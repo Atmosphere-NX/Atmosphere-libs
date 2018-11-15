@@ -16,6 +16,7 @@ void smMitMExit(void);
 Result smMitMGetService(Service* service_out, const char *name);
 Result smMitMInstall(Handle *handle_out, Handle *query_out, const char *name);
 Result smMitMUninstall(const char *name);
+Result smMitMAcknowledgeSession(Service *srv_out, u64 *pid_out, const char *name);
 
 Result smMitMIsRegistered(const char *name);
 
