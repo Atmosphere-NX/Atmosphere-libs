@@ -40,11 +40,7 @@ class MitmSession final : public ServiceSession {
         MitmSession(Handle s_h, u64 pid, std::shared_ptr<Service> fs, std::shared_ptr<T> srv) : ServiceSession(s_h), client_pid(pid) {
             this->forward_service = std::move(fs);
             this->obj_holder = std::move(ServiceObjectHolder(std::move(srv)));
-            
-            u64 tid = 0;
-            MitmQueryUtils::GetAssociatedTidForPid(client_pid, &tid);
-            this->obj_holder.GetServiceObjectUnsafe<IMitmServiceObject>()->SetPidTid(client_pid, tid);
-            
+                        
             this->service_post_process_handler = T::PostProcess;
             
             size_t pbs;

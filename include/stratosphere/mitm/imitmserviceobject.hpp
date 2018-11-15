@@ -19,6 +19,7 @@
 #include <atomic>
 
 #include <stratosphere.hpp>
+#include "mitm_query_service.hpp"
 
 class IMitmServiceObject : public IServiceObject {
     protected:
@@ -26,7 +27,9 @@ class IMitmServiceObject : public IServiceObject {
         u64 process_id = 0;
         u64 title_id = 0;
     public:
-        IMitmServiceObject(std::shared_ptr<Service> s) : forward_service(s) {}
+        IMitmServiceObject(std::shared_ptr<Service> s, u64 pid) : forward_service(s), process_id(pid) {
+            MitmQueryUtils::GetAssociatedTidForPid(this->process_id, &this->title_id);
+        }
         
         virtual u64 GetTitleId() {
             return this->title_id;
@@ -34,11 +37,6 @@ class IMitmServiceObject : public IServiceObject {
         
         virtual u64 GetProcessId() {
             return this->process_id;
-        }
-        
-        void SetPidTid(u64 pid, u64 tid) {
-            this->process_id = pid;
-            this->title_id = tid;
         }
         
         static bool ShouldMitm(u64 pid, u64 tid);

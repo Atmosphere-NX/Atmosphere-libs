@@ -96,8 +96,8 @@ class MitmServer : public IWaitable {
             }
             
             smMitMExit();
-            
-            this->GetSessionManager()->AddWaitable(new MitmSession(session_h, client_pid, forward_service, std::make_shared<T>(forward_service)));
+                        
+            this->GetSessionManager()->AddWaitable(new MitmSession(session_h, client_pid, forward_service, std::make_shared<T>(forward_service, client_pid)));
             return 0;
         }
 
