@@ -427,7 +427,7 @@ struct Decoder {
         } else if constexpr (argT == ArgType::OutPointerClientSize || argT == ArgType::OutPointerServerSize) {
             u16 sz;
             if constexpr(argT == ArgType::OutPointerServerSize) {
-                sz = T::element_size;
+                sz = T::element_size * T::num_elements;
             } else {
                 sz = *(const u16 *)((uintptr_t)ctx->request.Raw + 0x10 + c_sz_offset);
             }
