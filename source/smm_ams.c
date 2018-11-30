@@ -67,3 +67,41 @@ Result smManagerAmsEndInitialDefers(void) {
     return rc;
 
 }
+
+Result smManagerAmsHasMitm(bool *out, const char* name) {
+    IpcCommand c;
+    ipcInitialize(&c);
+    
+    struct {
+        u64 magic;
+        u64 cmd_id;
+        u64 service_name;
+    } *raw;
+
+    raw = serviceIpcPrepareHeader(&g_smManagerAmsSrv, &c, sizeof(*raw));
+    raw->magic = SFCI_MAGIC;
+    raw->cmd_id = 65001;
+    raw->service_name = smEncodeName(name);
+    
+    Result rc = serviceIpcDispatch(&g_smManagerAmsSrv);
+    
+    if (R_SUCCEEDED(rc)) {
+        IpcParsedCommand r;
+        struct {
+            u64 magic;
+            u64 result;
+            u8 has_mitm;
+        } *resp;
+        
+        serviceIpcParse(&g_smManagerAmsSrv, &r, sizeof(*resp));
+        resp = r.Raw;
+
+        rc = resp->result;
+        
+        if (R_SUCCEEDED(rc)) {
+            *out = has_mitm != 0;
+        }
+    }
+    
+    return rc;
+}

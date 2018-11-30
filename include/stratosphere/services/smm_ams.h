@@ -25,6 +25,7 @@ Result smManagerAmsInitialize(void);
 void smManagerAmsExit(void);
 
 Result smManagerAmsEndInitialDefers(void);
+Result smManagerAmsHasMitm(bool *out, const char* name);
 
 #ifdef __cplusplus
 }
