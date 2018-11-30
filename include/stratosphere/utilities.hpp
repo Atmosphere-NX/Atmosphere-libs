@@ -15,22 +15,12 @@
  */
  
 #pragma once
+#include <switch.h>
 
-#include "stratosphere/utilities.hpp"
-
-#include "stratosphere/scope_guard.hpp"
-
-#include "stratosphere/version_check.hpp"
-
-#include "stratosphere/hossynch.hpp"
-#include "stratosphere/message_queue.hpp"
-#include "stratosphere/iwaitable.hpp"
-#include "stratosphere/event.hpp"
-
-#include "stratosphere/waitable_manager.hpp"
-
-#include "stratosphere/ipc.hpp"
-
-#include "stratosphere/mitm.hpp"
-
-#include "stratosphere/services.hpp"
+static inline void RebootToRcm() {
+    SecmonArgs args = {0};
+    args.X[0] = 0xC3000401; /* smcSetConfig */
+    args.X[1] = 65001; /* Exosphere reboot to rcm */
+    args.X[3] = 1; /* Perform reboot. */
+    svcCallSecureMonitor(&args);
+}
