@@ -99,7 +99,7 @@ Result smManagerAmsHasMitm(bool *out, const char* name) {
         rc = resp->result;
         
         if (R_SUCCEEDED(rc)) {
-            *out = has_mitm != 0;
+            *out = resp->has_mitm != 0;
         }
     }
     
