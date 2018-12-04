@@ -88,6 +88,8 @@ enum class ArgType {
     InPointer,
     OutPointerClientSize,
     OutPointerServerSize,
+    InSmartBuffer,
+    OutSmartBuffer,
 };
 
 template<typename X>
@@ -102,6 +104,10 @@ constexpr ArgType GetArgType() {
         return ArgType::InBuffer;
     } else if constexpr (std::is_base_of_v<OutBufferBase, X>) {
         return ArgType::OutBuffer;
+    } else if constexpr (std::is_base_of_v<InSmartBase, X>) {
+        return ArgType::InSmartBuffer;
+    } else if constexpr (std::is_base_of_v<OutSmartBase, X>) {
+        return ArgType::OutSmartBuffer;
     } else if constexpr (std::is_base_of_v<InPointerBase, X>) {
         return ArgType::InPointer;
     } else if constexpr (std::is_base_of_v<OutPointerWithClientSizeBase, X>) {
@@ -128,7 +134,7 @@ struct ArgTypeFilter {
 
 template<ArgType ArgT>
 struct IsArgTypeBuffer {
-    static constexpr bool value = ArgT == ArgType::InBuffer || ArgT == ArgType::OutBuffer || ArgT == ArgType::InPointer || ArgT == ArgType::OutPointerClientSize || ArgT == ArgType::OutPointerServerSize;
+    static constexpr bool value = ArgT == ArgType::InBuffer || ArgT == ArgType::OutBuffer || ArgT == ArgType::InPointer || ArgT == ArgType::OutPointerClientSize || ArgT == ArgType::OutPointerServerSize || ArgT == ArgType::InSmartBuffer || ArgT == ArgType::OutSmartBuffer;
 };
 
 struct ArgTypeBufferFilter {
@@ -264,6 +270,8 @@ struct CommandMetaInfo<std::tuple<_Args...>, _ReturnType> {
     using InPointers = FilteredTypes<ArgTypeFilter<ArgType::InPointer>::type, _Args...>;
     using ClientSizeOutPointers = FilteredTypes<ArgTypeFilter<ArgType::OutPointerClientSize>::type, _Args...>;
     using ServerSizeOutPointers = FilteredTypes<ArgTypeFilter<ArgType::OutPointerServerSize>::type, _Args...>;
+    using InSmarts = FilteredTypes<ArgTypeFilter<ArgType::InSmartBuffer>::type, _Args...>;
+    using OutSmarts = FilteredTypes<ArgTypeFilter<ArgType::OutSmartBuffer>::type, _Args...>;
     using Buffers = FilteredTypes<ArgTypeBufferFilter::type, _Args...>;
 
     static constexpr size_t NumInDatas = std::tuple_size_v<InDatas>;
@@ -274,10 +282,12 @@ struct CommandMetaInfo<std::tuple<_Args...>, _ReturnType> {
     static constexpr size_t NumOutSessions = std::tuple_size_v<OutSessions>;
     static constexpr size_t NumPidDescs = std::tuple_size_v<PidDescs>;
 
-    static constexpr size_t NumInBuffers = std::tuple_size_v<InBuffers>;
-    static constexpr size_t NumOutBuffers = std::tuple_size_v<OutBuffers>;
-    static constexpr size_t NumInPointers = std::tuple_size_v<InPointers>;
-    static constexpr size_t NumClientSizeOutPointers = std::tuple_size_v<ClientSizeOutPointers>;
+    static constexpr size_t NumInSmarts = std::tuple_size_v<InSmarts>;
+    static constexpr size_t NumOutSmarts = std::tuple_size_v<OutSmarts>;
+    static constexpr size_t NumInBuffers = std::tuple_size_v<InBuffers> + NumInSmarts;
+    static constexpr size_t NumOutBuffers = std::tuple_size_v<OutBuffers> + NumOutSmarts;
+    static constexpr size_t NumInPointers = std::tuple_size_v<InPointers> + NumInSmarts;
+    static constexpr size_t NumClientSizeOutPointers = std::tuple_size_v<ClientSizeOutPointers> + NumOutSmarts;
     static constexpr size_t NumServerSizeOutPointers = std::tuple_size_v<ServerSizeOutPointers>;
     static constexpr size_t NumBuffers = std::tuple_size_v<Buffers>;
 
@@ -317,10 +327,31 @@ struct Validator {
             } else if constexpr (std::is_same_v<T, CopiedHandle>) {
                 return ctx->request.WasHandleCopied[h_index++];
             }
+        } else if constexpr (argT == ArgType::InSmartBuffer) {
+            if (ctx->request.BufferSizes[a_index] > 0) {
+                return ctx->request.Statics[x_index] == nullptr && ctx->request.StaticSizes[x_index++] == 0
+                        && ctx->request.Buffers[a_index] != nullptr && ctx->request.BufferDirections[a_index++] == BufferDirection_Send;
+            } else if (ctx->request.StaticSizes[x_index] > 0) {
+                return ctx->request.Buffers[a_index] == nullptr && ctx->request.BufferSizes[a_index++] == 0
+                        && ctx->request.Statics[x_index++] != nullptr;
+            }
+            return false;
+        } else if constexpr (argT == ArgType::OutSmartBuffer) {
+            if (ctx->request.BufferSizes[b_index] > 0) {
+                x_index++;
+                return ctx->request.Buffers[b_index] != nullptr
+                        && ctx->request.BufferDirections[b_index++] == BufferDirection_Recv;
+            } else if (ctx->request.StaticSizes[x_index++] > 0) {
+                b_index++;
+                total_c_size += *((u16 *)((uintptr_t)(ctx->request.Raw) + 0x10 + cur_c_size_offset));
+                cur_c_size_offset += sizeof(u16);
+                return true;
+            }
+            return false;
         } else {
             if constexpr (argT == ArgType::OutPointerServerSize) {
                 total_c_size += T::num_elements * sizeof(T);
-            } else if constexpr (argT == ArgType::OutPointerServerSize) {
+            } else if constexpr (argT == ArgType::OutPointerClientSize) {
                 total_c_size += *((u16 *)((uintptr_t)(ctx->request.Raw) + 0x10 + cur_c_size_offset));
                 cur_c_size_offset += sizeof(u16);
             }
@@ -406,6 +437,34 @@ struct Decoder {
             const T& value = T(ctx->request.Statics[x_index], ctx->request.StaticSizes[x_index]);
             ++x_index;
             return value;
+        } else if constexpr (argT == ArgType::InSmartBuffer) {
+            if (ctx->request.BufferSizes[a_index] > 0) {
+                const T& value = T(ctx->request.Buffers[a_index], ctx->request.BufferSizes[a_index]);
+                ++a_index;
+                ++x_index;
+                return value;
+            } else {
+                const T& value = T(ctx->request.Statics[x_index], ctx->request.StaticSizes[x_index]);
+                ++a_index;
+                ++x_index;
+                return value;
+            }
+        } else if constexpr (argT == ArgType::OutSmartBuffer) {
+            if (ctx->request.BufferSizes[b_index] > 0) {
+                const T& value = T(ctx->request.Buffers[b_index], ctx->request.BufferSizes[b_index]);
+                ++b_index;
+                ++c_index;
+                return value;
+            } else {
+                u16 sz = *(const u16 *)((uintptr_t)ctx->request.Raw + 0x10 + c_sz_offset);
+                u8* buf = ctx->pb + pb_offset;
+                c_sz_offset += sizeof(u16);
+                pb_offset += sz;
+                ipcAddSendStatic(&ctx->reply, buf, sz, c_index);
+                ++b_index;
+                ++c_index;
+                return T(buf, sz);
+            }
         } else if constexpr (argT == ArgType::InHandle) {
             return T(ctx->request.Handles[in_h_index++]);
         } else if constexpr (argT == ArgType::OutHandle) {
@@ -427,12 +486,12 @@ struct Decoder {
         } else if constexpr (argT == ArgType::OutPointerClientSize || argT == ArgType::OutPointerServerSize) {
             u16 sz;
             if constexpr(argT == ArgType::OutPointerServerSize) {
-                sz = T::element_size;
+                sz = T::element_size * T::num_elements;
             } else {
                 sz = *(const u16 *)((uintptr_t)ctx->request.Raw + 0x10 + c_sz_offset);
+                c_sz_offset += sizeof(u16);
             }
             u8* buf = ctx->pb + pb_offset;
-            c_sz_offset += sizeof(u16);
             pb_offset += sz;
             ipcAddSendStatic(&ctx->reply, buf, sz, c_index++);
             return T(buf, sz);

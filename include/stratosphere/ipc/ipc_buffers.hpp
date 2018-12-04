@@ -115,3 +115,38 @@ struct OutPointerWithClientSize : public OutPointerWithClientSizeBase {
     
     OutPointerWithClientSize(void *p, size_t n) : pointer((T *)p), num_elements(n/sizeof(T)) { }
 };
+
+struct InOutSmartBase : public IpcBufferBase {};
+
+struct OutSmartBase : public InOutSmartBase {};
+
+template <typename T>
+struct OutSmartBuffer : public OutSmartBase {
+    T *buffer;
+    size_t num_elements;
+    static const size_t element_size = sizeof(T);
+    
+    /* Convenience. */
+    T& operator[](size_t i) const {
+        return buffer[i];
+    }
+
+    OutSmartBuffer(void *b, size_t n) : buffer((T *)b), num_elements(n/sizeof(T)) { }
+};
+
+
+struct InSmartBase : public InOutSmartBase {};
+
+template <typename T>
+struct InSmartBuffer : public InSmartBase {
+    T *buffer;
+    size_t num_elements;
+    static const size_t element_size = sizeof(T);
+    
+    /* Convenience. */
+    T& operator[](size_t i) const {
+        return buffer[i];
+    }
+    
+    InSmartBuffer(void *b, size_t n) : buffer((T *)b), num_elements(n/sizeof(T)) { }
+};
