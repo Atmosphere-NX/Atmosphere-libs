@@ -178,12 +178,79 @@ class TimeoutHelper {
             return (tick * 625) / 12;
         }
         
+        u64 NsUntilTimeout() {
+            u64 diff = TickToNs(this->end_tick - armGetSystemTick());
+            
+            if (TimedOut()) {
+                return 0;
+            }
+            
+            return diff;
+        }
+        
         bool TimedOut() {
             if (this->end_tick == 0) {
                 return true;
             }
             
             return armGetSystemTick() >= this->end_tick;
+        }
+};
+
+class HosSignal {
+    private:
+        CondVar cv;
+        Mutex m;
+        bool signaled;
+    public:
+        HosSignal() {
+            condvarInit(&cv);
+            mutexInit(&m);
+            signaled = false;
+        }
+        
+        void Signal() {
+            mutexLock(&m);
+            signaled = true;
+            condvarWakeAll(&cv);
+            mutexUnlock(&m);
+        }
+        
+        void Reset() {
+            mutexLock(&m);
+            signaled = false;
+            mutexUnlock(&m);
+        }
+        
+        void Wait() {
+            mutexLock(&m);
+            
+            while (!signaled) {
+                condvarWait(&cv, &m);
+            }
+            
+            mutexUnlock(&m);
+        }
+        
+        bool TryWait() {
+            mutexLock(&m);
+            bool success = signaled;
+            mutexUnlock(&m);
+            return success;
+        }
+        
+        Result TimedWait(u64 ns) {
+            mutexLock(&m);
+            TimeoutHelper timeout_helper(ns);
+            
+            while (!signaled) {
+                if (R_FAILED(condvarWaitTimeout(&cv, &m, timeout_helper.NsUntilTimeout()))) {
+                    return false;
+                }
+            }
+            
+            mutexUnlock(&m);
+            return true;
         }
 };
 
