@@ -370,7 +370,7 @@ struct Validator {
         }
 
         size_t a_index = 0, b_index = MetaInfo::NumInBuffers, x_index = 0, h_index = 0;
-        size_t cur_c_size_offset = MetaInfo::InRawArgSize + (0x10 - ((uintptr_t)ctx->request.Raw - (uintptr_t)ctx->request.RawWithoutPadding));
+        size_t cur_c_size_offset = MetaInfo::InRawArgSize + (0x10 - ((uintptr_t)ctx->request.Raw - (ctx->request.IsDomainRequest ? sizeof(DomainMessageHeader) : 0) - (uintptr_t)ctx->request.RawWithoutPadding));
         size_t total_c_size = 0;
 
         if (!ValidateCommandTuple<typename MetaInfo::Args>::IsValid(ctx, a_index, b_index, x_index, h_index, cur_c_size_offset, total_c_size)) {
@@ -466,7 +466,7 @@ struct Decoder {
 	static constexpr typename MetaInfo::Args Decode(IpcResponseContext *ctx) {
         size_t a_index = 0, b_index = MetaInfo::NumInBuffers, x_index = 0, c_index = 0, in_h_index = 0, out_h_index = 0, out_obj_index = 0;
         size_t in_data_index = 0x0, out_data_index = 0, pb_offset = 0;
-        size_t c_sz_offset = MetaInfo::InRawArgSize + (0x10 - ((uintptr_t)ctx->request.Raw - (uintptr_t)ctx->request.RawWithoutPadding));
+        size_t c_sz_offset = MetaInfo::InRawArgSize + (0x10 - ((uintptr_t)ctx->request.Raw  - (ctx->request.IsDomainRequest ? sizeof(DomainMessageHeader) : 0) - (uintptr_t)ctx->request.RawWithoutPadding));
         return DecodeTuple<typename MetaInfo::Args>::GetArgs(ctx, a_index, b_index, x_index, c_index,  in_h_index, out_h_index, out_obj_index, in_data_index, out_data_index, pb_offset, c_sz_offset);
     }
 };
