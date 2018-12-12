@@ -537,7 +537,7 @@ struct Encoder<MetaInfo, std::tuple<Args...>> {
             u64 result;
         } *raw;
         if (is_domain) {
-            raw = (decltype(raw))ipcPrepareHeaderForDomain(&ctx->reply, sizeof(*raw) + MetaInfo::OutRawArgSize, 0);
+            raw = (decltype(raw))ipcPrepareHeaderForDomain(&ctx->reply, sizeof(*raw) + MetaInfo::OutRawArgSize + sizeof(*ctx->out_object_ids) * MetaInfo::NumOutSessions, 0);
             auto resp_header = (DomainResponseHeader *)((uintptr_t)raw - sizeof(DomainResponseHeader));
             *resp_header = {0};
             resp_header->NumObjectIds = MetaInfo::NumOutSessions;
