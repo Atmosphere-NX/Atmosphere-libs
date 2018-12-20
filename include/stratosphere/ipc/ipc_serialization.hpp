@@ -334,6 +334,8 @@ struct Validator {
             } else if (ctx->request.StaticSizes[x_index] > 0) {
                 return ctx->request.Buffers[a_index] == nullptr && ctx->request.BufferSizes[a_index++] == 0
                         && ctx->request.Statics[x_index++] != nullptr;
+            } else {
+                return ctx->request.Buffers[a_index++] == nullptr && ctx->request.Statics[x_index++] == nullptr;
             }
             return false;
         } else if constexpr (argT == ArgType::OutSmartBuffer) {
