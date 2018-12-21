@@ -39,7 +39,9 @@ class IMitmServiceObject : public IServiceObject {
             return this->process_id;
         }
         
-        static bool ShouldMitm(u64 pid, u64 tid);
+        static bool ShouldMitm(u64 pid, u64 tid) {
+            return true;
+        }
                 
     protected:
         virtual ~IMitmServiceObject() = default;
