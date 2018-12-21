@@ -17,18 +17,27 @@
 #pragma once
 #include <switch.h>
 
+#include<tuple>
+
 #include "iwaitable.hpp"
 #include "ipc.hpp"
 
-template<typename T>
+template<typename T, typename... Args>
 class IServer : public IWaitable {
     static_assert(std::is_base_of<IServiceObject, T>::value, "Service Objects must derive from IServiceObject");
     protected:
         Handle port_handle;
         unsigned int max_sessions;
-    
+
+    private:
+        std::tuple<Args...> args;
+
+        template<std::size_t... I>
+        static std::shared_ptr<T> ConstructionDetailHelper(std::tuple<Args...> &&tuple, std::index_sequence<I...>) {
+            return std::make_shared<T>(std::forward<Args>(std::get<I>(std::forward<std::tuple<Args...>>(tuple)))...);
+        }
     public:        
-        IServer(unsigned int max_s) : port_handle(0), max_sessions(max_s) { }
+        IServer(unsigned int max_s, Args... args) : port_handle(0), max_sessions(max_s), args(std::forward_as_tuple<Args>(std::forward<Args>(args))...) { }
         
         virtual ~IServer() {            
             if (port_handle) {
@@ -53,33 +62,33 @@ class IServer : public IWaitable {
                 return rc;
             }
             
-            this->GetSessionManager()->AddSession(session_h, std::move(ServiceObjectHolder(std::move(std::make_shared<T>()))));
+            this->GetSessionManager()->AddSession(session_h, std::move(ServiceObjectHolder(std::move(ConstructionDetailHelper(std::forward<std::tuple<Args...>>(args), std::index_sequence_for<Args...>())))));
             return 0;
         }
 };
 
-template <typename T>
-class ServiceServer : public IServer<T> {    
+template <typename T, typename... Args>
+class ServiceServer : public IServer<T, Args...> {    
     public:
-        ServiceServer(const char *service_name, unsigned int max_s) : IServer<T>(max_s) { 
+        ServiceServer(const char *service_name, unsigned int max_s, Args... args) : IServer<T, Args...>(max_s, std::forward<Args>(args)...) { 
             if (R_FAILED(smRegisterService(&this->port_handle, service_name, false, this->max_sessions))) {
                 /* TODO: Panic. */
             }
         }
 };
 
-template <typename T>
-class ExistingPortServer : public IServer<T> {    
+template <typename T, typename... Args>
+class ExistingPortServer : public IServer<T, Args...> {
     public:
-        ExistingPortServer(Handle port_h, unsigned int max_s) : IServer<T>(max_s) {
+        ExistingPortServer(Handle port_h, unsigned int max_s, Args... args) : IServer<T, Args...>(max_s, args...) {
             this->port_handle = port_h;
         }
 };
 
-template <typename T>
-class ManagedPortServer : public IServer<T> {    
+template <typename T, typename... Args>
+class ManagedPortServer : public IServer<T, Args...> {
     public:
-        ManagedPortServer(const char *service_name, unsigned int max_s) : IServer<T>(max_s) { 
+        ManagedPortServer(const char *service_name, unsigned int max_s, Args... args) : IServer<T, Args...>(max_s, args...) { 
             if (R_FAILED(svcManageNamedPort(&this->port_handle, service_name, this->max_sessions))) {
                 /* TODO: panic */
             }

@@ -21,7 +21,7 @@
 #include "sm_mitm.h"
 #include "mitm_session.hpp"
 
-template <typename T>
+template <typename T, typename... Args>
 class MitmServer : public IWaitable {          
     static_assert(std::is_base_of<IMitmServiceObject, T>::value, "MitM Service Objects must derive from IMitmServiceObject");
     private:
@@ -29,8 +29,14 @@ class MitmServer : public IWaitable {
         unsigned int max_sessions;
         char mitm_name[9];
     
+        std::tuple<Args...> args;
+
+        template<std::size_t... I>
+        static std::shared_ptr<T> ConstructionDetailHelper(std::shared_ptr<Service> forward_service, u64 client_pid, std::tuple<Args...> &&tuple, std::index_sequence<I...>) {
+            return std::make_shared<T>(forward_service, client_pid, std::forward<Args>(std::get<I>(std::forward<std::tuple<Args...>>(tuple)))...);
+        }
     public:
-        MitmServer(Handle *out_query_h, const char *service_name, unsigned int max_s) : port_handle(0), max_sessions(max_s) {
+        MitmServer(Handle *out_query_h, const char *service_name, unsigned int max_s, Args... args) : port_handle(0), max_sessions(max_s), args(std::forward_as_tuple<Args>(std::forward<Args>(args))...) {
             Handle tmp_hnd;
             Result rc = smMitMInitialize();
             if (R_FAILED(rc)) {
@@ -97,16 +103,16 @@ class MitmServer : public IWaitable {
             
             smMitMExit();
                         
-            this->GetSessionManager()->AddWaitable(new MitmSession(session_h, client_pid, forward_service, std::make_shared<T>(forward_service, client_pid)));
+            this->GetSessionManager()->AddWaitable(new MitmSession(session_h, client_pid, forward_service, ConstructionDetailHelper(forward_service, client_pid, std::forward<std::tuple<Args...>>(args), std::index_sequence_for<Args...>())));
             return 0;
         }
 
 };
 
-template<typename T>
-static void AddMitmServerToManager(SessionManagerBase *manager, const char *srv_name, unsigned int max_sessions) {
+template<typename T, typename... Args>
+static void AddMitmServerToManager(SessionManagerBase *manager, const char *srv_name, unsigned int max_sessions, Args... args) {
     Handle query_h;
-    auto *srv = new MitmServer<T>(&query_h, srv_name, max_sessions);
+    auto *srv = new MitmServer<T, Args...>(&query_h, srv_name, max_sessions, std::forward<Args>(args)...);
     manager->AddSession(query_h, std::move(ServiceObjectHolder(std::move(std::make_shared<MitmQueryService<T>>()))));
     manager->AddWaitable(srv);
 }
