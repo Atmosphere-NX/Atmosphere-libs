@@ -31,17 +31,11 @@ class MitmServer : public IWaitable {
     
     public:
         MitmServer(Handle *out_query_h, const char *service_name, unsigned int max_s) : port_handle(0), max_sessions(max_s) {
-            Handle tmp_hnd;
             Result rc = smMitMInitialize();
             if (R_FAILED(rc)) {
                 fatalSimple(rc);
             }
             
-            if (R_SUCCEEDED((rc = smGetServiceOriginal(&tmp_hnd, smEncodeName(service_name))))) {
-                svcCloseHandle(tmp_hnd);
-            } else {
-                fatalSimple(rc);
-            }
             strncpy(mitm_name, service_name, 8);
             mitm_name[8] = '\x00';
             if (R_FAILED((rc = smMitMInstall(&this->port_handle, out_query_h, mitm_name)))) {
