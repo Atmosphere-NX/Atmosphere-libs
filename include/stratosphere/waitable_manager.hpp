@@ -182,23 +182,27 @@ class WaitableManager : public SessionManagerBase {
                 /* We finished processing, and maybe that means we can stop deferring an object. */
                 {
                     std::scoped_lock lk{this_ptr->deferred_lock};
-
-                    for (auto it = this_ptr->deferred_waitables.begin(); it != this_ptr->deferred_waitables.end();) {
-                        auto w = *it;
-                        Result rc = w->HandleDeferred();
-                        if (rc == 0xF601 || !w->IsDeferred()) {
-                            /* Remove from the deferred list, set iterator. */
-                            it = this_ptr->deferred_waitables.erase(it);
-                            if (rc == 0xF601) {
-                                /* Delete the closed waitable. */
-                                delete w;
+                    bool undeferred_any = true;
+                    while (undeferred_any) {
+                        undeferred_any = false;
+                        for (auto it = this_ptr->deferred_waitables.begin(); it != this_ptr->deferred_waitables.end();) {
+                            auto w = *it;
+                            Result rc = w->HandleDeferred();
+                            if (rc == 0xF601 || !w->IsDeferred()) {
+                                /* Remove from the deferred list, set iterator. */
+                                it = this_ptr->deferred_waitables.erase(it);
+                                if (rc == 0xF601) {
+                                    /* Delete the closed waitable. */
+                                    delete w;
+                                } else {
+                                    /* Add to the waitables list. */
+                                    this_ptr->AddWaitable(w);
+                                    undeferred_any = true;
+                                }
                             } else {
-                                /* Add to the waitables list. */
-                                this_ptr->AddWaitable(w);
+                                /* Move on to the next deferred waitable. */
+                                it++;
                             }
-                        } else {
-                            /* Move on to the next deferred waitable. */
-                            it++;
                         }
                     }
                 }
