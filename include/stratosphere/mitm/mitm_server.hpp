@@ -21,6 +21,8 @@
 #include "sm_mitm.h"
 #include "mitm_session.hpp"
 
+void RegisterMitmServerQueryHandle(Handle query_h, ServiceObjectHolder &&service);
+
 template <typename T>
 class MitmServer : public IWaitable {          
     static_assert(std::is_base_of<IMitmServiceObject, T>::value, "MitM Service Objects must derive from IMitmServiceObject");
@@ -30,7 +32,8 @@ class MitmServer : public IWaitable {
         char mitm_name[9];
     
     public:
-        MitmServer(Handle *out_query_h, const char *service_name, unsigned int max_s) : port_handle(0), max_sessions(max_s) {
+        MitmServer(const char *service_name, unsigned int max_s) : port_handle(0), max_sessions(max_s) {
+            Handle query_h = 0;
             Result rc = smMitMInitialize();
             if (R_FAILED(rc)) {
                 fatalSimple(rc);
@@ -38,9 +41,10 @@ class MitmServer : public IWaitable {
             
             strncpy(mitm_name, service_name, 8);
             mitm_name[8] = '\x00';
-            if (R_FAILED((rc = smMitMInstall(&this->port_handle, out_query_h, mitm_name)))) {
+            if (R_FAILED((rc = smMitMInstall(&this->port_handle, &query_h, mitm_name)))) {
                 fatalSimple(rc);           
             }
+            RegisterMitmServerQueryHandle(query_h, std::move(ServiceObjectHolder(std::move(std::make_shared<MitmQueryService<T>>()))));
             
             smMitMExit();
         }
@@ -99,10 +103,6 @@ class MitmServer : public IWaitable {
 
 template<typename T>
 static void AddMitmServerToManager(SessionManagerBase *manager, const char *srv_name, unsigned int max_sessions) {
-    Handle query_h;
-    auto *srv = new MitmServer<T>(&query_h, srv_name, max_sessions);
-    manager->AddSession(query_h, std::move(ServiceObjectHolder(std::move(std::make_shared<MitmQueryService<T>>()))));
+    auto *srv = new MitmServer<T>(srv_name, max_sessions);
     manager->AddWaitable(srv);
 }
-
-
