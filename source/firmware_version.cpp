@@ -35,7 +35,16 @@ static void _CacheValues(void)
     }
 
     u32 target_fw = 0;
-    GetAtmosphereApiVersion(nullptr, nullptr, nullptr, &target_fw, nullptr);
+    {
+        SecmonArgs args = {0};
+        args.X[0] = 0xC3000002; /* smcGetConfig */
+        args.X[1] = 65000; /* ConfigItem_ExosphereVersion */
+        if (R_FAILED(svcCallSecureMonitor(&args)) || args.X[0] != 0) {
+            std::abort();
+        }
+        
+        target_fw = (args.X[1] >> 0x08) & 0xFF;
+    }
     
     switch (static_cast<AtmosphereTargetFirmware>(target_fw)) {
         case AtmosphereTargetFirmware_100:
