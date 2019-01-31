@@ -24,26 +24,20 @@ enum FirmwareVersion : u32 {
     FirmwareVersion_400 = 3,
     FirmwareVersion_500 = 4,
     FirmwareVersion_600 = 5,
-    FirmwareVersion_Current = FirmwareVersion_600,
+    FirmwareVersion_700 = 6,
+    FirmwareVersion_Current = FirmwareVersion_700,
     FirmwareVersion_Max = 32,
 };
 
-static inline FirmwareVersion GetRuntimeFirmwareVersion() {
-    FirmwareVersion fw = FirmwareVersion_Min;
-    if (kernelAbove200()) {
-        fw = FirmwareVersion_200;
-    }
-    if (kernelAbove300()) {
-        fw = FirmwareVersion_300;
-    }
-    if (kernelAbove400()) {
-        fw = FirmwareVersion_400;
-    }
-    if (kernelAbove500()) {
-        fw = FirmwareVersion_500;
-    }
-    if (kernelAbove600()) {
-        fw = FirmwareVersion_600;
-    }
-    return fw;
-}
+enum AtmosphereTargetFirmware : u32 {
+    AtmosphereTargetFirmware_100 = 1,
+    AtmosphereTargetFirmware_200 = 2,
+    AtmosphereTargetFirmware_300 = 3,
+    AtmosphereTargetFirmware_400 = 4,
+    AtmosphereTargetFirmware_500 = 5,
+    AtmosphereTargetFirmware_600 = 6,
+    AtmosphereTargetFirmware_620 = 7,
+    AtmosphereTargetFirmware_700 = 8,
+};
+
+FirmwareVersion GetRuntimeFirmwareVersion();
