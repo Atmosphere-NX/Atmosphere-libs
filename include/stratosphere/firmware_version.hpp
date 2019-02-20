@@ -41,3 +41,5 @@ enum AtmosphereTargetFirmware : u32 {
 };
 
 FirmwareVersion GetRuntimeFirmwareVersion();
+
+void SetFirmwareVersionForLibnx();

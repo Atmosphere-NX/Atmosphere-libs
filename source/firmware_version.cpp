@@ -83,3 +83,48 @@ FirmwareVersion GetRuntimeFirmwareVersion() {
     _CacheValues();
     return g_firmware_version;
 }
+
+void SetFirmwareVersionForLibnx() {
+    u32 major = 0, minor = 0, micro = 0;
+    switch (GetRuntimeFirmwareVersion()) {
+        case FirmwareVersion_100:
+            major = 1;
+            minor = 0;
+            micro = 0;
+            break;
+        case FirmwareVersion_200:
+            major = 2;
+            minor = 0;
+            micro = 0;
+            break;
+        case FirmwareVersion_300:
+            major = 3;
+            minor = 0;
+            micro = 0;
+            break;
+        case FirmwareVersion_400:
+            major = 4;
+            minor = 0;
+            micro = 0;
+            break;
+        case FirmwareVersion_500:
+            major = 5;
+            minor = 0;
+            micro = 0;
+            break;
+        case FirmwareVersion_600:
+            major = 6;
+            minor = 0;
+            micro = 0;
+            break;
+        case FirmwareVersion_700:
+            major = 7;
+            minor = 0;
+            micro = 0;
+            break;
+        default:
+            std::abort();
+            break;
+    }
+    hosversionSet(MAKEHOSVERSION(major, minor, micro));
+}
