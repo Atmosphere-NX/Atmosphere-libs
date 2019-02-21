@@ -33,6 +33,14 @@ static inline void RebootToIramPayload() {
     svcCallSecureMonitor(&args);
 }
 
+static inline void PerformShutdown() {
+    SecmonArgs args = {0};
+    args.X[0] = 0xC3000401; /* smcSetConfig */
+    args.X[1] = 65002; /* Exosphere shutdown */
+    args.X[3] = 1; /* Perform shutdown. */
+    svcCallSecureMonitor(&args);
+}
+
 static inline void CopyToIram(uintptr_t iram_addr, void *src_addr, size_t size) {
     SecmonArgs args = {0};
     args.X[0] = 0xF0000201;     /* smcAmsIramCopy */
