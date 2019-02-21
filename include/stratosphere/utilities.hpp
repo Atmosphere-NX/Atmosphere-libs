@@ -33,7 +33,7 @@ static inline void RebootToIramPayload() {
     svcCallSecureMonitor(&args);
 }
 
-static inline void PerformShutdown() {
+static inline void PerformShutdownSmc() {
     SecmonArgs args = {0};
     args.X[0] = 0xC3000401; /* smcSetConfig */
     args.X[1] = 65002; /* Exosphere shutdown */
