@@ -590,7 +590,7 @@ Result dmntchtEnableFrozenAddress(u64 address, u64 width, u64 *out_value) {
     raw->magic = SFCI_MAGIC;
     raw->cmd_id = 65303;
     raw->address = address;
-    raw->address = width;
+    raw->width = width;
 
     Result rc = serviceIpcDispatch(&g_dmntchtService);
 
