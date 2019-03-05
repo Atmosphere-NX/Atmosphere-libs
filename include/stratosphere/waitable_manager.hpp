@@ -161,7 +161,8 @@ class WaitableManager : public SessionManagerBase {
                         }
                         break;
                     } else {
-                        svcExitThread();
+                        /* Return, this will cause thread to exit. */
+                        return;
                     }
                 }
                 if (w) {
