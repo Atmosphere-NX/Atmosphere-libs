@@ -19,3 +19,4 @@
 #include "ipc.hpp"
 
 #include "services/smm_ams.h"
+#include "services/dmntcht.h"
