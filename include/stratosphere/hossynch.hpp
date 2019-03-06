@@ -279,4 +279,8 @@ class HosThread {
             }
             return rc;
         }
+        
+        Result CancelSynchronization() {
+            return svcCancelSynchronization(this->thr.handle);
+        }
 };
