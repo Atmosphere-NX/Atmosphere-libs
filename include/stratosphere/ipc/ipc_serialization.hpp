@@ -320,7 +320,7 @@ struct Validator {
         } else {
             if constexpr (argT == ArgType::OutPointerServerSize) {
                 total_c_size += T::num_elements * sizeof(T);
-            } else if constexpr (argT == ArgType::OutPointerServerSize) {
+            } else if constexpr (argT == ArgType::OutPointerClientSize) {
                 total_c_size += *((u16 *)((uintptr_t)(ctx->request.Raw) + 0x10 + cur_c_size_offset));
                 cur_c_size_offset += sizeof(u16);
             }
