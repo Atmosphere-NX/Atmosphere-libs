@@ -61,6 +61,25 @@ static inline void CopyFromIram(void *dst_addr, uintptr_t iram_addr, size_t size
     svcCallSecureMonitor(&args);
 }
 
+static inline Result SmcGetConfig(SplConfigItem config_item, u64 *out_config) {
+    SecmonArgs args = {0};
+    args.X[0] = 0xC3000002;        /* smcGetConfig */
+    args.X[1] = (u64)config_item;  /* config item */
+
+    Result rc = svcCallSecureMonitor(&args);
+    if (R_SUCCEEDED(rc)) {
+        if (args.X[0] == 0) {
+            if (out_config) {
+                *out_config = args.X[1];
+            }
+        } else {
+            /* SPL result n = SMC result n */
+            rc = MAKERESULT(26, args.X[0]);
+        }
+    }
+    return rc;
+}
+
 static inline bool IsApplicationTid(u64 title_id) {
     constexpr u64 application_tid_min = 0x0100000000010000ul;
     constexpr u64 application_tid_max = 0x01FFFFFFFFFFFFFFul;

@@ -18,13 +18,9 @@
 #include <switch.h>
 
 static inline void GetAtmosphereApiVersion(u32 *major, u32 *minor, u32 *micro, u32 *target_fw, u32 *mkey_rev) {
-    if (R_FAILED(splInitialize())) {
-        fatalSimple(0xCAFE << 4 | 0xD);
-    }
-    
     /* Check for exosphere API compatibility. */
     u64 exosphere_cfg;
-    if (R_FAILED(splGetConfig((SplConfigItem)65000, &exosphere_cfg))) {
+    if (R_FAILED(SmcGetConfig((SplConfigItem)65000, &exosphere_cfg))) {
         fatalSimple(0xCAFE << 4 | 0xE);
     }
     
@@ -47,8 +43,6 @@ static inline void GetAtmosphereApiVersion(u32 *major, u32 *minor, u32 *micro, u
     if (major) {
         *major     = (u32)((exosphere_cfg >> 0x20) & 0xFF);
     }
-    
-    splExit();
 }
 
 static inline u32 MakeAtmosphereVersion(u32 major, u32 minor, u32 micro) {
