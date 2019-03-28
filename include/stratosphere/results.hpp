@@ -21,4 +21,5 @@
 #include "results/dmnt_results.hpp"
 #include "results/pm_results.hpp"
 #include "results/sm_results.hpp"
+#include "results/fatal_results.hpp"
 #include "results/creport_results.hpp"
