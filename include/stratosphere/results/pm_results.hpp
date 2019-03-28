@@ -15,9 +15,13 @@
  */
  
 #pragma once
+#include <switch.h>
 
-#include "results/fs_results.hpp"
-#include "results/loader_results.hpp"
-#include "results/dmnt_results.hpp"
-#include "results/pm_results.hpp"
-#include "results/creport_results.hpp"
+static constexpr u32 Module_Pm = 15;
+
+static constexpr Result ResultPmProcessNotFound    = MAKERESULT(Module_Pm, 1);
+static constexpr Result ResultPmAlreadyStarted     = MAKERESULT(Module_Pm, 2);
+static constexpr Result ResultPmNotExited          = MAKERESULT(Module_Pm, 3);
+static constexpr Result ResultPmDebugHookInUse     = MAKERESULT(Module_Pm, 4);
+static constexpr Result ResultPmApplicationRunning = MAKERESULT(Module_Pm, 5);
+static constexpr Result ResultPmInvalidSize        = MAKERESULT(Module_Pm, 6);
