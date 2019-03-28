@@ -21,6 +21,7 @@
 
 #include "../meta_tools.hpp"
 
+#include "results.hpp"
 #include "waitable_manager_base.hpp"
 #include "event.hpp"
 #include "ipc.hpp"
@@ -167,7 +168,7 @@ class WaitableManager : public SessionManagerBase {
                 }
                 if (w) {
                     Result rc = w->HandleSignaled(0);
-                    if (rc == 0xF601) {
+                    if (rc == ResultKernelConnectionClosed) {
                         /* Close! */
                         delete w;
                     } else {
@@ -189,10 +190,10 @@ class WaitableManager : public SessionManagerBase {
                         for (auto it = this_ptr->deferred_waitables.begin(); it != this_ptr->deferred_waitables.end();) {
                             auto w = *it;
                             Result rc = w->HandleDeferred();
-                            if (rc == 0xF601 || !w->IsDeferred()) {
+                            if (rc == ResultKernelConnectionClosed || !w->IsDeferred()) {
                                 /* Remove from the deferred list, set iterator. */
                                 it = this_ptr->deferred_waitables.erase(it);
-                                if (rc == 0xF601) {
+                                if (rc == ResultKernelConnectionClosed) {
                                     /* Delete the closed waitable. */
                                     delete w;
                                 } else {
@@ -279,10 +280,10 @@ class WaitableManager : public SessionManagerBase {
                         size_t w_ind = std::distance(this->waitables.begin(), std::find(this->waitables.begin(), this->waitables.end(), w));
                         std::for_each(waitables.begin(), waitables.begin() + w_ind + 1, std::mem_fn(&IWaitable::UpdatePriority));
                         result = w;
-                    } else if (rc == 0xEA01) {
+                    } else if (rc == ResultKernelTimedOut) {
                         /* Timeout: Just update priorities. */
                         std::for_each(waitables.begin(), waitables.end(), std::mem_fn(&IWaitable::UpdatePriority));
-                    } else if (rc == 0xEC01) {
+                    } else if (rc == ResultKernelCancelled) {
                         /* svcCancelSynchronization was called. */
                         AddWaitablesInternal();
                         {

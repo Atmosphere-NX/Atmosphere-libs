@@ -19,8 +19,10 @@
 #include <stratosphere.hpp>
 #include "imitmserviceobject.hpp"
 
+#include "../results.hpp"
 #include "mitm_query_service.hpp"
 
+/* TODO: Change this. */
 #define RESULT_FORWARD_TO_SESSION 0xCAFEFC
 
 class MitmSession final : public ServiceSession {
@@ -112,7 +114,7 @@ class MitmSession final : public ServiceSession {
         }
 
         virtual Result GetResponse(IpcResponseContext *ctx) {
-            Result rc = 0xF601;
+            Result rc = ResultKernelConnectionClosed;
             FirmwareVersion fw = GetRuntimeFirmwareVersion();
             
             const ServiceCommandMeta *dispatch_table = ctx->obj_holder->GetDispatchTable();
@@ -121,7 +123,7 @@ class MitmSession final : public ServiceSession {
             if (IsDomainObject(ctx->obj_holder)) {
                 switch (ctx->request.InMessageType) {
                     case DomainMessageType_Invalid:
-                        return 0xF601;
+                        return ResultKernelConnectionClosed;
                     case DomainMessageType_Close:
                         rc = ForwardRequest(ctx);
                         if (R_SUCCEEDED(rc)) {
@@ -216,7 +218,7 @@ class MitmSession final : public ServiceSession {
             public:
                 Result ConvertCurrentObjectToDomain(Out<u32> object_id) {
                     if (IsDomainObject(this->session->obj_holder)) {
-                        return 0xF601;
+                        return ResultKernelConnectionClosed;
                     }
                     
                     Result rc = serviceConvertToDomain(this->session->forward_service.get());
@@ -230,12 +232,12 @@ class MitmSession final : public ServiceSession {
                     auto new_domain = this->session->GetDomainManager()->AllocateDomain();
                     if (new_domain == nullptr) {
                         /* If our domains mismatch, we're in trouble. */
-                        return 0xF601;
+                        return ResultKernelConnectionClosed;
                     }
                                         
                     /* Reserve the expected object in the domain for our session. */
                     if (R_FAILED(new_domain->ReserveSpecificObject(expected_id))) {
-                        return 0xF601;
+                        return ResultKernelConnectionClosed;
                     }
                     new_domain->SetObject(expected_id, std::move(this->session->obj_holder));
                     this->session->obj_holder = std::move(ServiceObjectHolder(std::move(new_domain)));

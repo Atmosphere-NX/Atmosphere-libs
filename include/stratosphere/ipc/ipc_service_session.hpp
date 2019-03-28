@@ -17,6 +17,7 @@
 #pragma once
 #include <switch.h>
 
+#include "../results.hpp"
 #include "../iwaitable.hpp"
 #include "ipc_service_object.hpp"
 #include "ipc_serialization.hpp"
@@ -133,7 +134,7 @@ class ServiceSession : public IWaitable
         }
         
         virtual Result GetResponse(IpcResponseContext *ctx) {
-            Result rc = 0xF601;
+            Result rc = ResultKernelConnectionClosed;
             FirmwareVersion fw = GetRuntimeFirmwareVersion();
             
             const ServiceCommandMeta *dispatch_table = ctx->obj_holder->GetDispatchTable();
@@ -142,7 +143,7 @@ class ServiceSession : public IWaitable
             if (IsDomainObject(ctx->obj_holder)) {
                 switch (ctx->request.InMessageType) {
                     case DomainMessageType_Invalid:
-                        return 0xF601;
+                        return ResultKernelConnectionClosed;
                     case DomainMessageType_Close:
                         return PrepareBasicDomainResponse(ctx, ctx->obj_holder->GetServiceObject<IDomainObject>()->FreeObject(ctx->request.InThisObjectId));
                     case DomainMessageType_SendMessage:
@@ -180,14 +181,14 @@ class ServiceSession : public IWaitable
                 case IpcCommandType_Invalid:
                 case IpcCommandType_LegacyRequest:
                 case IpcCommandType_LegacyControl:
-                    return 0xF601;
+                    return ResultKernelConnectionClosed;
                 case IpcCommandType_Close:
                     {
                         /* Clean up gracefully. */
                         PrepareBasicResponse(&ctx, 0);
                         this->Reply();
                     }
-                    return 0xF601;
+                    return ResultKernelConnectionClosed;
                 case IpcCommandType_Control:
                 case IpcCommandType_ControlWithContext:
                     ctx.rc = ipcParse(&ctx.request);
@@ -202,7 +203,7 @@ class ServiceSession : public IWaitable
                     }
                     break;
                 default:
-                    return 0xF601;
+                    return ResultKernelConnectionClosed;
             }
             
             
@@ -215,7 +216,7 @@ class ServiceSession : public IWaitable
             if (ctx.rc == RESULT_DEFER_SESSION) {
                 /* Session defer. */
                 this->SetDeferred(true);
-            } else if (ctx.rc == 0xF601) {
+            } else if (ctx.rc == ResultKernelConnectionClosed) {
                 /* Session close, nothing to do. */
             } else {
                 if (R_SUCCEEDED(ctx.rc)) {
@@ -224,7 +225,7 @@ class ServiceSession : public IWaitable
                 
                 ctx.rc = this->Reply();
                 
-                if (ctx.rc == 0xEA01) {
+                if (ctx.rc == ResultKernelTimedOut) {
                     ctx.rc = 0x0;
                 }
                 

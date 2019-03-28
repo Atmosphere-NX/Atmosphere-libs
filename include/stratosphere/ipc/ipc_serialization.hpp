@@ -23,6 +23,8 @@
 #include <type_traits>
 #include <memory>
 
+#include "../results.hpp"
+
 #include "ipc_out.hpp"
 #include "ipc_buffers.hpp"
 #include "ipc_special.hpp"
@@ -341,32 +343,32 @@ struct Validator {
     template<typename MetaInfo>
 	static constexpr Result Validate(IpcResponseContext *ctx) {
         if (ctx->request.RawSize < MetaInfo::InRawArgSizeWithOutPointers) {
-            return 0xF601;
+            return ResultKernelConnectionClosed;
         }
 
         if (ctx->request.NumBuffers != MetaInfo::NumInBuffers + MetaInfo::NumOutBuffers) {
-            return 0xF601;
+            return ResultKernelConnectionClosed;
         }
 
         if (ctx->request.NumStatics != MetaInfo::NumInPointers) {
-            return 0xF601;
+            return ResultKernelConnectionClosed;
         }
 
         if (ctx->request.NumStaticsOut != MetaInfo::NumClientSizeOutPointers + MetaInfo::NumServerSizeOutPointers) {
-            return 0xF601;
+            return ResultKernelConnectionClosed;
         }
 
         if (ctx->request.NumHandles != MetaInfo::NumInHandles) {
-            return 0xF601;
+            return ResultKernelConnectionClosed;
         }
 
 
         if ((ctx->request.HasPid && MetaInfo::NumPidDescs == 0) || (!ctx->request.HasPid && MetaInfo::NumPidDescs != 0)) {
-            return 0xF601;
+            return ResultKernelConnectionClosed;
         }
 
         if (((u32 *)ctx->request.Raw)[0] != SFCI_MAGIC) {
-            return 0xF601;
+            return ResultKernelConnectionClosed;
         }
 
         size_t a_index = 0, b_index = MetaInfo::NumInBuffers, x_index = 0, h_index = 0;
@@ -374,11 +376,11 @@ struct Validator {
         size_t total_c_size = 0;
 
         if (!ValidateCommandTuple<typename MetaInfo::Args>::IsValid(ctx, a_index, b_index, x_index, h_index, cur_c_size_offset, total_c_size)) {
-            return 0xF601;
+            return ResultKernelConnectionClosed;
         }
 
         if (total_c_size > ctx->pb_size) {
-            return 0xF601;
+            return ResultKernelConnectionClosed;
         }
 
         return 0;
