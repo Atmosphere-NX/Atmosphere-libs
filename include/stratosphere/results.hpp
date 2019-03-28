@@ -20,4 +20,5 @@
 #include "results/loader_results.hpp"
 #include "results/dmnt_results.hpp"
 #include "results/pm_results.hpp"
+#include "results/sm_results.hpp"
 #include "results/creport_results.hpp"
