@@ -17,5 +17,6 @@
 #pragma once
 
 #include "results/fs_results.hpp"
+#include "results/loader_results.hpp"
 #include "results/dmnt_results.hpp"
 #include "results/creport_results.hpp"
