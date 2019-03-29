@@ -25,6 +25,10 @@ static constexpr Result ResultFsPathAlreadyExists  = MAKERESULT(Module_Fs, 2);
 static constexpr Result ResultFsTargetLocked       = MAKERESULT(Module_Fs, 7);
 static constexpr Result ResultFsDirectoryNotEmpty  = MAKERESULT(Module_Fs, 8);
 
+static constexpr Result ResultFsMountNameAlreadyExists = MAKERESULT(Module_Fs, 60);
+
+static constexpr Result ResultFsSdCardNotPresent = MAKERESULT(Module_Fs, 2001);
+
 static constexpr Result ResultFsNotImplemented       = MAKERESULT(Module_Fs, 3001);
 static constexpr Result ResultFsOutOfRange           = MAKERESULT(Module_Fs, 3005);
 
@@ -45,3 +49,5 @@ static constexpr Result ResultFsInvalidSize          = MAKERESULT(Module_Fs, 606
 static constexpr Result ResultFsNullptrArgument      = MAKERESULT(Module_Fs, 6063);
 
 static constexpr Result ResultFsUnsupportedOperation = MAKERESULT(Module_Fs, 6300);
+
+static constexpr Result ResultFsPermissionDenied = MAKERESULT(Module_Fs, 6400);
