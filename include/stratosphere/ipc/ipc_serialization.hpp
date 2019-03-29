@@ -576,7 +576,7 @@ constexpr Result WrapIpcCommandImpl(IpcResponseContext *ctx) {
     Result rc = Validator::Validate<CommandMetaData>(ctx);
 
     if (R_FAILED(rc)) {
-        return 0xAAEE;
+        return rc;
     }
 
     ClassType *this_ptr = nullptr;
@@ -586,7 +586,7 @@ constexpr Result WrapIpcCommandImpl(IpcResponseContext *ctx) {
         this_ptr = ctx->obj_holder->GetServiceObject<ClassType>();
     }
     if (this_ptr == nullptr) {
-        return 0xBBEE;
+        return ResultServiceFrameworkTargetNotFound;
     }
 
     std::shared_ptr<IServiceObject> out_objects[CommandMetaData::NumOutSessions];

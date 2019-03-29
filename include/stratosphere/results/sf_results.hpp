@@ -19,6 +19,8 @@
 
 static constexpr u32 Module_ServiceFramework = 10;
 
+static constexpr Result ResultServiceFrameworkTargetNotFound     = MAKERESULT(Module_ServiceFramework, 261);
+
 static constexpr Result ResultServiceFrameworkOutOfDomainEntries = MAKERESULT(Module_ServiceFramework, 301);
 
 
