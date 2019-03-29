@@ -36,3 +36,5 @@
 #include "stratosphere/services.hpp"
 
 #include "stratosphere/results.hpp"
+
+#include "stratosphere/title_ids.hpp"
