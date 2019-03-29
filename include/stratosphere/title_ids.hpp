@@ -165,7 +165,7 @@ static constexpr u64 TitleId_AppletDummyShop       = 0x010000000000101Bul;
 static constexpr u64 TitleId_AppletUserMigration   = 0x010000000000101Cul;
 static constexpr u64 TitleId_AppletEncounter       = 0x010000000000101Dul;
 
-static constexpr u64 TitleId_AppletEncounter       = 0x0100000000001020ul;
+static constexpr u64 TitleId_AppletStory           = 0x0100000000001020ul;
 
 static constexpr u64 TitleId_AppletEnd             = 0x0100000000001FFFul;
 
