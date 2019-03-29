@@ -30,10 +30,6 @@ enum HipcControlCommand : u32 {
     HipcControlCommand_CloneCurrentObjectEx = 4
 };
 
-
-#define RESULT_DEFER_SESSION (0x6580A)
-
-
 class ServiceSession : public IWaitable
 {
     protected:
@@ -150,7 +146,7 @@ class ServiceSession : public IWaitable
                     {
                         auto sub_obj = ctx->obj_holder->GetServiceObject<IDomainObject>()->GetObject(ctx->request.InThisObjectId);
                         if (sub_obj == nullptr) {
-                            return PrepareBasicDomainResponse(ctx, 0x3D80B);
+                            return PrepareBasicDomainResponse(ctx, ResultHipcDomainObjectNotFound);
                         }
                         dispatch_table = sub_obj->GetDispatchTable();
                         entry_count = sub_obj->GetDispatchTableEntryCount();
@@ -213,7 +209,7 @@ class ServiceSession : public IWaitable
                 ctx.rc = this->GetResponse(&ctx);
             }
             
-            if (ctx.rc == RESULT_DEFER_SESSION) {
+            if (ctx.rc == ResultServiceFrameworkRequestDeferredByUser) {
                 /* Session defer. */
                 this->SetDeferred(true);
             } else if (ctx.rc == ResultKernelConnectionClosed) {
@@ -239,7 +235,7 @@ class ServiceSession : public IWaitable
             memcpy(armGetTls(), this->backup_tls, sizeof(this->backup_tls));
             Result rc = this->HandleReceived();
             
-            if (rc != RESULT_DEFER_SESSION) {
+            if (rc != ResultServiceFrameworkRequestDeferredByUser) {
                 this->SetDeferred(false);
             }
             return rc;
@@ -285,7 +281,7 @@ class ServiceSession : public IWaitable
                     /* Allocate new domain. */
                     auto new_domain = this->session->GetDomainManager()->AllocateDomain();
                     if (new_domain == nullptr) {
-                        return 0x1900B;
+                        return ResultHipcOutOfDomains;
                     }
                                         
                     /* Reserve an object in the domain for our session. */
@@ -305,13 +301,13 @@ class ServiceSession : public IWaitable
                 Result CopyFromCurrentDomain(Out<MovedHandle> out_h, u32 id) {
                     auto domain = this->session->obj_holder.GetServiceObject<IDomainObject>();
                     if (domain == nullptr) {
-                        return 0x3D60B;
+                        return ResultHipcTargetNotDomain;
                     }
                     
                     
                     auto object = domain->GetObject(id);
                     if (object == nullptr) {
-                        return 0x3D80B;
+                        return ResultHipcDomainObjectNotFound;
                     }
                     
                     Handle server_h, client_h;

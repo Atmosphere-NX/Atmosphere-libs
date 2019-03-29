@@ -359,19 +359,19 @@ class WaitableManager : public SessionManagerBase {
                     return 0;
                 }
             }
-            return 0x25A0A;
+            return ResultServiceFrameworkOutOfDomainEntries;
         }
 
         virtual Result ReserveSpecificObject(IDomainObject *domain, u32 object_id) override {
             std::scoped_lock lk{this->domain_lock};
             if (object_id > ManagerOptions::MaxDomainObjects) {
-                return 0x25A0A;
+                return ResultServiceFrameworkOutOfDomainEntries;
             }
             if (this->domain_objects[object_id-1].owner == nullptr) {
                 this->domain_objects[object_id-1].owner = domain;
                 return 0;
             }
-            return 0x25A0A;
+            return ResultServiceFrameworkOutOfDomainEntries;
         }
 
         virtual void SetObject(IDomainObject *domain, u32 object_id, ServiceObjectHolder&& holder) override {
@@ -398,27 +398,27 @@ class WaitableManager : public SessionManagerBase {
         virtual Result FreeObject(IDomainObject *domain, u32 object_id) override {
             std::scoped_lock lk{this->domain_lock};
             if (object_id > ManagerOptions::MaxDomainObjects) {
-                return 0x3D80B;
+                return ResultHipcDomainObjectNotFound;
             }
             if (this->domain_objects[object_id-1].owner == domain) {
                 this->domain_objects[object_id-1].obj_holder.Reset();
                 this->domain_objects[object_id-1].owner = nullptr;
                 return 0x0;
             }
-            return 0x3D80B;
+            return ResultHipcDomainObjectNotFound;
         }
 
         virtual Result ForceFreeObject(u32 object_id) override {
             std::scoped_lock lk{this->domain_lock};
             if (object_id > ManagerOptions::MaxDomainObjects) {
-                return 0x3D80B;
+                return ResultHipcDomainObjectNotFound;
             }
             if (this->domain_objects[object_id-1].owner != nullptr) {
                 this->domain_objects[object_id-1].obj_holder.Reset();
                 this->domain_objects[object_id-1].owner = nullptr;
                 return 0x0;
             }
-            return 0x3D80B;
+            return ResultHipcDomainObjectNotFound;
         }
 };
 

@@ -250,7 +250,7 @@ class MitmSession final : public ServiceSession {
                 Result CopyFromCurrentDomain(Out<MovedHandle> out_h, u32 id) {
                     auto domain = this->session->obj_holder.GetServiceObject<IDomainObject>();
                     if (domain == nullptr) {
-                        return 0x3D60B;
+                        return ResultHipcTargetNotDomain;
                     }
                     
                     

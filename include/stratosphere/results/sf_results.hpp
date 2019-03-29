@@ -15,17 +15,12 @@
  */
  
 #pragma once
+#include <switch.h>
 
-#include "results/creport_results.hpp"
-#include "results/debug_results.hpp"
-#include "results/dmnt_results.hpp"
-#include "results/fatal_results.hpp"
-#include "results/fs_results.hpp"
-#include "results/hipc_results.hpp"
-#include "results/kernel_results.hpp"
-#include "results/loader_results.hpp"
-#include "results/pm_results.hpp"
-#include "results/sf_results.hpp"
-#include "results/sm_results.hpp"
+static constexpr u32 Module_ServiceFramework = 10;
 
-static constexpr Result ResultSuccess = 0;
+static constexpr Result ResultServiceFrameworkOutOfDomainEntries = MAKERESULT(Module_ServiceFramework, 301);
+
+
+static constexpr Result ResultServiceFrameworkRequestDeferred       = MAKERESULT(Module_ServiceFramework, 811);
+static constexpr Result ResultServiceFrameworkRequestDeferredByUser = MAKERESULT(Module_ServiceFramework, 812);
