@@ -29,6 +29,7 @@
 #include "results/lr_results.hpp"
 #include "results/ncm_results.hpp"
 #include "results/pm_results.hpp"
+#include "results/settings_results.hpp"
 #include "results/sf_results.hpp"
 #include "results/sm_results.hpp"
 #include "results/vi_results.hpp"
