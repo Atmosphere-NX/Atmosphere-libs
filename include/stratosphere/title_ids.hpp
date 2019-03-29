@@ -15,6 +15,7 @@
  */
  
 #pragma once
+#include <switch.h>
 
 /* System Modules. */
 static constexpr u64 TitleId_SystemStart = 0x0100000000000000ul;
