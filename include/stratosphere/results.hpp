@@ -25,6 +25,7 @@
 #include "results/hipc_results.hpp"
 #include "results/kernel_results.hpp"
 #include "results/loader_results.hpp"
+#include "results/lr_results.hpp"
 #include "results/pm_results.hpp"
 #include "results/sf_results.hpp"
 #include "results/sm_results.hpp"
