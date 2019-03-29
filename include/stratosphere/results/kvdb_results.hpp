@@ -15,25 +15,12 @@
  */
  
 #pragma once
+#include <switch.h>
 
-/* Official. */
-#include "results/creport_results.hpp"
-#include "results/debug_results.hpp"
-#include "results/dmnt_results.hpp"
-#include "results/fatal_results.hpp"
-#include "results/fs_results.hpp"
-#include "results/hipc_results.hpp"
-#include "results/kernel_results.hpp"
-#include "results/kvdb_results.hpp"
-#include "results/loader_results.hpp"
-#include "results/lr_results.hpp"
-#include "results/ncm_results.hpp"
-#include "results/pm_results.hpp"
-#include "results/sf_results.hpp"
-#include "results/sm_results.hpp"
-#include "results/vi_results.hpp"
+static constexpr u32 Module_Kvdb = 20;
 
-/* Unofficial. */
-#include "results/ams_results.hpp"
-
-static constexpr Result ResultSuccess = 0;
+static constexpr Result ResultKvdbTooLargeKey        = MAKERESULT(Module_Kvdb, 1);
+static constexpr Result ResultKvdbKeyNotFound        = MAKERESULT(Module_Kvdb, 2);
+static constexpr Result ResultKvdbAllocationFailed   = MAKERESULT(Module_Kvdb, 4);
+static constexpr Result ResultKvdbInvalidKeyValue    = MAKERESULT(Module_Kvdb, 5);
+static constexpr Result ResultKvdbBufferInsufficient = MAKERESULT(Module_Kvdb, 6);
