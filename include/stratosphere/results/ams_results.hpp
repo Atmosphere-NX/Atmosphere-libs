@@ -15,21 +15,17 @@
  */
  
 #pragma once
+#include <switch.h>
 
-/* Official. */
-#include "results/creport_results.hpp"
-#include "results/debug_results.hpp"
-#include "results/dmnt_results.hpp"
-#include "results/fatal_results.hpp"
-#include "results/fs_results.hpp"
-#include "results/hipc_results.hpp"
-#include "results/kernel_results.hpp"
-#include "results/loader_results.hpp"
-#include "results/pm_results.hpp"
-#include "results/sf_results.hpp"
-#include "results/sm_results.hpp"
+/* Please note: These results are all custom, and not official. */
 
-/* Unofficial. */
-#include "results/ams_results.hpp"
+static constexpr u32 Module_Atmosphere = 444;
 
-static constexpr Result ResultSuccess = 0;
+/* Result 1-1000 reserved for Atmosphere. */
+static constexpr Result ResultAtmosphereExosphereNotPresent = MAKERESULT(Module_Atmosphere, 1);
+static constexpr Result ResultAtmosphereVersionMismatch     = MAKERESULT(Module_Atmosphere, 2);
+
+/* Results 1000-2000 reserved for Atmosphere Mitm. */
+static constexpr Result ResultAtmosphereMitmShouldForwardToSession =  MAKERESULT(Module_Atmosphere, 1000);
+static constexpr Result ResultAtmosphereMitmProcessNotAssociated =  MAKERESULT(Module_Atmosphere, 1100);
+

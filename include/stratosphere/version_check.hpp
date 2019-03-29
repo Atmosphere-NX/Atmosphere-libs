@@ -17,11 +17,13 @@
 #pragma once
 #include <switch.h>
 
+#include "results.hpp"
+
 static inline void GetAtmosphereApiVersion(u32 *major, u32 *minor, u32 *micro, u32 *target_fw, u32 *mkey_rev) {
     /* Check for exosphere API compatibility. */
     u64 exosphere_cfg;
     if (R_FAILED(SmcGetConfig((SplConfigItem)65000, &exosphere_cfg))) {
-        fatalSimple(0xCAFE << 4 | 0xE);
+        fatalSimple(ResultAtmosphereExosphereNotPresent);
     }
     
     if (mkey_rev) {
@@ -54,7 +56,7 @@ static inline void CheckAtmosphereVersion(u32 expected_major, u32 expected_minor
     GetAtmosphereApiVersion(&major, &minor, &micro, nullptr, nullptr);
     
     if (MakeAtmosphereVersion(major, minor, micro) < MakeAtmosphereVersion(expected_major, expected_minor, expected_micro)) {
-        fatalSimple(0xCAFE << 4 | 0xF);
+        fatalSimple(ResultAtmosphereVersionMismatch);
     }
 }
 

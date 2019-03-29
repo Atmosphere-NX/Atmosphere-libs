@@ -23,7 +23,7 @@ static std::vector<u64> g_known_tids;
 static HosMutex g_pid_tid_mutex;
 
 Result MitmQueryUtils::GetAssociatedTidForPid(u64 pid, u64 *tid) {
-    Result rc = 0xCAFE;
+    Result rc = ResultAtmosphereMitmProcessNotAssociated;
     std::scoped_lock lk{g_pid_tid_mutex};
     for (unsigned int i = 0; i < g_known_pids.size(); i++) {
         if (g_known_pids[i] == pid) {
