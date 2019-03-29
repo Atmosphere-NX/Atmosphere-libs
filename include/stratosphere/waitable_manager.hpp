@@ -356,7 +356,7 @@ class WaitableManager : public SessionManagerBase {
                 if (this->domain_objects[i].owner == nullptr) {
                     this->domain_objects[i].owner = domain;
                     *out_object_id = i+1;
-                    return 0;
+                    return ResultSuccess;
                 }
             }
             return ResultServiceFrameworkOutOfDomainEntries;
@@ -369,7 +369,7 @@ class WaitableManager : public SessionManagerBase {
             }
             if (this->domain_objects[object_id-1].owner == nullptr) {
                 this->domain_objects[object_id-1].owner = domain;
-                return 0;
+                return ResultSuccess;
             }
             return ResultServiceFrameworkOutOfDomainEntries;
         }
@@ -403,7 +403,7 @@ class WaitableManager : public SessionManagerBase {
             if (this->domain_objects[object_id-1].owner == domain) {
                 this->domain_objects[object_id-1].obj_holder.Reset();
                 this->domain_objects[object_id-1].owner = nullptr;
-                return 0x0;
+                return ResultSuccess;
             }
             return ResultHipcDomainObjectNotFound;
         }
@@ -416,7 +416,7 @@ class WaitableManager : public SessionManagerBase {
             if (this->domain_objects[object_id-1].owner != nullptr) {
                 this->domain_objects[object_id-1].obj_holder.Reset();
                 this->domain_objects[object_id-1].owner = nullptr;
-                return 0x0;
+                return ResultSuccess;
             }
             return ResultHipcDomainObjectNotFound;
         }

@@ -383,7 +383,7 @@ struct Validator {
             return ResultKernelConnectionClosed;
         }
 
-        return 0;
+        return ResultSuccess;
 	}
 };
 

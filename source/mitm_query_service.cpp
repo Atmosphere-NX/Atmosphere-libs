@@ -28,7 +28,7 @@ Result MitmQueryUtils::GetAssociatedTidForPid(u64 pid, u64 *tid) {
     for (unsigned int i = 0; i < g_known_pids.size(); i++) {
         if (g_known_pids[i] == pid) {
             *tid = g_known_tids[i];
-            rc = 0x0;
+            rc = ResultSuccess;
             break;
         }
     }

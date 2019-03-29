@@ -170,7 +170,7 @@ class ServiceSession : public IWaitable
             
             ctx.cmd_type = (IpcCommandType)(*(u16 *)(armGetTls()));
             
-            ctx.rc = 0;
+            ctx.rc = ResultSuccess;
             
             /* Parse based on command type. */
             switch (ctx.cmd_type) {
@@ -222,7 +222,7 @@ class ServiceSession : public IWaitable
                 ctx.rc = this->Reply();
                 
                 if (ctx.rc == ResultKernelTimedOut) {
-                    ctx.rc = 0x0;
+                    ctx.rc = ResultSuccess;
                 }
                 
                 this->CleanupResponse(&ctx);
@@ -295,7 +295,7 @@ class ServiceSession : public IWaitable
                     
                     /* Return the object id. */
                     object_id.SetValue(reserved_id);
-                    return 0;
+                    return ResultSuccess;
                 }
                 
                 Result CopyFromCurrentDomain(Out<MovedHandle> out_h, u32 id) {
@@ -318,7 +318,7 @@ class ServiceSession : public IWaitable
                     
                     this->session->GetSessionManager()->AddSession(server_h, std::move(object->Clone()));
                     out_h.SetValue(client_h);
-                    return 0;
+                    return ResultSuccess;
                 }
                 
                 void CloneCurrentObject(Out<MovedHandle> out_h) {

@@ -123,7 +123,7 @@ static IEvent *CreateSystemEvent(F f, bool autoclear = false) {
 
 template <bool a = false>
 static IEvent *CreateWriteOnlySystemEvent() {
-    return CreateSystemEvent([](u64 timeout) { std::abort(); return 0; }, a);
+    return CreateSystemEvent([](u64 timeout) -> Result { std::abort(); }, a);
 }
 
 template <class F>

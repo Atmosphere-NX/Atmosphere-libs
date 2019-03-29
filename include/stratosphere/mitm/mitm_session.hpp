@@ -241,7 +241,7 @@ class MitmSession final : public ServiceSession {
                     
                     /* Return the object id. */
                     object_id.SetValue(expected_id);
-                    return 0;
+                    return ResultSuccess;
                 }
                 
                 Result CopyFromCurrentDomain(Out<MovedHandle> out_h, u32 id) {
@@ -293,7 +293,7 @@ class MitmSession final : public ServiceSession {
                     } else {
                         this->session->GetSessionManager()->AddSession(server_h, std::move(object->Clone()));
                     }
-                    return 0;
+                    return ResultSuccess;
                 }
                 
                 void CloneCurrentObject(Out<MovedHandle> out_h) {

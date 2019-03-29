@@ -54,7 +54,7 @@ class IServer : public IWaitable {
             }
             
             this->GetSessionManager()->AddSession(session_h, std::move(ServiceObjectHolder(std::move(std::make_shared<T>()))));
-            return 0;
+            return ResultSuccess;
         }
 };
 
