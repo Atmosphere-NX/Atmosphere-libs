@@ -79,9 +79,3 @@ static inline Result SmcGetConfig(SplConfigItem config_item, u64 *out_config) {
     }
     return rc;
 }
-
-static inline bool IsApplicationTid(u64 title_id) {
-    constexpr u64 application_tid_min = 0x0100000000010000ul;
-    constexpr u64 application_tid_max = 0x01FFFFFFFFFFFFFFul;
-    return application_tid_min <= title_id && title_id <= application_tid_max;
-}
