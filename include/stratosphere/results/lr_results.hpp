@@ -24,7 +24,7 @@ static constexpr Result ResultLrDataNotFound                             = MAKER
 static constexpr Result ResultLrUnknownStorageId                         = MAKERESULT(Module_Lr, 4);
 static constexpr Result ResultLrHtmlDocumentNotFound                     = MAKERESULT(Module_Lr, 6);
 static constexpr Result ResultLrAddOnContentNotFound                     = MAKERESULT(Module_Lr, 7);
-static constexpr Result ResultLrControlPathNotFound                      = MAKERESULT(Module_Lr, 8);
-static constexpr Result ResultLrLegalInformationPathNotFound             = MAKERESULT(Module_Lr, 9);
+static constexpr Result ResultLrControlNotFound                          = MAKERESULT(Module_Lr, 8);
+static constexpr Result ResultLrLegalInformationNotFound                 = MAKERESULT(Module_Lr, 9);
 
 static constexpr Result ResultLrTooManyRegisteredPaths = MAKERESULT(Module_Lr, 90);
