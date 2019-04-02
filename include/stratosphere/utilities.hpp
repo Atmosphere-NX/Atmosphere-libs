@@ -16,6 +16,7 @@
  
 #pragma once
 #include <switch.h>
+#include <cstdlib>
 
 static inline void RebootToRcm() {
     SecmonArgs args = {0};
@@ -78,4 +79,21 @@ static inline Result SmcGetConfig(SplConfigItem config_item, u64 *out_config) {
         }
     }
     return rc;
+}
+
+static inline Result GetRcmBugPatched(bool *out) {
+    u64 tmp = 0;
+    Result rc = SmcGetConfig((SplConfigItem)65004, &tmp);
+    if (R_SUCCEEDED(rc)) {
+        *out = (tmp != 0);
+    }
+    return rc;
+}
+
+static inline bool IsRcmBugPatched() {
+    bool rcm_bug_patched;
+    if (R_FAILED(GetRcmBugPatched(&rcm_bug_patched))) {
+        std::abort();
+    }
+    return rcm_bug_patched;
 }
