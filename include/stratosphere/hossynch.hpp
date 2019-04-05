@@ -256,7 +256,7 @@ class HosSignal {
 
 class HosThread {
     private:
-        Thread thr = {0};
+        Thread thr = {};
     public:
         HosThread() {}
         
