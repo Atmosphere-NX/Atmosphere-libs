@@ -44,9 +44,11 @@ static constexpr Result ResultFsInvalidPathFormat     = MAKERESULT(Module_Fs, 60
 static constexpr Result ResultFsDirectoryUnobtainable = MAKERESULT(Module_Fs, 6006);
 static constexpr Result ResultFsNotNormalized         = MAKERESULT(Module_Fs, 6007);
 
-static constexpr Result ResultFsInvalidOffset        = MAKERESULT(Module_Fs, 6061);
-static constexpr Result ResultFsInvalidSize          = MAKERESULT(Module_Fs, 6062);
-static constexpr Result ResultFsNullptrArgument      = MAKERESULT(Module_Fs, 6063);
+static constexpr Result ResultFsInvalidOffset          = MAKERESULT(Module_Fs, 6061);
+static constexpr Result ResultFsInvalidSize            = MAKERESULT(Module_Fs, 6062);
+static constexpr Result ResultFsNullptrArgument        = MAKERESULT(Module_Fs, 6063);
+
+static constexpr Result ResultFsInvalidSaveDataSpaceId = MAKERESULT(Module_Fs, 6082);
 
 static constexpr Result ResultFsUnsupportedOperation = MAKERESULT(Module_Fs, 6300);
 
