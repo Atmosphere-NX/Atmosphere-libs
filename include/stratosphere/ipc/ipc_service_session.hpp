@@ -109,7 +109,7 @@ class ServiceSession : public IWaitable
                 u64 result;
             } *raw = (decltype(raw))ipcPrepareHeader(&ctx->reply, sizeof(*raw));
             
-            raw->hdr = (DomainResponseHeader){0};
+            raw->hdr = {};
             raw->magic = SFCO_MAGIC;
             raw->result = rc;
             return raw->result;

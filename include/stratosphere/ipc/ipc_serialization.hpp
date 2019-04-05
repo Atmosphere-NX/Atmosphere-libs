@@ -511,7 +511,7 @@ struct Encoder<MetaInfo, std::tuple<Args...>> {
         if (IsDomainObject(ctx->obj_holder)) {
             raw = (decltype(raw))ipcPrepareHeaderForDomain(&ctx->reply, sizeof(*raw), 0);
             auto resp_header = (DomainResponseHeader *)((uintptr_t)raw - sizeof(DomainResponseHeader));
-            *resp_header = {0};
+            *resp_header = {};
         } else {
             raw = (decltype(raw))ipcPrepareHeader(&ctx->reply, sizeof(*raw));
         }
@@ -541,7 +541,7 @@ struct Encoder<MetaInfo, std::tuple<Args...>> {
         if (is_domain) {
             raw = (decltype(raw))ipcPrepareHeaderForDomain(&ctx->reply, sizeof(*raw) + MetaInfo::OutRawArgSize + sizeof(*ctx->out_object_ids) * MetaInfo::NumOutSessions, 0);
             auto resp_header = (DomainResponseHeader *)((uintptr_t)raw - sizeof(DomainResponseHeader));
-            *resp_header = {0};
+            *resp_header = {};
             resp_header->NumObjectIds = MetaInfo::NumOutSessions;
         } else {
             raw = (decltype(raw))ipcPrepareHeader(&ctx->reply, sizeof(*raw)+ MetaInfo::OutRawArgSize);
