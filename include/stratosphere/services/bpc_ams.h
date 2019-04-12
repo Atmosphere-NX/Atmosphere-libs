@@ -15,28 +15,40 @@
  */
  
 #pragma once
+#include <switch.h>
 
-#include "stratosphere/utilities.hpp"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-#include "stratosphere/scope_guard.hpp"
+typedef struct {
+    u32 magic;
+    u32 error_desc;
+    u64 title_id;
+    union {
+        u64 gprs[32];
+        struct {
+            u64 _gprs[29];
+            u64 fp;
+            u64 lr;
+            u64 sp;
+        };
+    };
+    u64 pc;
+    u64 padding;
+    u32 pstate;
+    u32 afsr0;
+    u32 afsr1;
+    u32 esr;
+    u64 far;
+    u64 report_identifier; /* Normally just system tick. */
+} AtmosphereFatalErrorContext;
 
-#include "stratosphere/version_check.hpp"
+Result bpcAmsInitialize(void);
+void bpcAmsExit(void);
 
-#include "stratosphere/hossynch.hpp"
-#include "stratosphere/message_queue.hpp"
-#include "stratosphere/iwaitable.hpp"
-#include "stratosphere/event.hpp"
+Result bpcAmsRebootToFatalError(AtmosphereFatalErrorContext *ctx);
 
-#include "stratosphere/waitable_manager.hpp"
-
-#include "stratosphere/ipc.hpp"
-
-#include "stratosphere/mitm.hpp"
-
-#include "stratosphere/services.hpp"
-
-#include "stratosphere/results.hpp"
-
-#include "stratosphere/title_ids.hpp"
-
-#include "stratosphere/on_crash.hpp"
+#ifdef __cplusplus
+}
+#endif

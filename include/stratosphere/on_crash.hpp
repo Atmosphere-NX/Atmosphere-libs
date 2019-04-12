@@ -15,28 +15,13 @@
  */
  
 #pragma once
+#include <switch.h>
+#include <cstdlib>
+#include "services/bpc_ams.h"
 
-#include "stratosphere/utilities.hpp"
+static constexpr size_t AtmosphereFatalErrorNumGprs = 29;
 
-#include "stratosphere/scope_guard.hpp"
+static constexpr u32 AtmosphereFatalErrorMagic = 0x30454641; /* "AFE0" */
 
-#include "stratosphere/version_check.hpp"
-
-#include "stratosphere/hossynch.hpp"
-#include "stratosphere/message_queue.hpp"
-#include "stratosphere/iwaitable.hpp"
-#include "stratosphere/event.hpp"
-
-#include "stratosphere/waitable_manager.hpp"
-
-#include "stratosphere/ipc.hpp"
-
-#include "stratosphere/mitm.hpp"
-
-#include "stratosphere/services.hpp"
-
-#include "stratosphere/results.hpp"
-
-#include "stratosphere/title_ids.hpp"
-
-#include "stratosphere/on_crash.hpp"
+/* Will be called by libstratosphere on crash. */
+void StratosphereCrashHandler(ThreadExceptionDump *ctx);
