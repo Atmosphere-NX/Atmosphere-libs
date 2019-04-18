@@ -69,6 +69,9 @@ static void _CacheValues(void)
         case AtmosphereTargetFirmware_700:
             g_firmware_version = FirmwareVersion_700;
             break;
+        case AtmosphereTargetFirmware_800:
+            g_firmware_version = FirmwareVersion_800;
+            break;
         default:
             std::abort();
             break;
@@ -119,6 +122,10 @@ void SetFirmwareVersionForLibnx() {
             break;
         case FirmwareVersion_700:
             major = 7;
+            minor = 0;
+            micro = 0;
+        case FirmwareVersion_800:
+            major = 8;
             minor = 0;
             micro = 0;
             break;

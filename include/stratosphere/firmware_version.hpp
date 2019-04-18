@@ -25,7 +25,8 @@ enum FirmwareVersion : u32 {
     FirmwareVersion_500 = 4,
     FirmwareVersion_600 = 5,
     FirmwareVersion_700 = 6,
-    FirmwareVersion_Current = FirmwareVersion_700,
+    FirmwareVersion_800 = 7,
+    FirmwareVersion_Current = FirmwareVersion_800,
     FirmwareVersion_Max = 32,
 };
 
@@ -38,6 +39,7 @@ enum AtmosphereTargetFirmware : u32 {
     AtmosphereTargetFirmware_600 = 6,
     AtmosphereTargetFirmware_620 = 7,
     AtmosphereTargetFirmware_700 = 8,
+    AtmosphereTargetFirmware_800 = 9,
 };
 
 FirmwareVersion GetRuntimeFirmwareVersion();
