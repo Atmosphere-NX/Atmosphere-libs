@@ -20,7 +20,7 @@
 #include "iwaitable.hpp"
 #include "ipc.hpp"
 
-template<typename T>
+template<typename T, auto MakeShared>
 class IServer : public IWaitable {
     static_assert(std::is_base_of<IServiceObject, T>::value, "Service Objects must derive from IServiceObject");
     protected:
@@ -53,33 +53,33 @@ class IServer : public IWaitable {
                 return rc;
             }
             
-            this->GetSessionManager()->AddSession(session_h, std::move(ServiceObjectHolder(std::move(std::make_shared<T>()))));
+            this->GetSessionManager()->AddSession(session_h, std::move(ServiceObjectHolder(std::move(MakeShared()))));
             return ResultSuccess;
         }
 };
 
-template <typename T>
-class ServiceServer : public IServer<T> {    
+template <typename T, auto MakeShared = std::make_shared<T>>
+class ServiceServer : public IServer<T, MakeShared> {    
     public:
-        ServiceServer(const char *service_name, unsigned int max_s) : IServer<T>(max_s) { 
+        ServiceServer(const char *service_name, unsigned int max_s) : IServer<T, MakeShared>(max_s) { 
             if (R_FAILED(smRegisterService(&this->port_handle, service_name, false, this->max_sessions))) {
                 /* TODO: Panic. */
             }
         }
 };
 
-template <typename T>
-class ExistingPortServer : public IServer<T> {    
+template <typename T, auto MakeShared = std::make_shared<T>>
+class ExistingPortServer : public IServer<T, MakeShared> {    
     public:
-        ExistingPortServer(Handle port_h, unsigned int max_s) : IServer<T>(max_s) {
+        ExistingPortServer(Handle port_h, unsigned int max_s) : IServer<T, MakeShared>(max_s) {
             this->port_handle = port_h;
         }
 };
 
-template <typename T>
-class ManagedPortServer : public IServer<T> {    
+template <typename T, auto MakeShared = std::make_shared<T>>
+class ManagedPortServer : public IServer<T, MakeShared> {    
     public:
-        ManagedPortServer(const char *service_name, unsigned int max_s) : IServer<T>(max_s) { 
+        ManagedPortServer(const char *service_name, unsigned int max_s) : IServer<T, MakeShared>(max_s) { 
             if (R_FAILED(svcManageNamedPort(&this->port_handle, service_name, this->max_sessions))) {
                 /* TODO: panic */
             }
