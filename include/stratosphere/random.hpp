@@ -13,32 +13,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 #pragma once
+#include <switch.h>
 
-#include "stratosphere/utilities.hpp"
+class StratosphereRandomUtils {
+    public:
+        static u32 GetRandomU32(u32 max);
+        static u64 GetRandomU64(u64 max);
 
-#include "stratosphere/scope_guard.hpp"
-
-#include "stratosphere/version_check.hpp"
-
-#include "stratosphere/hossynch.hpp"
-#include "stratosphere/message_queue.hpp"
-#include "stratosphere/iwaitable.hpp"
-#include "stratosphere/event.hpp"
-
-#include "stratosphere/waitable_manager.hpp"
-
-#include "stratosphere/ipc.hpp"
-
-#include "stratosphere/mitm.hpp"
-
-#include "stratosphere/services.hpp"
-
-#include "stratosphere/results.hpp"
-
-#include "stratosphere/title_ids.hpp"
-
-#include "stratosphere/on_crash.hpp"
-
-#include "stratosphere/random.hpp"
+        template<typename T>
+        static T GetRandom(T max);
+};
