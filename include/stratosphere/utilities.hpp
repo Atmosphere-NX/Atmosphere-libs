@@ -18,6 +18,9 @@
 #include <switch.h>
 #include <cstdlib>
 
+#include "hossynch.hpp"
+#include "mitm/sm_mitm.h"
+
 static inline void RebootToRcm() {
     SecmonArgs args = {0};
     args.X[0] = 0xC3000401; /* smcSetConfig */
@@ -96,4 +99,37 @@ static inline bool IsRcmBugPatched() {
         std::abort();
     }
     return rcm_bug_patched;
+}
+
+HosRecursiveMutex &GetSmSessionMutex();
+HosRecursiveMutex &GetSmMitmSessionMutex();
+
+template<typename F>
+static void DoWithSmSession(F f) {
+    std::scoped_lock<HosRecursiveMutex &> lk(GetSmSessionMutex());
+    {
+        Result rc;
+        if (R_SUCCEEDED((rc = smInitialize()))) {
+            f();
+        } else {
+            /* TODO: fatalSimple(rc); ? */
+            std::abort();
+        }
+        smExit();
+    }
+}
+
+template<typename F>
+static void DoWithSmMitmSession(F f) {
+    std::scoped_lock<HosRecursiveMutex &> lk(GetSmMitmSessionMutex());
+    {
+        Result rc;
+        if (R_SUCCEEDED((rc = smMitMInitialize()))) {
+            f();
+        } else {
+            /* TODO: fatalSimple(rc); ? */
+            std::abort();
+        }
+        smMitMExit();
+    }
 }

@@ -13,12 +13,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 #pragma once
 #include <switch.h>
 
 #include "iwaitable.hpp"
 #include "ipc.hpp"
+#include "utilities.hpp"
 
 template<typename T, auto MakeShared>
 class IServer : public IWaitable {
@@ -26,11 +27,11 @@ class IServer : public IWaitable {
     protected:
         Handle port_handle;
         unsigned int max_sessions;
-    
-    public:        
+
+    public:
         IServer(unsigned int max_s) : port_handle(0), max_sessions(max_s) { }
-        
-        virtual ~IServer() {            
+
+        virtual ~IServer() {
             if (port_handle) {
                 svcCloseHandle(port_handle);
             }
@@ -39,12 +40,12 @@ class IServer : public IWaitable {
         SessionManagerBase *GetSessionManager() {
             return static_cast<SessionManagerBase *>(this->GetManager());
         }
-        
-        /* IWaitable */                        
+
+        /* IWaitable */
         virtual Handle GetHandle() override {
             return this->port_handle;
         }
-        
+
         virtual Result HandleSignaled(u64 timeout) override {
             /* If this server's port was signaled, accept a new session. */
             Handle session_h;
@@ -52,24 +53,26 @@ class IServer : public IWaitable {
             if (R_FAILED(rc)) {
                 return rc;
             }
-            
+
             this->GetSessionManager()->AddSession(session_h, std::move(ServiceObjectHolder(std::move(MakeShared()))));
             return ResultSuccess;
         }
 };
 
 template <typename T, auto MakeShared = std::make_shared<T>>
-class ServiceServer : public IServer<T, MakeShared> {    
+class ServiceServer : public IServer<T, MakeShared> {
     public:
-        ServiceServer(const char *service_name, unsigned int max_s) : IServer<T, MakeShared>(max_s) { 
-            if (R_FAILED(smRegisterService(&this->port_handle, service_name, false, this->max_sessions))) {
-                /* TODO: Panic. */
-            }
+        ServiceServer(const char *service_name, unsigned int max_s) : IServer<T, MakeShared>(max_s) {
+            DoWithSmSession([&]() {
+                if (R_FAILED(smRegisterService(&this->port_handle, service_name, false, this->max_sessions))) {
+                    std::abort();
+                }
+            });
         }
 };
 
 template <typename T, auto MakeShared = std::make_shared<T>>
-class ExistingPortServer : public IServer<T, MakeShared> {    
+class ExistingPortServer : public IServer<T, MakeShared> {
     public:
         ExistingPortServer(Handle port_h, unsigned int max_s) : IServer<T, MakeShared>(max_s) {
             this->port_handle = port_h;
@@ -77,9 +80,9 @@ class ExistingPortServer : public IServer<T, MakeShared> {
 };
 
 template <typename T, auto MakeShared = std::make_shared<T>>
-class ManagedPortServer : public IServer<T, MakeShared> {    
+class ManagedPortServer : public IServer<T, MakeShared> {
     public:
-        ManagedPortServer(const char *service_name, unsigned int max_s) : IServer<T, MakeShared>(max_s) { 
+        ManagedPortServer(const char *service_name, unsigned int max_s) : IServer<T, MakeShared>(max_s) {
             if (R_FAILED(svcManageNamedPort(&this->port_handle, service_name, this->max_sessions))) {
                 /* TODO: panic */
             }
