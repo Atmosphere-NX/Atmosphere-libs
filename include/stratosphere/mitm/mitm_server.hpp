@@ -37,8 +37,8 @@ class MitmServer : public IWaitable {
             Handle query_h = 0;
 
             DoWithSmMitmSession([&]() {
-                strncpy(mitm_name, service_name, 9);
-                mitm_name[8] = '\x00';
+                strncpy(mitm_name, service_name, sizeof(mitm_name));
+                mitm_name[sizeof(mitm_name)-1] = '\x00';
                 if (R_FAILED(smMitMInstall(&this->port_handle, &query_h, mitm_name))) {
                     std::abort();
                 }
