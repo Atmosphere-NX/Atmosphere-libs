@@ -36,13 +36,16 @@ class MitmServer : public IWaitable {
         MitmServer(const char *service_name, unsigned int max_s) : port_handle(0), max_sessions(max_s) {
             Handle query_h = 0;
 
+            #pragma GCC diagnostic push
+            #pragma GCC diagnostic ignored "-Wstringop-truncation"
             DoWithSmMitmSession([&]() {
-                strncpy(mitm_name, service_name, sizeof(mitm_name));
-                mitm_name[sizeof(mitm_name)-1] = '\x00';
+                strncpy(mitm_name, service_name, 8);
+                mitm_name[8] = '\x00';
                 if (R_FAILED(smMitMInstall(&this->port_handle, &query_h, mitm_name))) {
                     std::abort();
                 }
             });
+            #pragma GCC diagnostic pop
 
             RegisterMitmServerQueryHandle(query_h, std::move(ServiceObjectHolder(std::move(std::make_shared<MitmQueryService<T>>()))));
         }
