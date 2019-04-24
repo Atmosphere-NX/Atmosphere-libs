@@ -124,7 +124,7 @@ class MitmSession final : public ServiceSession {
                     case DomainMessageType_Close:
                     {
                         auto sub_obj = ctx->obj_holder->GetServiceObject<IDomainObject>()->GetObject(ctx->request.InThisObjectId);
-                        if (sub_obj == nullptr || (!sub_obj)) {
+                        if (sub_obj == nullptr) {
                             rc = ForwardRequest(ctx);
                             return rc;
                         }
