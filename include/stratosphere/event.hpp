@@ -54,7 +54,9 @@ class IEvent : public IWaitable {
         void Clear() {
             std::scoped_lock<HosMutex> lock(this->sig_lock);
             this->is_signaled = false;
-            if (this->r_h != INVALID_HANDLE) {
+            if (this->w_h != INVALID_HANDLE) {
+                svcClearEvent(this->w_h);
+            } else if (this->r_h != INVALID_HANDLE) {
                 svcResetSignal(this->r_h);
             }
         }
@@ -112,13 +114,21 @@ static IEvent *CreateHosEvent(F f, bool autoclear = false) {
 
 template <class F>
 static IEvent *CreateSystemEvent(F f, bool autoclear = false) {
-    
     Handle w_h, r_h;
     if (R_FAILED(svcCreateEvent(&w_h, &r_h))) {
         std::abort();
     }
-    
     return new HosEvent<F>(r_h, w_h, std::move(f), autoclear);
+}
+
+template <class F>
+static IEvent *CreateInterruptEvent(F f, u64 irq, bool autoclear = false) {
+    Handle r_h;
+    /* flag is "rising edge vs level", official N code maps autoclear to edge and not to level... */
+    if (R_FAILED(svcCreateInterruptEvent(&r_h, irq, autoclear ? 1 : 0))) {
+        std::abort();
+    }
+    return new HosEvent<F>(r_h, INVALID_HANDLE, std::move(f), autoclear);
 }
 
 template <bool a = false>
