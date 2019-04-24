@@ -122,15 +122,28 @@ class MitmSession final : public ServiceSession {
                     case DomainMessageType_Invalid:
                         return ResultKernelConnectionClosed;
                     case DomainMessageType_Close:
-                        rc = ForwardRequest(ctx);
-                        if (R_SUCCEEDED(rc)) {
-                            ctx->obj_holder->GetServiceObject<IDomainObject>()->FreeObject(ctx->request.InThisObjectId);
+                    {
+                        auto sub_obj = ctx->obj_holder->GetServiceObject<IDomainObject>()->GetObject(ctx->request.InThisObjectId);
+                        if (sub_obj == nullptr || (!sub_obj)) {
+                            rc = ForwardRequest(ctx);
+                            return rc;
                         }
+
+                        if (sub_obj->IsMitmObject()) {
+                            rc = ForwardRequest(ctx);
+                            if (R_SUCCEEDED(rc)) {
+                                ctx->obj_holder->GetServiceObject<IDomainObject>()->FreeObject(ctx->request.InThisObjectId);
+                            }
+                        } else {
+                            rc = ctx->obj_holder->GetServiceObject<IDomainObject>()->FreeObject(ctx->request.InThisObjectId);
+                        }
+
                         if (R_SUCCEEDED(rc) && ctx->request.InThisObjectId == serviceGetObjectId(this->forward_service.get()) && !this->service_post_process_ctx->closed) {
                             /* If we're not longer MitMing anything, we'll no longer do any postprocessing. */
                             this->service_post_process_ctx->closed = true;
                         }
                         return rc;
+                    }
                     case DomainMessageType_SendMessage:
                     {
                         auto sub_obj = ctx->obj_holder->GetServiceObject<IDomainObject>()->GetObject(ctx->request.InThisObjectId);

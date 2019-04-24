@@ -26,6 +26,8 @@ class IDomainObject;
 
 class DomainManager {
     public:
+        static constexpr u32 MinimumDomainId = 1;
+    public:
         virtual std::shared_ptr<IDomainObject> AllocateDomain() = 0;
         virtual void FreeDomain(IDomainObject *domain) = 0;
         virtual Result ReserveObject(IDomainObject *domain, u32 *out_object_id) = 0;

@@ -364,7 +364,7 @@ class WaitableManager : public SessionManagerBase {
 
         virtual Result ReserveSpecificObject(IDomainObject *domain, u32 object_id) override {
             std::scoped_lock lk{this->domain_lock};
-            if (object_id > ManagerOptions::MaxDomainObjects) {
+            if (object_id > ManagerOptions::MaxDomainObjects || object_id < MinimumDomainId) {
                 return ResultServiceFrameworkOutOfDomainEntries;
             }
             if (this->domain_objects[object_id-1].owner == nullptr) {
@@ -376,7 +376,7 @@ class WaitableManager : public SessionManagerBase {
 
         virtual void SetObject(IDomainObject *domain, u32 object_id, ServiceObjectHolder&& holder) override {
             std::scoped_lock lk{this->domain_lock};
-            if (object_id > ManagerOptions::MaxDomainObjects) {
+            if (object_id > ManagerOptions::MaxDomainObjects || object_id < MinimumDomainId) {
                 return;
             }
             if (this->domain_objects[object_id-1].owner == domain) {
@@ -386,7 +386,7 @@ class WaitableManager : public SessionManagerBase {
 
         virtual ServiceObjectHolder *GetObject(IDomainObject *domain, u32 object_id) override {
             std::scoped_lock lk{this->domain_lock};
-            if (object_id > ManagerOptions::MaxDomainObjects) {
+            if (object_id > ManagerOptions::MaxDomainObjects || object_id < MinimumDomainId) {
                 return nullptr;
             }
             if (this->domain_objects[object_id-1].owner == domain) {
@@ -397,7 +397,7 @@ class WaitableManager : public SessionManagerBase {
 
         virtual Result FreeObject(IDomainObject *domain, u32 object_id) override {
             std::scoped_lock lk{this->domain_lock};
-            if (object_id > ManagerOptions::MaxDomainObjects) {
+            if (object_id > ManagerOptions::MaxDomainObjects || object_id < MinimumDomainId) {
                 return ResultHipcDomainObjectNotFound;
             }
             if (this->domain_objects[object_id-1].owner == domain) {
@@ -410,7 +410,7 @@ class WaitableManager : public SessionManagerBase {
 
         virtual Result ForceFreeObject(u32 object_id) override {
             std::scoped_lock lk{this->domain_lock};
-            if (object_id > ManagerOptions::MaxDomainObjects) {
+            if (object_id > ManagerOptions::MaxDomainObjects || object_id < MinimumDomainId) {
                 return ResultHipcDomainObjectNotFound;
             }
             if (this->domain_objects[object_id-1].owner != nullptr) {

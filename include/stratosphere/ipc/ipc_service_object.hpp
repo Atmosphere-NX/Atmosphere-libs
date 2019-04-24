@@ -35,6 +35,7 @@ struct ServiceCommandMeta {
 class IServiceObject  {
     public:
         virtual ~IServiceObject() { }
+        virtual bool IsMitmObject() const { return false; }
 };
 
 #define SERVICE_DISPATCH_TABLE_NAME s_DispatchTable
@@ -94,6 +95,10 @@ class ServiceObjectHolder {
         
         constexpr uintptr_t GetServiceId() const {
             return reinterpret_cast<uintptr_t>(this->dispatch_table);
+        }
+        
+        bool IsMitmObject() const {
+            return this->srv->IsMitmObject();
         }
         
         /* Default constructor, move constructor, move assignment operator. */

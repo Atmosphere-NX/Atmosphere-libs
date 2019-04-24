@@ -39,6 +39,8 @@ class IMitmServiceObject : public IServiceObject {
             return this->process_id;
         }
         
+        virtual bool IsMitmObject() const override { return true; }
+        
         static bool ShouldMitm(u64 pid, u64 tid);
                 
     protected:
