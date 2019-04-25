@@ -560,12 +560,11 @@ struct Encoder<MetaInfo, std::tuple<Args...>> {
 
 /* ================================================================================= */
 
-template<auto IpcCommandImpl>
+template<auto IpcCommandImpl, typename ClassType = boost::callable_traits::class_of_t<decltype(IpcCommandImpl)>>
 constexpr Result WrapIpcCommandImpl(IpcResponseContext *ctx) {
     using InArgs = typename PopFront<typename boost::callable_traits::args_t<decltype(IpcCommandImpl)>>::type;
     using OutArgs = typename boost::callable_traits::return_type_t<decltype(IpcCommandImpl)>;
-    using ClassType = typename boost::callable_traits::class_of_t<decltype(IpcCommandImpl)>;
-
+    static_assert(std::is_base_of_v<boost::callable_traits::class_of_t<decltype(IpcCommandImpl)>, ClassType>, "Override class type incorrect");
     using CommandMetaData = CommandMetaInfo<InArgs, OutArgs>;
 
     static_assert(CommandMetaData::ReturnsResult || CommandMetaData::ReturnsVoid, "IpcCommandImpls must return Result or void");
@@ -663,6 +662,17 @@ inline static constexpr ServiceCommandMeta MakeServiceCommandMeta() {
         .handler = WrapIpcCommandImpl<CommandImpl>,
     };
 };
+
+template <u32 c, auto CommandImpl, typename OverrideClassType, FirmwareVersion l = FirmwareVersion_Min, FirmwareVersion h = FirmwareVersion_Max>
+inline static constexpr ServiceCommandMeta MakeServiceCommandMetaEx() {
+    return {
+        .fw_low = l,
+        .fw_high = h,
+        .cmd_id = c,
+        .handler = WrapIpcCommandImpl<CommandImpl, OverrideClassType>,
+    };
+};
+
 
 
 #pragma GCC diagnostic pop
