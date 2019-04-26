@@ -21,7 +21,7 @@
 
 static constexpr size_t AtmosphereFatalErrorNumGprs = 29;
 
-static constexpr u32 AtmosphereFatalErrorMagic = 0x30454641; /* "AFE0" */
+static constexpr u32 AtmosphereFatalErrorMagic = 0x31454641; /* "AFE1" */
 
 /* Will be called by libstratosphere on crash. */
 void StratosphereCrashHandler(ThreadExceptionDump *ctx);

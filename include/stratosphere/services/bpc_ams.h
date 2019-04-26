@@ -21,6 +21,14 @@
 extern "C" {
 #endif
 
+#define AMS_FATAL_ERROR_MAX_STACKTRACE 0x20
+#define AMS_FATAL_ERROR_MAX_STACKDUMP 0x100
+
+#define STD_ABORT_ADDR_MAGIC   (0x8)
+#define STD_ABORT_VALUE_MAGIC  (0xA55AF00DDEADCAFEul)
+#define DATA_ABORT_ERROR_DESC  (0x101)
+#define STD_ABORT_ERROR_DESC   (0xFFE)
+
 typedef struct {
     u32 magic;
     u32 error_desc;
@@ -35,13 +43,17 @@ typedef struct {
         };
     };
     u64 pc;
-    u64 padding;
+    u64 module_base;
     u32 pstate;
     u32 afsr0;
     u32 afsr1;
     u32 esr;
     u64 far;
     u64 report_identifier; /* Normally just system tick. */
+    u64 stack_trace_size;
+    u64 stack_dump_size;
+    u64 stack_trace[AMS_FATAL_ERROR_MAX_STACKTRACE];
+    u8 stack_dump[AMS_FATAL_ERROR_MAX_STACKDUMP];
 } AtmosphereFatalErrorContext;
 
 Result bpcAmsInitialize(void);

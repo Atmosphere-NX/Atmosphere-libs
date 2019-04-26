@@ -13,7 +13,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 #include <mutex>
 #include <switch.h>
 #include <stratosphere.hpp>
@@ -21,9 +21,20 @@
 extern "C" {
     __attribute__((weak)) u64 __stratosphere_title_id = 0;
     void __attribute__((weak)) __libstratosphere_exception_handler(AtmosphereFatalErrorContext *ctx);
-    
+
     /* Redefine abort, so that it triggers these handlers. */
     void abort();
+};
+
+static inline u64 GetPc() {
+    u64 pc;
+    __asm__ __volatile__ ("adr %[pc], ." : [pc]"=&r"(pc) :: );
+    return pc;
+}
+
+struct StackFrame {
+    u64 fp;
+    u64 lr;
 };
 
 void StratosphereCrashHandler(ThreadExceptionDump *ctx) {
@@ -36,6 +47,13 @@ void StratosphereCrashHandler(ThreadExceptionDump *ctx) {
         for (size_t i = 0; i < AtmosphereFatalErrorNumGprs; i++) {
             ams_ctx.gprs[i] = ctx->cpu_gprs[i].x;
         }
+        if (ams_ctx.error_desc == DATA_ABORT_ERROR_DESC &&
+            ams_ctx.gprs[2] == STD_ABORT_ADDR_MAGIC &&
+            ams_ctx.gprs[3] == STD_ABORT_VALUE_MAGIC) {
+            /* Detect std::abort(). */
+            ams_ctx.error_desc = STD_ABORT_ERROR_DESC;
+        }
+
         ams_ctx.fp = ctx->fp.x;
         ams_ctx.lr = ctx->lr.x;
         ams_ctx.sp = ctx->sp.x;
@@ -45,13 +63,62 @@ void StratosphereCrashHandler(ThreadExceptionDump *ctx) {
         ams_ctx.afsr1 = ctx->afsr1;
         ams_ctx.far = ctx->far.x;
         ams_ctx.report_identifier = armGetSystemTick();
+        /* Grab module base. */
+        {
+            MemoryInfo mem_info;
+            u32 page_info;
+            if (R_SUCCEEDED(svcQueryMemory(&mem_info, &page_info, GetPc()))) {
+                ams_ctx.module_base = mem_info.addr;
+            } else {
+                ams_ctx.module_base = 0;
+            }
+        }
+        ams_ctx.stack_trace_size = 0;
+        u64 cur_fp = ams_ctx.fp;
+        for (size_t i = 0; i < AMS_FATAL_ERROR_MAX_STACKTRACE; i++) {
+            /* Validate current frame. */
+            if (cur_fp == 0 || (cur_fp & 0xF)) {
+                break;
+            }
+
+            /* Read a new frame. */
+            StackFrame cur_frame;
+            MemoryInfo mem_info;
+            u32 page_info;
+            if (R_SUCCEEDED(svcQueryMemory(&mem_info, &page_info, cur_fp)) && (mem_info.perm & Perm_R) == Perm_R) {
+                std::memcpy(&cur_frame, reinterpret_cast<void *>(cur_fp), sizeof(cur_frame));
+            } else {
+                break;
+            }
+
+            /* Advance to the next frame. */
+            ams_ctx.stack_trace[ams_ctx.stack_trace_size++] = cur_frame.lr;
+            cur_fp = cur_frame.fp;
+        }
+        /* Clear unused parts of stack trace. */
+        for (size_t i = ams_ctx.stack_trace_size; i < AMS_FATAL_ERROR_MAX_STACKTRACE; i++) {
+            ams_ctx.stack_trace[i] = 0;
+        }
+
+        /* Grab up to 0x100 of stack. */
+        {
+            MemoryInfo mem_info;
+            u32 page_info;
+            if (R_SUCCEEDED(svcQueryMemory(&mem_info, &page_info, ams_ctx.sp)) && (mem_info.perm & Perm_R) == Perm_R) {
+                size_t copy_size = std::min(static_cast<size_t>(AMS_FATAL_ERROR_MAX_STACKDUMP), static_cast<size_t>(mem_info.addr + mem_info.size - ams_ctx.sp));
+                ams_ctx.stack_dump_size = copy_size;
+                std::memcpy(ams_ctx.stack_dump, reinterpret_cast<void *>(ams_ctx.sp), copy_size);
+            } else {
+                ams_ctx.stack_dump_size = 0;
+            }
+        }
     }
-    
+
     /* Just call the user exception handler. */
     __libstratosphere_exception_handler(&ams_ctx);
 }
 
-/* Default exception handler behavior. */    
+/* Default exception handler behavior. */
 void __attribute__((weak)) __libstratosphere_exception_handler(AtmosphereFatalErrorContext *ctx) {
     Result rc = bpcAmsInitialize();
     if (R_SUCCEEDED(rc)) {
@@ -67,7 +134,13 @@ void __attribute__((weak)) __libstratosphere_exception_handler(AtmosphereFatalEr
 /* Custom abort handler, so that std::abort will trigger these. */
 void abort() {
     /* Just perform a data abort. */
+    register u64 addr __asm__("x2") = STD_ABORT_ADDR_MAGIC;
+    register u64 val __asm__("x3") = STD_ABORT_VALUE_MAGIC;
     while (true) {
-        *((volatile u64 *)0x8) = 0xCAFEBABE;
+        __asm__ __volatile__ (
+            "str %[val], [%[addr]]"
+            :
+            : [val]"r"(val), [addr]"r"(addr)
+        );
     }
 }
