@@ -124,8 +124,8 @@ static IEvent *CreateSystemEvent(F f, bool autoclear = false) {
 template <class F>
 static IEvent *CreateInterruptEvent(F f, u64 irq, bool autoclear = false) {
     Handle r_h;
-    /* flag is "rising edge vs level", official N code maps autoclear to edge and not to level... */
-    if (R_FAILED(svcCreateInterruptEvent(&r_h, irq, autoclear ? 1 : 0))) {
+    /* flag is "rising edge vs level". */
+    if (R_FAILED(svcCreateInterruptEvent(&r_h, irq, autoclear ? 0 : 1))) {
         std::abort();
     }
     return new HosEvent<F>(r_h, INVALID_HANDLE, std::move(f), autoclear);
