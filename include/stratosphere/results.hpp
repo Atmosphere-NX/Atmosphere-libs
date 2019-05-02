@@ -23,6 +23,7 @@
 #include "results/fatal_results.hpp"
 #include "results/fs_results.hpp"
 #include "results/hipc_results.hpp"
+#include "results/i2c_results.hpp"
 #include "results/kernel_results.hpp"
 #include "results/kvdb_results.hpp"
 #include "results/loader_results.hpp"
