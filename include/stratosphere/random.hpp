@@ -21,6 +21,7 @@ class StratosphereRandomUtils {
     public:
         static u32 GetRandomU32(u32 max);
         static u64 GetRandomU64(u64 max);
+        static void GetRandomBytes(void* out, size_t size);
 
         template<typename T>
         static T GetRandom(T max);
