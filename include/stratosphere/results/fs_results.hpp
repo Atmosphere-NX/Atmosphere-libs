@@ -27,6 +27,8 @@ static constexpr Result ResultFsDirectoryNotEmpty  = MAKERESULT(Module_Fs, 8);
 
 static constexpr Result ResultFsMountNameAlreadyExists = MAKERESULT(Module_Fs, 60);
 
+static constexpr Result ResultFsTargetNotFound   = MAKERESULT(Module_Fs, 1002);
+
 static constexpr Result ResultFsSdCardNotPresent = MAKERESULT(Module_Fs, 2001);
 
 static constexpr Result ResultFsNotImplemented       = MAKERESULT(Module_Fs, 3001);

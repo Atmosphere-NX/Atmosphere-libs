@@ -35,6 +35,7 @@
 #include "results/sf_results.hpp"
 #include "results/sm_results.hpp"
 #include "results/spl_results.hpp"
+#include "results/updater_results.hpp"
 #include "results/vi_results.hpp"
 
 /* Unofficial. */
