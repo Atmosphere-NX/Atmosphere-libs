@@ -84,7 +84,7 @@ class ManagedPortServer : public IServer<T, MakeShared> {
     public:
         ManagedPortServer(const char *service_name, unsigned int max_s) : IServer<T, MakeShared>(max_s) {
             if (R_FAILED(svcManageNamedPort(&this->port_handle, service_name, this->max_sessions))) {
-                /* TODO: panic */
+                std::abort();
             }
         }
 };
