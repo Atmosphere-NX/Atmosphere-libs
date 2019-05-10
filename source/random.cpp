@@ -82,3 +82,7 @@ u64 StratosphereRandomUtils::GetRandomU64(u64 max) {
     return GetRandom<u64>(max);
 }
 
+void StratosphereRandomUtils::GetRandomBytes(void* out, size_t size) {
+    std::generate(reinterpret_cast<u8*>(out), reinterpret_cast<u8*>(out) + size, std::bind(GetRandom<u8>, 0xFF));
+}
+
