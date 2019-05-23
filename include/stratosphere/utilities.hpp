@@ -101,6 +101,23 @@ static inline bool IsRcmBugPatched() {
     return rcm_bug_patched;
 }
 
+static inline Result GetShouldBlankProdInfo(bool *out) {
+    u64 tmp = 0;
+    Result rc = SmcGetConfig((SplConfigItem)65005, &tmp);
+    if (R_SUCCEEDED(rc)) {
+        *out = (tmp != 0);
+    }
+    return rc;
+}
+
+static inline bool ShouldBlankProdInfo() {
+    bool should_blank_prodinfo;
+    if (R_FAILED(GetShouldBlankProdInfo(&should_blank_prodinfo))) {
+        std::abort();
+    }
+    return should_blank_prodinfo;
+}
+
 HosRecursiveMutex &GetSmSessionMutex();
 HosRecursiveMutex &GetSmMitmSessionMutex();
 
