@@ -118,6 +118,23 @@ static inline bool ShouldBlankProdInfo() {
     return should_blank_prodinfo;
 }
 
+static inline Result GetEmunandConfig(u64 *out) {
+    u64 tmp = 0;
+    Result rc = SmcGetConfig((SplConfigItem)65100, &tmp);
+    if (R_SUCCEEDED(rc)) {
+        *out = tmp;
+    }
+    return rc;
+}
+
+static inline bool IsEmunand() {
+    u64 emunand;
+    if (R_FAILED(GetEmunandConfig(&emunand))) {
+        std::abort();
+    }
+    return emunand != 0;
+}
+
 HosRecursiveMutex &GetSmSessionMutex();
 HosRecursiveMutex &GetSmMitmSessionMutex();
 
