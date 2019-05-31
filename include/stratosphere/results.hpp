@@ -16,6 +16,9 @@
  
 #pragma once
 
+/* Utilities. */
+#include "results/utilities.h"
+
 /* Official. */
 #include "results/creport_results.hpp"
 #include "results/debug_results.hpp"
