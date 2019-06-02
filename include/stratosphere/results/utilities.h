@@ -56,3 +56,19 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+
+// For C++, also define R_CATCH_MANY helper.
+#ifdef __cplusplus
+
+template<Result... rs>
+constexpr inline bool _CheckResultsForMultiTryCatch(const Result &rc) {
+    static_assert((R_FAILED(rs) && ...), "Multi try catch result must be constexpr error Result!");
+    return ((rs == rc) || ...);
+}
+
+#define R_CATCH_MANY(...) \
+            } else if (_CheckResultsForMultiTryCatch<__VA_ARGS__>(_tmp_r_try_catch_rc)) { \
+                if (false) { } \
+                else
+
+#endif
