@@ -124,6 +124,7 @@ void SetFirmwareVersionForLibnx() {
             major = 7;
             minor = 0;
             micro = 0;
+            break;
         case FirmwareVersion_800:
             major = 8;
             minor = 0;
