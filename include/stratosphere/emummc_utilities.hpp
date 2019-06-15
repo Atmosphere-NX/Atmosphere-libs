@@ -15,31 +15,14 @@
  */
  
 #pragma once
+#include <switch.h>
+#include <cstdlib>
 
-#include "stratosphere/utilities.hpp"
-#include "stratosphere/emummc_utilities.hpp"
+/* Get whether emummc is active. */
+bool IsEmummc();
 
-#include "stratosphere/scope_guard.hpp"
+/* Get Nintendo redirection path. */
+const char *GetEmummcNintendoDirPath();
 
-#include "stratosphere/version_check.hpp"
-
-#include "stratosphere/hossynch.hpp"
-#include "stratosphere/message_queue.hpp"
-#include "stratosphere/iwaitable.hpp"
-#include "stratosphere/event.hpp"
-
-#include "stratosphere/waitable_manager.hpp"
-
-#include "stratosphere/ipc.hpp"
-
-#include "stratosphere/mitm.hpp"
-
-#include "stratosphere/services.hpp"
-
-#include "stratosphere/results.hpp"
-
-#include "stratosphere/title_ids.hpp"
-
-#include "stratosphere/on_crash.hpp"
-
-#include "stratosphere/random.hpp"
+/* Get Emummc folderpath, NULL if not file-based. */
+const char *GetEmummcFilePath();
