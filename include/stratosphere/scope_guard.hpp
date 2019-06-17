@@ -13,7 +13,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
  /* Scope guard logic lovingly taken from Andrei Alexandrescu's "Systemic Error Handling in C++" */
 #pragma once
 
@@ -28,7 +28,7 @@ public:
     ScopeGuard(F f) : f(std::move(f)), active(true) { }
     ~ScopeGuard() { if (active) { f(); } }
     void Cancel() { active = false; }
-    
+
     ScopeGuard() = delete;
     ScopeGuard(const ScopeGuard &) = delete;
     ScopeGuard& operator=(const ScopeGuard&) = delete;
@@ -58,4 +58,5 @@ ScopeGuard<F> operator+(ScopeGuardOnExit, F&& f) {
 #define ANONYMOUS_VARIABLE(pref) CONCATENATE(pref, __LINE__)
 #endif
 
-#define ON_SCOPE_EXIT auto ANONYMOUS_VARIABLE(SCOPE_EXIT_STATE_) = ScopeGuardOnExit() + [&]()
+#define SCOPE_GUARD ScopeGuardOnExit() + [&]()
+#define ON_SCOPE_EXIT auto ANONYMOUS_VARIABLE(SCOPE_EXIT_STATE_) = SCOPE_GUARD

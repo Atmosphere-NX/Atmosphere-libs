@@ -58,9 +58,7 @@ extern "C" {
     ({ \
         const Result _tmp_r_try_cleanup_rc = res_expr; \
         if (R_FAILED(_tmp_r_try_cleanup_rc)) { \
-            do { \
-                cleanup_expr \
-            } while (0); \
+            ({ cleanup_expr }); \
             return _tmp_r_try_cleanup_rc; \
         } \
     })
