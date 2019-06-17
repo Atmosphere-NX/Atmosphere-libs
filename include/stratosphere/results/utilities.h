@@ -13,17 +13,16 @@ extern "C" {
 
 /// Evaluates an expression that returns a result, and returns the result if it would fail.
 #define R_TRY(res_expr) \
-    { \
+    ({ \
         const Result _tmp_r_try_rc = res_expr; \
         if (R_FAILED(_tmp_r_try_rc)) { \
             return _tmp_r_try_rc; \
         } \
-    } \
-    do {} while (0)
+    })
 
 /// Helpers for pattern-matching on a result expression, if the result would fail.
 #define R_TRY_CATCH(res_expr) \
-    { \
+    ({ \
         const Result _tmp_r_try_catch_rc = res_expr; \
         if (R_FAILED(_tmp_r_try_catch_rc)) { \
             if (false)
@@ -52,12 +51,11 @@ extern "C" {
         } else if (R_FAILED(_tmp_r_try_catch_rc)) { \
             return _tmp_r_try_catch_rc; \
         } \
-    } \
-    do {} while (0)
+    })
 
 /// Evaluates an expression that returns a result, and returns the result (after evaluating a cleanup expression) if it would fail.
 #define R_TRY_CLEANUP(res_expr, cleanup_expr) \
-    { \
+    ({ \
         const Result _tmp_r_try_cleanup_rc = res_expr; \
         if (R_FAILED(_tmp_r_try_cleanup_rc)) { \
             do { \
@@ -65,8 +63,7 @@ extern "C" {
             } while (0); \
             return _tmp_r_try_cleanup_rc; \
         } \
-    } \
-    do {} while (0)
+    })
 
 #ifdef __cplusplus
 }
