@@ -13,7 +13,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 #pragma once
 #include <switch.h>
 
@@ -28,6 +28,7 @@ static constexpr Result ResultLoaderInvalidPath           = MAKERESULT(Module_Lo
 static constexpr Result ResultLoaderTooManyProcesses      = MAKERESULT(Module_Loader, 7);
 static constexpr Result ResultLoaderProcessNotRegistered  = MAKERESULT(Module_Loader, 8);
 static constexpr Result ResultLoaderInvalidProgramId      = MAKERESULT(Module_Loader, 9);
+static constexpr Result ResultLoaderInvalidVersion        = MAKERESULT(Module_Loader, 10);
 
 static constexpr Result ResultLoaderInsufficientAddressSpace     = MAKERESULT(Module_Loader, 51);
 static constexpr Result ResultLoaderInvalidNro                   = MAKERESULT(Module_Loader, 52);

@@ -26,7 +26,8 @@ enum FirmwareVersion : u32 {
     FirmwareVersion_600 = 5,
     FirmwareVersion_700 = 6,
     FirmwareVersion_800 = 7,
-    FirmwareVersion_Current = FirmwareVersion_800,
+    FirmwareVersion_810 = 8,
+    FirmwareVersion_Current = FirmwareVersion_810,
     FirmwareVersion_Max = 32,
 };
 
