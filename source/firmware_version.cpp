@@ -13,7 +13,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 #include <mutex>
 #include <switch.h>
 #include <stratosphere.hpp>
@@ -42,10 +42,10 @@ static void _CacheValues(void)
         if (R_FAILED(svcCallSecureMonitor(&args)) || args.X[0] != 0) {
             std::abort();
         }
-        
+
         target_fw = (args.X[1] >> 0x08) & 0xFF;
     }
-    
+
     switch (static_cast<AtmosphereTargetFirmware>(target_fw)) {
         case AtmosphereTargetFirmware_100:
             g_firmware_version = FirmwareVersion_100;
@@ -70,6 +70,7 @@ static void _CacheValues(void)
             g_firmware_version = FirmwareVersion_700;
             break;
         case AtmosphereTargetFirmware_800:
+        case AtmosphereTargetFirmware_810:
             g_firmware_version = FirmwareVersion_800;
             break;
         default:
