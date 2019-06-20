@@ -48,8 +48,9 @@ extern "C" {
                 else
 
 #define R_END_TRY_CATCH \
-        } else if (R_FAILED(_tmp_r_try_catch_rc)) { \
-            return _tmp_r_try_catch_rc; \
+            else if (R_FAILED(_tmp_r_try_catch_rc)) { \
+                return _tmp_r_try_catch_rc; \
+            } \
         } \
     })
 
