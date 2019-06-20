@@ -75,16 +75,11 @@ class WaitableManager : public SessionManagerBase {
     public:
         WaitableManager(u32 n, u32 ss = 0x8000) : num_extra_threads(n-1) {
             u32 prio;
-            Result rc;
             if (num_extra_threads) {
                 threads = new HosThread[num_extra_threads];
-                if (R_FAILED((rc = svcGetThreadPriority(&prio, CUR_THREAD_HANDLE)))) {
-                    fatalSimple(rc);
-                }
+                R_ASSERT(svcGetThreadPriority(&prio, CUR_THREAD_HANDLE));
                 for (unsigned int i = 0; i < num_extra_threads; i++) {
-                    if (R_FAILED(threads[i].Initialize(&WaitableManager::ProcessLoop, this, ss, prio))) {
-                        std::abort();
-                    }
+                    R_ASSERT(threads[i].Initialize(&WaitableManager::ProcessLoop, this, ss, prio));
                 }
             }
         }
@@ -130,11 +125,8 @@ class WaitableManager : public SessionManagerBase {
             /* Set main thread handle. */
             this->main_thread_handle = GetCurrentThreadHandle();
 
-            Result rc;
             for (unsigned int i = 0; i < num_extra_threads; i++) {
-                if (R_FAILED((rc = threads[i].Start()))) {
-                    fatalSimple(rc);
-                }
+                R_ASSERT(threads[i].Start());
             }
 
             ProcessLoop(this);
@@ -167,8 +159,7 @@ class WaitableManager : public SessionManagerBase {
                     }
                 }
                 if (w) {
-                    Result rc = w->HandleSignaled(0);
-                    if (rc == ResultKernelConnectionClosed) {
+                    if (w->HandleSignaled(0) == ResultKernelConnectionClosed) {
                         /* Close! */
                         delete w;
                     } else {
@@ -189,11 +180,11 @@ class WaitableManager : public SessionManagerBase {
                         undeferred_any = false;
                         for (auto it = this_ptr->deferred_waitables.begin(); it != this_ptr->deferred_waitables.end();) {
                             auto w = *it;
-                            Result rc = w->HandleDeferred();
-                            if (rc == ResultKernelConnectionClosed || !w->IsDeferred()) {
+                            const bool closed = (w->HandleDeferred() == ResultKernelConnectionClosed);
+                            if (closed || !w->IsDeferred()) {
                                 /* Remove from the deferred list, set iterator. */
                                 it = this_ptr->deferred_waitables.erase(it);
-                                if (rc == ResultKernelConnectionClosed) {
+                                if (closed) {
                                     /* Delete the closed waitable. */
                                     delete w;
                                 } else {
@@ -249,7 +240,6 @@ class WaitableManager : public SessionManagerBase {
                 std::vector<IWaitable *> wait_list;
 
                 int handle_index = 0;
-                Result rc;
                 while (result == nullptr) {
                     /* Sort waitables by priority. */
                     std::sort(this->waitables.begin(), this->waitables.end(), IWaitable::Compare);
@@ -269,21 +259,21 @@ class WaitableManager : public SessionManagerBase {
                     }
 
                     /* Wait forever. */
-                    rc = svcWaitSynchronization(&handle_index, handles.data(), num_handles, U64_MAX);
+                    const Result wait_res = svcWaitSynchronization(&handle_index, handles.data(), num_handles, U64_MAX);
 
                     if (this->should_stop) {
                         return nullptr;
                     }
 
-                    if (R_SUCCEEDED(rc)) {
+                    if (R_SUCCEEDED(wait_res)) {
                         IWaitable *w = wait_list[handle_index];
                         size_t w_ind = std::distance(this->waitables.begin(), std::find(this->waitables.begin(), this->waitables.end(), w));
                         std::for_each(waitables.begin(), waitables.begin() + w_ind + 1, std::mem_fn(&IWaitable::UpdatePriority));
                         result = w;
-                    } else if (rc == ResultKernelTimedOut) {
+                    } else if (wait_res == ResultKernelTimedOut) {
                         /* Timeout: Just update priorities. */
                         std::for_each(waitables.begin(), waitables.end(), std::mem_fn(&IWaitable::UpdatePriority));
-                    } else if (rc == ResultKernelCancelled) {
+                    } else if (wait_res == ResultKernelCancelled) {
                         /* svcCancelSynchronization was called. */
                         AddWaitablesInternal();
                         {

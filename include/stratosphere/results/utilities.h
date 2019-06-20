@@ -75,12 +75,14 @@ extern "C" {
     })
 
 /// Evaluates an expression that returns a result, and returns the result (after evaluating a cleanup expression) if it would fail.
+#define R_CLEANUP_RESULT _tmp_r_try_cleanup_rc
+
 #define R_TRY_CLEANUP(res_expr, cleanup_expr) \
     ({ \
-        const Result _tmp_r_try_cleanup_rc = res_expr; \
-        if (R_FAILED(_tmp_r_try_cleanup_rc)) { \
+        const Result R_CLEANUP_RESULT = res_expr; \
+        if (R_FAILED(R_CLEANUP_RESULT)) { \
             ({ cleanup_expr }); \
-            return _tmp_r_try_cleanup_rc; \
+            return R_CLEANUP_RESULT; \
         } \
     })
 

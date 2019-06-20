@@ -13,7 +13,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 #pragma once
 #include <switch.h>
 #include <cstdlib>
@@ -70,51 +70,41 @@ static inline Result SmcGetConfig(SplConfigItem config_item, u64 *out_config) {
     args.X[0] = 0xC3000002;        /* smcGetConfig */
     args.X[1] = (u64)config_item;  /* config item */
 
-    Result rc = svcCallSecureMonitor(&args);
-    if (R_SUCCEEDED(rc)) {
-        if (args.X[0] == 0) {
-            if (out_config) {
-                *out_config = args.X[1];
-            }
-        } else {
-            /* SPL result n = SMC result n */
-            rc = MAKERESULT(26, args.X[0]);
-        }
+    R_TRY(svcCallSecureMonitor(&args));
+    if (args.X[0] != 0) {
+        /* SPL result n = SMC result n */
+        return MAKERESULT(26, args.X[0]);
     }
-    return rc;
+
+    if (out_config) {
+        *out_config = args.X[1];
+    }
+    return ResultSuccess;
 }
 
 static inline Result GetRcmBugPatched(bool *out) {
     u64 tmp = 0;
-    Result rc = SmcGetConfig((SplConfigItem)65004, &tmp);
-    if (R_SUCCEEDED(rc)) {
-        *out = (tmp != 0);
-    }
-    return rc;
+    R_TRY(SmcGetConfig((SplConfigItem)65004, &tmp));
+    *out = (tmp != 0);
+    return ResultSuccess;
 }
 
 static inline bool IsRcmBugPatched() {
     bool rcm_bug_patched;
-    if (R_FAILED(GetRcmBugPatched(&rcm_bug_patched))) {
-        std::abort();
-    }
+    R_ASSERT(GetRcmBugPatched(&rcm_bug_patched));
     return rcm_bug_patched;
 }
 
 static inline Result GetShouldBlankProdInfo(bool *out) {
     u64 tmp = 0;
-    Result rc = SmcGetConfig((SplConfigItem)65005, &tmp);
-    if (R_SUCCEEDED(rc)) {
-        *out = (tmp != 0);
-    }
-    return rc;
+    R_TRY(SmcGetConfig((SplConfigItem)65005, &tmp));
+    *out = (tmp != 0);
+    return ResultSuccess;
 }
 
 static inline bool ShouldBlankProdInfo() {
     bool should_blank_prodinfo;
-    if (R_FAILED(GetShouldBlankProdInfo(&should_blank_prodinfo))) {
-        std::abort();
-    }
+    R_ASSERT(GetShouldBlankProdInfo(&should_blank_prodinfo));
     return should_blank_prodinfo;
 }
 
@@ -125,13 +115,8 @@ template<typename F>
 static void DoWithSmSession(F f) {
     std::scoped_lock<HosRecursiveMutex &> lk(GetSmSessionMutex());
     {
-        Result rc;
-        if (R_SUCCEEDED((rc = smInitialize()))) {
-            f();
-        } else {
-            /* TODO: fatalSimple(rc); ? */
-            std::abort();
-        }
+        R_ASSERT(smInitialize());
+        f();
         smExit();
     }
 }
@@ -140,13 +125,8 @@ template<typename F>
 static void DoWithSmMitmSession(F f) {
     std::scoped_lock<HosRecursiveMutex &> lk(GetSmMitmSessionMutex());
     {
-        Result rc;
-        if (R_SUCCEEDED((rc = smMitMInitialize()))) {
-            f();
-        } else {
-            /* TODO: fatalSimple(rc); ? */
-            std::abort();
-        }
+        R_ASSERT(smMitMInitialize());
+        f();
         smMitMExit();
     }
 }

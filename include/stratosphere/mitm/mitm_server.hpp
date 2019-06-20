@@ -41,9 +41,7 @@ class MitmServer : public IWaitable {
             DoWithSmMitmSession([&]() {
                 strncpy(mitm_name, service_name, 8);
                 mitm_name[8] = '\x00';
-                if (R_FAILED(smMitMInstall(&this->port_handle, &query_h, mitm_name))) {
-                    std::abort();
-                }
+                R_ASSERT(smMitMInstall(&this->port_handle, &query_h, mitm_name));
             });
             #pragma GCC diagnostic pop
 
@@ -53,9 +51,7 @@ class MitmServer : public IWaitable {
         virtual ~MitmServer() override {
             if (this->port_handle) {
                 DoWithSmMitmSession([&]() {
-                    if (R_FAILED(smMitMUninstall(this->mitm_name))) {
-                        std::abort();
-                    }
+                    R_ASSERT(smMitMUninstall(this->mitm_name));
                 });
                 svcCloseHandle(port_handle);
             }
@@ -73,10 +69,7 @@ class MitmServer : public IWaitable {
         virtual Result HandleSignaled(u64 timeout) override {
             /* If this server's port was signaled, accept a new session. */
             Handle session_h;
-            Result rc = svcAcceptSession(&session_h, this->port_handle);
-            if (R_FAILED(rc)) {
-                return rc;
-            }
+            R_TRY(svcAcceptSession(&session_h, this->port_handle));
 
             /* Create a forward service for this instance. */
             std::shared_ptr<Service> forward_service(new Service(), [](Service *s) {
@@ -88,9 +81,7 @@ class MitmServer : public IWaitable {
             u64 client_pid;
 
             DoWithSmMitmSession([&]() {
-                if (R_FAILED(smMitMAcknowledgeSession(forward_service.get(), &client_pid, mitm_name))) {
-                    std::abort();
-                }
+                R_ASSERT(smMitMAcknowledgeSession(forward_service.get(), &client_pid, mitm_name));
             });
 
             this->GetSessionManager()->AddWaitable(new MitmSession(session_h, client_pid, forward_service, MakeShared(forward_service, client_pid)));

@@ -74,20 +74,21 @@ static void _CacheValues(void)
         char file_path[EmummcMaxDirLength+1];
         char nintendo_path[EmummcMaxDirLength+1];
     } __attribute__((aligned(0x1000))) paths;
-    
+
     {
         SecmonArgs args = {0};
         args.X[0] = 0xF0000404; /* smcAmsGetEmunandConfig */
         args.X[1] = 0; /* NAND */
         args.X[2] = reinterpret_cast<u64>(&paths); /* path output */
-        if (R_FAILED(svcCallSecureMonitor(&args)) || args.X[0] != 0) {
+        R_ASSERT(svcCallSecureMonitor(&args));
+        if (args.X[0] != 0) {
             std::abort();
         }
         std::memcpy(&g_exo_emummc_config, &args.X[1], sizeof(args) - sizeof(args.X[0]));
     }
-    
+
     const EmummcType emummc_type = static_cast<EmummcType>(g_exo_emummc_config.base_cfg.type);
-    
+
 /* Ignore format warnings. */
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wformat-truncation"
@@ -98,11 +99,11 @@ static void _CacheValues(void)
         default:
             break;
     }
-    
+
     std::snprintf(g_exo_emummc_config.emu_dir_path, sizeof(g_exo_emummc_config.emu_dir_path), "/%s", paths.nintendo_path);
-    
+
     g_IsEmummc = g_exo_emummc_config.base_cfg.magic == EmummcStorageMagic && emummc_type != EmummcType_Emmc;
-    
+
     /* Default Nintendo redirection path. */
     if (g_IsEmummc) {
         if (std::strcmp(g_exo_emummc_config.emu_dir_path, "/") == 0) {

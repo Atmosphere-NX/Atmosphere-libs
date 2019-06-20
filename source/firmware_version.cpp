@@ -39,7 +39,8 @@ static void _CacheValues(void)
         SecmonArgs args = {0};
         args.X[0] = 0xC3000002; /* smcGetConfig */
         args.X[1] = 65000; /* ConfigItem_ExosphereVersion */
-        if (R_FAILED(svcCallSecureMonitor(&args)) || args.X[0] != 0) {
+        R_ASSERT(svcCallSecureMonitor(&args));
+        if (args.X[0] != 0) {
             std::abort();
         }
 

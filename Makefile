@@ -20,6 +20,8 @@ SOURCES		:=	source
 DATA		:=	data
 INCLUDES	:=  include
 
+DEFINES	:=	-DRESULT_ABORT_ON_ASSERT
+
 #---------------------------------------------------------------------------------
 # options for code generation
 #---------------------------------------------------------------------------------

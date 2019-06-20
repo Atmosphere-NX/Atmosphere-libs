@@ -13,7 +13,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 #include <mutex>
 #include <switch.h>
 #include <stratosphere.hpp>
@@ -28,23 +28,19 @@ static void ServerQueryManagerThreadFunc(void *arg) {
 
 void RegisterMitmServerQueryHandle(Handle query_h, ServiceObjectHolder &&service) {
     std::scoped_lock<HosMutex> lock(g_server_query_mutex);
-    
+
     const bool exists = g_server_query_manager != nullptr;
     if (!exists) {
         /* Create a new waitable manager if it doesn't exist already. */
         g_server_query_manager = new WaitableManager(1);
     }
-    
+
     /* Add session to the manager. */
     g_server_query_manager->AddSession(query_h, std::move(service));
-    
+
     /* If this is our first time, launch thread. */
     if (!exists) {
-        if (R_FAILED(g_server_query_manager_thread.Initialize(&ServerQueryManagerThreadFunc, nullptr, 0x4000, 27))) {
-            std::abort();
-        }
-        if (R_FAILED(g_server_query_manager_thread.Start())) {
-            std::abort();
-        }
+        R_ASSERT(g_server_query_manager_thread.Initialize(&ServerQueryManagerThreadFunc, nullptr, 0x4000, 27));
+        R_ASSERT(g_server_query_manager_thread.Start());
     }
 }

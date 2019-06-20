@@ -34,9 +34,7 @@ class XorShiftGenerator {
             /* Seed using process entropy. */
             u64 val = 0;
             for (size_t i = 0; i < num_seed_dwords; i++) {
-                if (R_FAILED(svcGetInfo(&val, 0xB, 0, i))) {
-                    std::abort();
-                }
+                R_ASSERT(svcGetInfo(&val, 0xB, 0, i));
                 this->random_state[i] = result_type(val);
             }
         }

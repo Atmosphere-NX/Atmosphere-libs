@@ -120,14 +120,9 @@ void StratosphereCrashHandler(ThreadExceptionDump *ctx) {
 
 /* Default exception handler behavior. */
 void __attribute__((weak)) __libstratosphere_exception_handler(AtmosphereFatalErrorContext *ctx) {
-    Result rc = bpcAmsInitialize();
-    if (R_SUCCEEDED(rc)) {
-        rc = bpcAmsRebootToFatalError(ctx);
-        bpcAmsExit();
-    }
-    if (R_FAILED(rc)) {
-        std::abort();
-    }
+    R_ASSERT(bpcAmsInitialize());
+    R_ASSERT(bpcAmsRebootToFatalError(ctx));
+    bpcAmsExit();
     while (1) { }
 }
 

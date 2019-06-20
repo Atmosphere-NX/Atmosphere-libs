@@ -572,11 +572,7 @@ constexpr Result WrapIpcCommandImpl(IpcResponseContext *ctx) {
     ipcInitialize(&ctx->reply);
     memset(ctx->out_data, 0, CommandMetaData::OutRawArgSize);
 
-    Result rc = Validator::Validate<CommandMetaData>(ctx);
-
-    if (R_FAILED(rc)) {
-        return rc;
-    }
+    R_TRY(Validator::Validate<CommandMetaData>(ctx));
 
     ClassType *this_ptr = nullptr;
     if (IsDomainObject(ctx->obj_holder)) {
@@ -588,41 +584,19 @@ constexpr Result WrapIpcCommandImpl(IpcResponseContext *ctx) {
         return ResultServiceFrameworkTargetNotFound;
     }
 
+    size_t num_out_objects;
     std::shared_ptr<IServiceObject> out_objects[CommandMetaData::NumOutSessions];
 
-    /* Allocate out object IDs. */
-    size_t num_out_objects;
-    if (IsDomainObject(ctx->obj_holder)) {
-        for (num_out_objects = 0; num_out_objects < CommandMetaData::NumOutSessions; num_out_objects++) {
-            if (R_FAILED((rc = ctx->obj_holder->GetServiceObject<IDomainObject>()->ReserveObject(&ctx->out_object_ids[num_out_objects])))) {
-                break;
-            }
-            ctx->out_objs[num_out_objects] = &out_objects[num_out_objects];
-        }
-    } else {
-        for (num_out_objects = 0; num_out_objects < CommandMetaData::NumOutSessions; num_out_objects++) {
-            Handle server_h, client_h;
-            if (R_FAILED((rc = SessionManagerBase::CreateSessionHandles(&server_h, &client_h)))) {
-                break;
-            }
-            ctx->out_object_server_handles[num_out_objects] = server_h;
-            ctx->out_handles[CommandMetaData::NumOutHandles + num_out_objects].handle = client_h;
-            ctx->out_objs[num_out_objects] = &out_objects[num_out_objects];
-        }
-    }
-
-    ON_SCOPE_EXIT {
+    auto cleanup_guard = SCOPE_GUARD {
         /* Clean up objects as necessary. */
-        if (R_FAILED(rc)) {
-            if (IsDomainObject(ctx->obj_holder)) {
-                for (unsigned int i = 0; i < num_out_objects; i++) {
-                    ctx->obj_holder->GetServiceObject<IDomainObject>()->FreeObject(ctx->out_object_ids[i]);
-                }
-            } else {
-                for (unsigned int i = 0; i < num_out_objects; i++) {
-                    svcCloseHandle(ctx->out_object_server_handles[i]);
-                    svcCloseHandle(ctx->out_handles[CommandMetaData::NumOutHandles + i].handle);
-                }
+        if (IsDomainObject(ctx->obj_holder)) {
+            for (unsigned int i = 0; i < num_out_objects; i++) {
+                ctx->obj_holder->GetServiceObject<IDomainObject>()->FreeObject(ctx->out_object_ids[i]);
+            }
+        } else {
+            for (unsigned int i = 0; i < num_out_objects; i++) {
+                svcCloseHandle(ctx->out_object_server_handles[i]);
+                svcCloseHandle(ctx->out_handles[CommandMetaData::NumOutHandles + i].handle);
             }
         }
 
@@ -631,25 +605,48 @@ constexpr Result WrapIpcCommandImpl(IpcResponseContext *ctx) {
         }
     };
 
-    if (R_SUCCEEDED(rc)) {
+    /* Allocate out object IDs. */
+    if (IsDomainObject(ctx->obj_holder)) {
+        for (num_out_objects = 0; num_out_objects < CommandMetaData::NumOutSessions; num_out_objects++) {
+            R_TRY_CLEANUP(ctx->obj_holder->GetServiceObject<IDomainObject>()->ReserveObject(&ctx->out_object_ids[num_out_objects]), {
+                std::apply(Encoder<CommandMetaData, typename CommandMetaData::Args>::EncodeFailure, std::tuple_cat(std::make_tuple(ctx), std::make_tuple(R_CLEANUP_RESULT)));
+            });
+            ctx->out_objs[num_out_objects] = &out_objects[num_out_objects];
+        }
+    } else {
+        for (num_out_objects = 0; num_out_objects < CommandMetaData::NumOutSessions; num_out_objects++) {
+            Handle server_h, client_h;
+            R_TRY_CLEANUP(SessionManagerBase::CreateSessionHandles(&server_h, &client_h), {
+                std::apply(Encoder<CommandMetaData, typename CommandMetaData::Args>::EncodeFailure, std::tuple_cat(std::make_tuple(ctx), std::make_tuple(R_CLEANUP_RESULT)));
+            });
+            ctx->out_object_server_handles[num_out_objects] = server_h;
+            ctx->out_handles[CommandMetaData::NumOutHandles + num_out_objects].handle = client_h;
+            ctx->out_objs[num_out_objects] = &out_objects[num_out_objects];
+        }
+    }
+
+    /* Decode, apply, encode. */
+    {
         auto args = Decoder<CommandMetaData>::Decode(ctx);
 
         if constexpr (CommandMetaData::ReturnsResult) {
-            rc = std::apply( [=](auto&&... args) { return (this_ptr->*IpcCommandImpl)(args...); }, args);
+            R_TRY_CLEANUP(std::apply( [=](auto&&... args) { return (this_ptr->*IpcCommandImpl)(args...); }, args), {
+                std::apply(Encoder<CommandMetaData, decltype(args)>::EncodeFailure, std::tuple_cat(std::make_tuple(ctx), std::make_tuple(R_CLEANUP_RESULT)));
+            });
         } else {
             std::apply( [=](auto&&... args) { (this_ptr->*IpcCommandImpl)(args...); }, args);
         }
 
-        if (R_SUCCEEDED(rc)) {
-            std::apply(Encoder<CommandMetaData, decltype(args)>::EncodeSuccess, std::tuple_cat(std::make_tuple(ctx), args));
-        } else {
-            std::apply(Encoder<CommandMetaData, decltype(args)>::EncodeFailure, std::tuple_cat(std::make_tuple(ctx), std::make_tuple(rc)));
-        }
-    } else {
-        std::apply(Encoder<CommandMetaData, typename CommandMetaData::Args>::EncodeFailure, std::tuple_cat(std::make_tuple(ctx), std::make_tuple(rc)));
+        std::apply(Encoder<CommandMetaData, decltype(args)>::EncodeSuccess, std::tuple_cat(std::make_tuple(ctx), args));
     }
 
-    return rc;
+    /* Cancel object guard, clear remaining object references. */
+    cleanup_guard.Cancel();
+    for (unsigned int i = 0; i < num_out_objects; i++) {
+        ctx->out_objs[i] = nullptr;
+    }
+
+    return ResultSuccess;
 }
 
 
