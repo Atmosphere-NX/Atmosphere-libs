@@ -13,7 +13,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 #include <switch.h>
 #include <switch/arm/atomics.h>
 #include <stratosphere/services/smm_ams.h>
@@ -32,13 +32,13 @@ Result smManagerAmsInitialize(void) {
 
 void smManagerAmsExit(void) {
     if (atomicDecrement64(&g_smManagerAmsRefcnt) == 0)
-        serviceClose(&g_smManagerAmsSrv);    
+        serviceClose(&g_smManagerAmsSrv);
 }
 
 Result smManagerAmsEndInitialDefers(void) {
     IpcCommand c;
     ipcInitialize(&c);
-    
+
     struct {
         u64 magic;
         u64 cmd_id;
@@ -48,22 +48,22 @@ Result smManagerAmsEndInitialDefers(void) {
     raw->magic = SFCI_MAGIC;
     raw->cmd_id = 65000;
 
-    
+
     Result rc = serviceIpcDispatch(&g_smManagerAmsSrv);
-    
+
     if (R_SUCCEEDED(rc)) {
         IpcParsedCommand r;
         struct {
             u64 magic;
             u64 result;
         } *resp;
-        
+
         serviceIpcParse(&g_smManagerAmsSrv, &r, sizeof(*resp));
         resp = r.Raw;
 
         rc = resp->result;
     }
-    
+
     return rc;
 
 }
@@ -71,7 +71,7 @@ Result smManagerAmsEndInitialDefers(void) {
 Result smManagerAmsHasMitm(bool *out, const char* name) {
     IpcCommand c;
     ipcInitialize(&c);
-    
+
     struct {
         u64 magic;
         u64 cmd_id;
@@ -82,9 +82,9 @@ Result smManagerAmsHasMitm(bool *out, const char* name) {
     raw->magic = SFCI_MAGIC;
     raw->cmd_id = 65001;
     raw->service_name = smEncodeName(name);
-    
+
     Result rc = serviceIpcDispatch(&g_smManagerAmsSrv);
-    
+
     if (R_SUCCEEDED(rc)) {
         IpcParsedCommand r;
         struct {
@@ -92,16 +92,16 @@ Result smManagerAmsHasMitm(bool *out, const char* name) {
             u64 result;
             u8 has_mitm;
         } *resp;
-        
+
         serviceIpcParse(&g_smManagerAmsSrv, &r, sizeof(*resp));
         resp = r.Raw;
 
         rc = resp->result;
-        
+
         if (R_SUCCEEDED(rc)) {
             *out = resp->has_mitm != 0;
         }
     }
-    
+
     return rc;
 }

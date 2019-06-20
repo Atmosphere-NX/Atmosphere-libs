@@ -13,7 +13,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 #pragma once
 #include <switch.h>
 #include <stratosphere.hpp>
@@ -26,7 +26,7 @@ enum MitmQueryServiceCommand {
 namespace MitmQueryUtils {
     Result GetAssociatedTidForPid(u64 pid, u64 *tid);
 
-    void AssociatePidToTid(u64 pid, u64 tid); 
+    void AssociatePidToTid(u64 pid, u64 tid);
 }
 
 template <typename T>

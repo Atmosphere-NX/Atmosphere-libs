@@ -13,7 +13,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 #pragma once
 #include <switch.h>
 #include <type_traits>
@@ -25,11 +25,11 @@ struct PidDescriptorTag{};
 
 struct PidDescriptor : public PidDescriptorTag {
     u64 pid;
-    
+
     void operator=(u64 &p) {
         pid = p;
     }
-    
+
     PidDescriptor(u64 p) : pid(p) { }
 };
 
@@ -44,12 +44,12 @@ struct MovedHandle : public IpcHandle {
     void operator=(const Handle &h) {
         this->handle = h;
     }
-    
+
     void operator=(const IpcHandle &o) {
         this->handle = o.handle;
     }
-    
-    MovedHandle(Handle h) { 
+
+    MovedHandle(Handle h) {
         this->handle = h;
     }
 };
@@ -59,12 +59,12 @@ struct CopiedHandle : public IpcHandle {
     void operator=(const Handle &h) {
         handle = h;
     }
-    
+
     void operator=(const IpcHandle &o) {
         this->handle = o.handle;
     }
-    
-    CopiedHandle(Handle h) { 
+
+    CopiedHandle(Handle h) {
         this->handle = h;
     }
 };
@@ -73,34 +73,34 @@ template <>
 class Out<MovedHandle> : public OutHandleTag {
 private:
     MovedHandle *obj;
-public:  
+public:
     Out(IpcHandle *o) : obj(static_cast<MovedHandle *>(o)) { }
-    
+
     void SetValue(const Handle& h) {
         *obj = h;
     }
-    
+
     void SetValue(const MovedHandle& o) {
         *obj = o;
     }
-    
+
     const MovedHandle& GetValue() {
         return *obj;
     }
-    
+
     MovedHandle* GetPointer() {
         return obj;
     }
-    
+
     Handle* GetHandlePointer() {
         return &obj->handle;
     }
-    
+
     /* Convenience operators. */
     MovedHandle& operator*() {
         return *obj;
     }
-    
+
     MovedHandle* operator->() {
         return obj;
     }
@@ -110,34 +110,34 @@ template <>
 class Out<CopiedHandle> : public OutHandleTag {
 private:
     CopiedHandle *obj;
-public:  
+public:
     Out(IpcHandle *o) : obj(static_cast<CopiedHandle *>(o)) { }
-    
+
     void SetValue(const Handle& h) {
         *obj = h;
     }
-    
+
     void SetValue(const CopiedHandle& o) {
         *obj = o;
     }
-    
+
     const CopiedHandle& GetValue() {
         return *obj;
     }
-    
+
     CopiedHandle* GetPointer() {
         return obj;
     }
-    
+
     Handle* GetHandlePointer() {
         return &obj->handle;
     }
-    
+
     /* Convenience operators. */
     CopiedHandle& operator*() {
         return *obj;
     }
-    
+
     CopiedHandle* operator->() {
         return obj;
     }

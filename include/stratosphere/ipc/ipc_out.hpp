@@ -13,7 +13,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 #pragma once
 #include <switch.h>
 #include <type_traits>
@@ -36,26 +36,26 @@ template <typename T>
 class Out<T, typename std::enable_if<std::is_trivial<T>::value || AllowedOut<T>::value>::type> : public OutDataTag {
 private:
     T *obj;
-public:  
+public:
     Out(T *o) : obj(o) { }
-    
+
     void SetValue(const T& t) {
         *obj = t;
     }
-    
+
     const T& GetValue() {
         return *obj;
     }
-    
+
     T *GetPointer() {
         return obj;
     }
-    
+
     /* Convenience operators. */
     T& operator*() {
         return *obj;
     }
-    
+
     T* operator->() {
         return obj;
     }

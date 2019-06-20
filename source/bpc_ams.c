@@ -13,7 +13,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 #include <switch.h>
 #include <switch/arm/atomics.h>
 #include <stratosphere/services/bpc_ams.h>
@@ -39,19 +39,19 @@ Result bpcAmsInitialize(void) {
 
 void bpcAmsExit(void) {
     if (atomicDecrement64(&g_bpcAmsAmsRefcnt) == 0)
-        serviceClose(&g_bpcAmsSrv);    
+        serviceClose(&g_bpcAmsSrv);
 }
 
 Result bpcAmsRebootToFatalError(AtmosphereFatalErrorContext *ctx) {
     IpcCommand c;
     ipcInitialize(&c);
     ipcAddSendBuffer(&c, ctx, sizeof(*ctx), BufferType_Normal);
-    
+
     struct {
         u64 magic;
         u64 cmd_id;
     } *raw;
-    
+
     raw = serviceIpcPrepareHeader(&g_bpcAmsSrv, &c, sizeof(*raw));
 
     raw->magic = SFCI_MAGIC;

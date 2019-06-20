@@ -13,7 +13,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 #pragma once
 #include <atomic>
 
@@ -23,10 +23,10 @@
 class SessionManagerBase : public WaitableManagerBase, public DomainManager {
     public:
         SessionManagerBase() = default;
-        virtual ~SessionManagerBase() = default;     
-                
+        virtual ~SessionManagerBase() = default;
+
         virtual void AddSession(Handle server_h, ServiceObjectHolder &&service) = 0;
-                
+
         static Result CreateSessionHandles(Handle *server_h, Handle *client_h) {
             return svcCreateSession(server_h, client_h, 0, 0);
         }

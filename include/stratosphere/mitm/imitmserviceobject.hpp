@@ -13,7 +13,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 #pragma once
 #include <switch.h>
 #include <atomic>
@@ -30,19 +30,19 @@ class IMitmServiceObject : public IServiceObject {
         IMitmServiceObject(std::shared_ptr<Service> s, u64 pid) : forward_service(s), process_id(pid) {
             MitmQueryUtils::GetAssociatedTidForPid(this->process_id, &this->title_id);
         }
-        
+
         virtual u64 GetTitleId() {
             return this->title_id;
         }
-        
+
         virtual u64 GetProcessId() {
             return this->process_id;
         }
-        
+
         virtual bool IsMitmObject() const override { return true; }
-        
+
         static bool ShouldMitm(u64 pid, u64 tid);
-                
+
     protected:
         virtual ~IMitmServiceObject() = default;
 };

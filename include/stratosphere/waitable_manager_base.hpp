@@ -13,7 +13,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 #pragma once
 #include <atomic>
 
@@ -28,11 +28,11 @@ class WaitableManagerBase {
         u64 GetNextPriority() {
             return std::atomic_fetch_add(&cur_priority, (u64)1);
         }
-        
+
         virtual void AddWaitable(IWaitable *w) = 0;
         virtual void NotifySignaled(IWaitable *w) = 0;
-        
-        virtual void RequestStop() = 0;        
+
+        virtual void RequestStop() = 0;
         virtual void Process() = 0;
 };
 

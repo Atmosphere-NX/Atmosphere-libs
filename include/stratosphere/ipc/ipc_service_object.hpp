@@ -13,7 +13,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 #pragma once
 #include <switch.h>
 #include <memory>
@@ -39,7 +39,7 @@ class IServiceObject  {
 };
 
 #define SERVICE_DISPATCH_TABLE_NAME s_DispatchTable
-#define DEFINE_SERVICE_DISPATCH_TABLE static constexpr ServiceCommandMeta SERVICE_DISPATCH_TABLE_NAME[] 
+#define DEFINE_SERVICE_DISPATCH_TABLE static constexpr ServiceCommandMeta SERVICE_DISPATCH_TABLE_NAME[]
 
 template <typename T>
 static constexpr size_t DispatchTableEntryCount() {
@@ -63,7 +63,7 @@ class ServiceObjectHolder {
         std::shared_ptr<IServiceObject> srv;
         const ServiceCommandMeta *dispatch_table;
         size_t entry_count;
-    
+
         /* Private copy constructor. */
         ServiceObjectHolder(const ServiceObjectHolder& other) : srv(other.srv), dispatch_table(other.dispatch_table), entry_count(other.entry_count) { }
         ServiceObjectHolder& operator=(const ServiceObjectHolder& other);
@@ -71,7 +71,7 @@ class ServiceObjectHolder {
         /* Templated constructor ensures correct type id at runtime. */
         template <typename ServiceImpl>
         explicit ServiceObjectHolder(std::shared_ptr<ServiceImpl>&& s) : srv(std::move(s)), dispatch_table(DispatchTable<ServiceImpl>()), entry_count(DispatchTableEntryCount<ServiceImpl>()) { }
-        
+
         template <typename ServiceImpl>
         ServiceImpl *GetServiceObject() const {
             if (GetServiceId() == ServiceObjectId<ServiceImpl>()) {
@@ -79,33 +79,33 @@ class ServiceObjectHolder {
             }
             return nullptr;
         }
-        
+
         template<typename ServiceImpl>
         ServiceImpl *GetServiceObjectUnsafe() const {
             return static_cast<ServiceImpl *>(this->srv.get());
         }
-        
+
         const ServiceCommandMeta *GetDispatchTable() const {
             return this->dispatch_table;
         }
-        
+
         size_t GetDispatchTableEntryCount() const {
             return this->entry_count;
         }
-        
+
         constexpr uintptr_t GetServiceId() const {
             return reinterpret_cast<uintptr_t>(this->dispatch_table);
         }
-        
+
         bool IsMitmObject() const {
             return this->srv->IsMitmObject();
         }
-        
+
         /* Default constructor, move constructor, move assignment operator. */
         ServiceObjectHolder() : srv(nullptr), dispatch_table(nullptr) { }
 
         ServiceObjectHolder(ServiceObjectHolder&& other) : srv(std::move(other.srv)), dispatch_table(std::move(other.dispatch_table)), entry_count(std::move(other.entry_count)) { }
-        
+
         ServiceObjectHolder& operator=(ServiceObjectHolder&& other) {
             this->srv = other.srv;
             this->dispatch_table = other.dispatch_table;
@@ -113,21 +113,21 @@ class ServiceObjectHolder {
             other.Reset();
             return *this;
         }
-        
+
         explicit operator bool() const {
             return this->srv != nullptr;
         }
-        
+
         bool operator!() const {
             return this->srv == nullptr;
         }
-        
+
         void Reset() {
             this->srv.reset();
             this->dispatch_table = nullptr;
             this->entry_count = 0;
         }
-        
+
         ServiceObjectHolder Clone() const {
             ServiceObjectHolder clone(*this);
             return clone;
