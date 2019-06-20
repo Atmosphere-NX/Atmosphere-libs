@@ -32,7 +32,8 @@ void RegisterMitmServerQueryHandle(Handle query_h, ServiceObjectHolder &&service
     const bool exists = g_server_query_manager != nullptr;
     if (!exists) {
         /* Create a new waitable manager if it doesn't exist already. */
-        g_server_query_manager = new WaitableManager(1);
+        static auto s_server_query_manager = WaitableManager(1);
+        g_server_query_manager = &s_server_query_manager;
     }
 
     /* Add session to the manager. */
