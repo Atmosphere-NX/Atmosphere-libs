@@ -19,6 +19,7 @@
 #include <switch/arm/counter.h>
 #include <mutex>
 #include "results.hpp"
+#include "auto_handle.hpp"
 
 class HosMutex {
     private:

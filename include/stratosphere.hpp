@@ -16,6 +16,8 @@
 
 #pragma once
 
+#include "stratosphere/defines.hpp"
+
 #include "stratosphere/utilities.hpp"
 #include "stratosphere/emummc_utilities.hpp"
 
@@ -23,6 +25,7 @@
 
 #include "stratosphere/version_check.hpp"
 
+#include "stratosphere/auto_handle.hpp"
 #include "stratosphere/hossynch.hpp"
 #include "stratosphere/message_queue.hpp"
 #include "stratosphere/iwaitable.hpp"
