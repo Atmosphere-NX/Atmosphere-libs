@@ -21,6 +21,14 @@
 #include "hossynch.hpp"
 #include "mitm/sm_mitm.h"
 
+static inline uintptr_t GetIoMapping(const u64 io_addr, const u64 io_size) {
+    u64 vaddr;
+    const u64 aligned_addr = (io_addr & ~0xFFFul);
+    const u64 aligned_size = io_size + (io_addr - aligned_addr);
+    R_ASSERT(svcQueryIoMapping(&vaddr, aligned_addr, aligned_size));
+    return static_cast<uintptr_t>(vaddr + (io_addr - aligned_addr));
+}
+
 static inline void RebootToRcm() {
     SecmonArgs args = {0};
     args.X[0] = 0xC3000401; /* smcSetConfig */
