@@ -15,15 +15,16 @@
  */
 
 #pragma once
+#include <switch.h>
 
-#include "spl_types.hpp"
+#include "map_types.hpp"
 
-namespace sts::spl {
+namespace sts::map {
 
-    HardwareType GetHardwareType();
-    bool IsDevelopmentHardware();
-    bool IsDevelopmentFunctionEnabled();
-    bool IsMariko();
-    bool IsRecoveryBoot();
+    /* Public API. */
+    Result GetProcessAddressSpaceInfo(AddressSpaceInfo *out, Handle process_h);
+    Result LocateMappableSpace(uintptr_t *out_address, size_t size);
+    Result MapCodeMemoryInProcess(MappedCodeMemory &out_mcm, Handle process_handle, uintptr_t base_address, size_t size);
+    bool   CanAddGuardRegionsInProcess(Handle process_handle, uintptr_t address, size_t size);
 
 }

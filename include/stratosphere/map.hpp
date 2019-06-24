@@ -15,15 +15,7 @@
  */
 
 #pragma once
+#include <switch.h>
 
-#include "spl_types.hpp"
-
-namespace sts::spl {
-
-    HardwareType GetHardwareType();
-    bool IsDevelopmentHardware();
-    bool IsDevelopmentFunctionEnabled();
-    bool IsMariko();
-    bool IsRecoveryBoot();
-
-}
+#include "map/map_types.hpp"
+#include "map/map_api.hpp"

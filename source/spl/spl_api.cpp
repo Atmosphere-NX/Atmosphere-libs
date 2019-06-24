@@ -25,6 +25,18 @@ namespace sts::spl {
         return static_cast<HardwareType>(out_val);
     }
 
+    bool IsDevelopmentHardware() {
+        bool is_dev_hardware;
+        R_ASSERT(splIsDevelopment(&is_dev_hardware));
+        return is_dev_hardware;
+    }
+
+    bool IsDevelopmentFunctionEnabled() {
+        u64 val = 0;
+        R_ASSERT(splGetConfig(SplConfigItem_IsDebugMode, &val));
+        return val != 0;
+    }
+
     bool IsRecoveryBoot() {
         u64 val = 0;
         R_ASSERT(splGetConfig(SplConfigItem_IsRecoveryBoot, &val));
