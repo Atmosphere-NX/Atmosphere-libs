@@ -46,3 +46,4 @@
 #include "stratosphere/on_crash.hpp"
 
 #include "stratosphere/rnd.hpp"
+#include "stratosphere/util.hpp"

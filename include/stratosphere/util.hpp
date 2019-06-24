@@ -15,14 +15,7 @@
  */
 
 #pragma once
-#include <limits>
 #include <switch.h>
 
-namespace sts::rnd {
-
-    /* Random utilities. */
-    void GenerateRandomBytes(void* out, size_t size);
-    u32  GenerateRandomU32(u32 max = std::numeric_limits<u32>::max());
-    u64  GenerateRandomU64(u64 max = std::numeric_limits<u64>::max());
-
-}
+#include "util/util_compression.hpp"
+#include "util/util_ini.hpp"

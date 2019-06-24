@@ -15,14 +15,14 @@
  */
 
 #pragma once
-#include <limits>
 #include <switch.h>
 
-namespace sts::rnd {
+namespace sts::util {
 
-    /* Random utilities. */
-    void GenerateRandomBytes(void* out, size_t size);
-    u32  GenerateRandomU32(u32 max = std::numeric_limits<u32>::max());
-    u64  GenerateRandomU64(u64 max = std::numeric_limits<u64>::max());
+    /* Compression utilities. */
+    int CompressLZ4(void *dst, size_t dst_size, const void *src, size_t src_size);
+
+    /* Decompression utilities. */
+    int DecompressLZ4(void *dst, size_t dst_size, const void *src, size_t src_size);
 
 }

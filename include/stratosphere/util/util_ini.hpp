@@ -15,14 +15,18 @@
  */
 
 #pragma once
-#include <limits>
+#include <cstdio>
 #include <switch.h>
 
-namespace sts::rnd {
+namespace sts::util::ini {
 
-    /* Random utilities. */
-    void GenerateRandomBytes(void* out, size_t size);
-    u32  GenerateRandomU32(u32 max = std::numeric_limits<u32>::max());
-    u64  GenerateRandomU64(u64 max = std::numeric_limits<u64>::max());
+    /* Ini handler type. */
+    using Handler = int (*)(void *user_ctx, const char *section, const char *name, const char *value);
+
+    /* Utilities for dealing with INI file configuration. */
+    int ParseString(const char *ini_str, void *user_ctx, Handler h);
+    int ParseFile(FILE *f, void *user_ctx, Handler h);
+    int ParseFile(FsFile *f, void *user_ctx, Handler h);
+    int ParseFile(const char *path, void *user_ctx, Handler h);
 
 }
