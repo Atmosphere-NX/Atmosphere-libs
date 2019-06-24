@@ -116,7 +116,7 @@ namespace sts::map {
 
             uintptr_t try_address;
             for (unsigned int i = 0; i < LocateRetryCount; i++) {
-                try_address = address_space.aslr_base + (StratosphereRandomUtils::GetRandomU64(static_cast<u64>(address_space.aslr_size - size) >> 12) << 12);
+                try_address = address_space.aslr_base + (rnd::GenerateRandomU64(static_cast<u64>(address_space.aslr_size - size) >> 12) << 12);
 
                 MappedCodeMemory tmp_mcm(process_handle, try_address, base_address, size);
                 R_TRY_CATCH(tmp_mcm.GetResult()) {
@@ -148,7 +148,7 @@ namespace sts::map {
             uintptr_t try_address;
             for (unsigned int i = 0; i < LocateRetryCount; i++) {
                 while (true) {
-                    try_address = address_space.aslr_base + (StratosphereRandomUtils::GetRandomU64(static_cast<u64>(address_space.aslr_size - size) >> 12) << 12);
+                    try_address = address_space.aslr_base + (rnd::GenerateRandomU64(static_cast<u64>(address_space.aslr_size - size) >> 12) << 12);
                     if (address_space.heap_size && (address_space.heap_base <= try_address + size - 1 && try_address <= address_space.heap_end - 1)) {
                         continue;
                     }

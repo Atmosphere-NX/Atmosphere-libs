@@ -45,4 +45,4 @@
 
 #include "stratosphere/on_crash.hpp"
 
-#include "stratosphere/random.hpp"
+#include "stratosphere/rnd.hpp"
