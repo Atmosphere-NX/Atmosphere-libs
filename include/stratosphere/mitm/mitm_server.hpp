@@ -18,7 +18,6 @@
 #include <switch.h>
 
 #include "mitm_query_service.hpp"
-#include "sm_mitm.h"
 #include "mitm_session.hpp"
 #include "../utilities.hpp"
 
@@ -30,29 +29,19 @@ class MitmServer : public IWaitable {
     private:
         Handle port_handle;
         unsigned int max_sessions;
-        char mitm_name[9];
+        sts::sm::ServiceName mitm_name;
 
     public:
-        MitmServer(const char *service_name, unsigned int max_s) : port_handle(0), max_sessions(max_s) {
-            Handle query_h = 0;
-
-            #pragma GCC diagnostic push
-            #pragma GCC diagnostic ignored "-Wstringop-truncation"
-            DoWithSmMitmSession([&]() {
-                strncpy(mitm_name, service_name, 8);
-                mitm_name[8] = '\x00';
-                R_ASSERT(smMitMInstall(&this->port_handle, &query_h, mitm_name));
-            });
-            #pragma GCC diagnostic pop
+        MitmServer(const char *service_name, unsigned int max_s) : port_handle(0), max_sessions(max_s), mitm_name(sts::sm::ServiceName::Encode(service_name)) {
+            Handle query_h = INVALID_HANDLE;
+            R_ASSERT(sts::sm::mitm::InstallMitm(&this->port_handle, &query_h, this->mitm_name));
 
             RegisterMitmServerQueryHandle(query_h, std::move(ServiceObjectHolder(std::move(std::make_shared<MitmQueryService<T>>()))));
         }
 
         virtual ~MitmServer() override {
             if (this->port_handle) {
-                DoWithSmMitmSession([&]() {
-                    R_ASSERT(smMitMUninstall(this->mitm_name));
-                });
+                R_ASSERT(sts::sm::mitm::UninstallMitm(this->mitm_name));
                 svcCloseHandle(port_handle);
             }
         }
@@ -79,10 +68,7 @@ class MitmServer : public IWaitable {
             });
 
             u64 client_pid;
-
-            DoWithSmMitmSession([&]() {
-                R_ASSERT(smMitMAcknowledgeSession(forward_service.get(), &client_pid, mitm_name));
-            });
+            R_ASSERT(sts::sm::mitm::AcknowledgeSession(forward_service.get(), &client_pid, this->mitm_name));
 
             this->GetSessionManager()->AddWaitable(new MitmSession(session_h, client_pid, forward_service, MakeShared(forward_service, client_pid)));
             return ResultSuccess;

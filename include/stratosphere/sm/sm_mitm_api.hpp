@@ -16,11 +16,15 @@
 
 #pragma once
 
-#include "sm.hpp"
+#include "sm_types.hpp"
 
-#include "ipc.hpp"
+namespace sts::sm::mitm {
 
-#include "mitm/imitmserviceobject.hpp"
-#include "mitm/mitm_query_service.hpp"
-#include "mitm/mitm_session.hpp"
-#include "mitm/mitm_server.hpp"
+    /* Mitm API. */
+    Result InstallMitm(Handle *out_port, Handle *out_query, ServiceName name);
+    Result UninstallMitm(ServiceName name);
+    Result AssociateProcessIdAndTitleId(u64 process_id, u64 title_id);
+    Result AcknowledgeSession(Service *out_service, u64 *out_pid, ServiceName name);
+    Result HasMitm(bool *out, ServiceName name);
+
+}

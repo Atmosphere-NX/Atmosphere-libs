@@ -14,13 +14,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#include "sm_utils.hpp"
 
-#include "sm.hpp"
+namespace sts::sm::impl {
 
-#include "ipc.hpp"
+    namespace {
 
-#include "mitm/imitmserviceobject.hpp"
-#include "mitm/mitm_query_service.hpp"
-#include "mitm/mitm_session.hpp"
-#include "mitm/mitm_server.hpp"
+        /* Globals. */
+        HosRecursiveMutex g_user_session_mutex;
+        HosRecursiveMutex g_mitm_session_mutex;
+
+    }
+
+    /* Utilities. */
+    HosRecursiveMutex &GetUserSessionMutex() {
+        return g_user_session_mutex;
+    }
+
+    HosRecursiveMutex &GetMitmSessionMutex() {
+        return g_mitm_session_mutex;
+    }
+
+}

@@ -15,12 +15,8 @@
  */
 
 #pragma once
+#include <switch.h>
 
-#include "sm.hpp"
-
-#include "ipc.hpp"
-
-#include "mitm/imitmserviceobject.hpp"
-#include "mitm/mitm_query_service.hpp"
-#include "mitm/mitm_session.hpp"
-#include "mitm/mitm_server.hpp"
+#include "sm/sm_types.hpp"
+#include "sm/sm_api.hpp"
+#include "sm/sm_mitm_api.hpp"

@@ -15,18 +15,17 @@
  */
 
 #pragma once
-#include <switch.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include "sm_types.hpp"
 
-Result smManagerAmsInitialize(void);
-void smManagerAmsExit(void);
+namespace sts::sm {
 
-Result smManagerAmsEndInitialDefers(void);
-Result smManagerAmsHasMitm(bool *out, const char* name);
+    /* Ordinary SM API. */
+    Result GetService(Service *out, ServiceName name);
+    Result RegisterService(Handle *out, ServiceName name, size_t max_sessions, bool is_light);
+    Result UnregisterService(ServiceName name);
 
-#ifdef __cplusplus
+    /* Atmosphere extensions. */
+    Result HasService(bool *out, ServiceName name);
+
 }
-#endif

@@ -19,7 +19,6 @@
 #include <cstdlib>
 
 #include "hossynch.hpp"
-#include "mitm/sm_mitm.h"
 
 static inline uintptr_t GetIoMapping(const u64 io_addr, const u64 io_size) {
     u64 vaddr;
@@ -117,7 +116,6 @@ static inline bool ShouldBlankProdInfo() {
 }
 
 HosRecursiveMutex &GetSmSessionMutex();
-HosRecursiveMutex &GetSmMitmSessionMutex();
 
 template<typename F>
 static void DoWithSmSession(F f) {
@@ -126,15 +124,5 @@ static void DoWithSmSession(F f) {
         R_ASSERT(smInitialize());
         f();
         smExit();
-    }
-}
-
-template<typename F>
-static void DoWithSmMitmSession(F f) {
-    std::scoped_lock<HosRecursiveMutex &> lk(GetSmMitmSessionMutex());
-    {
-        R_ASSERT(smMitMInitialize());
-        f();
-        smMitMExit();
     }
 }

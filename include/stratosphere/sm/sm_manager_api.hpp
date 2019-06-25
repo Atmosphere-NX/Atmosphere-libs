@@ -16,11 +16,16 @@
 
 #pragma once
 
-#include "sm.hpp"
+#include "sm_types.hpp"
 
-#include "ipc.hpp"
+namespace sts::sm::manager {
 
-#include "mitm/imitmserviceobject.hpp"
-#include "mitm/mitm_query_service.hpp"
-#include "mitm/mitm_session.hpp"
-#include "mitm/mitm_server.hpp"
+    /* Manager API. */
+    Result RegisterProcess(u64 process_id, const void *acid, size_t acid_size, const void *aci, size_t aci_size);
+    Result UnregisterProcess(u64 process_id);
+
+    /* Atmosphere extensions. */
+    Result EndInitialDefers();
+    Result HasMitm(bool *out, ServiceName name);
+
+}

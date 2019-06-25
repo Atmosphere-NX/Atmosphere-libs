@@ -15,41 +15,24 @@
  */
 
 #include <switch.h>
-#include <switch/arm/atomics.h>
-#include <stratosphere/services/smm_ams.h>
+#include "smm_ams.h"
 
-static Service g_smManagerAmsSrv;
-static u64 g_smManagerAmsRefcnt;
-
-Result smManagerAmsInitialize(void) {
-    atomicIncrement64(&g_smManagerAmsRefcnt);
-
-    if (serviceIsActive(&g_smManagerAmsSrv))
-        return 0;
-
-    return smGetService(&g_smManagerAmsSrv, "sm:m");
-}
-
-void smManagerAmsExit(void) {
-    if (atomicDecrement64(&g_smManagerAmsRefcnt) == 0)
-        serviceClose(&g_smManagerAmsSrv);
-}
-
-Result smManagerAmsEndInitialDefers(void) {
+Result smManagerAtmosphereEndInitialDefers(void) {
     IpcCommand c;
     ipcInitialize(&c);
+    Service *srv = smManagerGetServiceSession();
 
     struct {
         u64 magic;
         u64 cmd_id;
     } *raw;
 
-    raw = serviceIpcPrepareHeader(&g_smManagerAmsSrv, &c, sizeof(*raw));
+    raw = serviceIpcPrepareHeader(srv, &c, sizeof(*raw));
     raw->magic = SFCI_MAGIC;
     raw->cmd_id = 65000;
 
 
-    Result rc = serviceIpcDispatch(&g_smManagerAmsSrv);
+    Result rc = serviceIpcDispatch(srv);
 
     if (R_SUCCEEDED(rc)) {
         IpcParsedCommand r;
@@ -58,7 +41,7 @@ Result smManagerAmsEndInitialDefers(void) {
             u64 result;
         } *resp;
 
-        serviceIpcParse(&g_smManagerAmsSrv, &r, sizeof(*resp));
+        serviceIpcParse(srv, &r, sizeof(*resp));
         resp = r.Raw;
 
         rc = resp->result;
@@ -68,9 +51,10 @@ Result smManagerAmsEndInitialDefers(void) {
 
 }
 
-Result smManagerAmsHasMitm(bool *out, const char* name) {
+Result smManagerAtmosphereHasMitm(bool *out, const char* name) {
     IpcCommand c;
     ipcInitialize(&c);
+    Service *srv = smManagerGetServiceSession();
 
     struct {
         u64 magic;
@@ -78,12 +62,12 @@ Result smManagerAmsHasMitm(bool *out, const char* name) {
         u64 service_name;
     } *raw;
 
-    raw = serviceIpcPrepareHeader(&g_smManagerAmsSrv, &c, sizeof(*raw));
+    raw = serviceIpcPrepareHeader(srv, &c, sizeof(*raw));
     raw->magic = SFCI_MAGIC;
     raw->cmd_id = 65001;
     raw->service_name = smEncodeName(name);
 
-    Result rc = serviceIpcDispatch(&g_smManagerAmsSrv);
+    Result rc = serviceIpcDispatch(srv);
 
     if (R_SUCCEEDED(rc)) {
         IpcParsedCommand r;
@@ -93,7 +77,7 @@ Result smManagerAmsHasMitm(bool *out, const char* name) {
             u8 has_mitm;
         } *resp;
 
-        serviceIpcParse(&g_smManagerAmsSrv, &r, sizeof(*resp));
+        serviceIpcParse(srv, &r, sizeof(*resp));
         resp = r.Raw;
 
         rc = resp->result;
