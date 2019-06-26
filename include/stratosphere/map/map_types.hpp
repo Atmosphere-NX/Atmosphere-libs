@@ -33,6 +33,13 @@ namespace sts::map {
         uintptr_t aslr_end;
     };
 
+    static constexpr uintptr_t AslrBase32Bit           = 0x0000200000ul;
+    static constexpr size_t    AslrSize32Bit           = 0x003FE00000ul;
+    static constexpr uintptr_t AslrBase64BitDeprecated = 0x0008000000ul;
+    static constexpr size_t    AslrSize64BitDeprecated = 0x0078000000ul;
+    static constexpr uintptr_t AslrBase64Bit           = 0x0008000000ul;
+    static constexpr size_t    AslrSize64Bit           = 0x7FF8000000ul;
+
     class AutoCloseMap {
         private:
             Handle process_handle;

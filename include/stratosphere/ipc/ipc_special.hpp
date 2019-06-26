@@ -52,6 +52,10 @@ struct MovedHandle : public IpcHandle {
     MovedHandle(Handle h) {
         this->handle = h;
     }
+
+    Handle GetValue() const {
+        return this->handle;
+    }
 };
 
 /* Represents a copied handle. */
@@ -66,6 +70,10 @@ struct CopiedHandle : public IpcHandle {
 
     CopiedHandle(Handle h) {
         this->handle = h;
+    }
+
+    Handle GetValue() const {
+        return this->handle;
     }
 };
 

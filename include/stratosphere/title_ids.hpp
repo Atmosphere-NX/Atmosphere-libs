@@ -187,13 +187,13 @@ static inline bool TitleIdIsSystem(const u64 title_id) {
 }
 
 static inline bool TitleIdIsArchive(const u64 title_id) {
-    return TitleId_ArchiveStart <= title_id && title_id  <= TitleId_ArchiveEnd;
+    return TitleId_ArchiveStart <= title_id && title_id <= TitleId_ArchiveEnd;
 }
 
 static inline bool TitleIdIsApplet(const u64 title_id) {
-    return TitleId_AppletStart <= title_id && title_id  <= TitleId_AppletEnd;
+    return TitleId_AppletStart <= title_id && title_id <= TitleId_AppletEnd;
 }
 
 static inline bool TitleIdIsApplication(const u64 title_id) {
-    return TitleId_ApplicationStart <= title_id && title_id  <= TitleId_ApplicationEnd;
+    return TitleId_ApplicationStart <= title_id && title_id <= TitleId_ApplicationEnd;
 }

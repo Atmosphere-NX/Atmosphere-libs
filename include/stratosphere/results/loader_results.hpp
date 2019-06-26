@@ -26,7 +26,7 @@ static constexpr Result ResultLoaderInvalidMeta           = MAKERESULT(Module_Lo
 static constexpr Result ResultLoaderInvalidNso            = MAKERESULT(Module_Loader, 5);
 static constexpr Result ResultLoaderInvalidPath           = MAKERESULT(Module_Loader, 6);
 static constexpr Result ResultLoaderTooManyProcesses      = MAKERESULT(Module_Loader, 7);
-static constexpr Result ResultLoaderProcessNotRegistered  = MAKERESULT(Module_Loader, 8);
+static constexpr Result ResultLoaderNotPinned             = MAKERESULT(Module_Loader, 8);
 static constexpr Result ResultLoaderInvalidProgramId      = MAKERESULT(Module_Loader, 9);
 static constexpr Result ResultLoaderInvalidVersion        = MAKERESULT(Module_Loader, 10);
 

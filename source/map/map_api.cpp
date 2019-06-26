@@ -23,11 +23,6 @@ namespace sts::map {
     namespace {
 
         /* Convenience defines. */
-        constexpr uintptr_t Deprecated64BitAslrBase = 0x08000000ul;
-        constexpr size_t    Deprecated64BitAslrSize = 0x78000000ul;
-        constexpr uintptr_t Deprecated32BitAslrBase = 0x00200000ul;
-        constexpr size_t    Deprecated32BitAslrSize = 0x3FE00000ul;
-
         constexpr size_t GuardRegionSize = 0x4000;
         constexpr size_t LocateRetryCount = 0x200;
 
@@ -194,12 +189,12 @@ namespace sts::map {
             R_TRY(svcGetInfo(&out->aslr_size, InfoType_AslrRegionSize, process_h, 0));
         } else {
             /* Auto-detect 32-bit vs 64-bit. */
-            if (out->heap_base < Deprecated64BitAslrBase || out->alias_base < Deprecated64BitAslrBase) {
-                out->aslr_base = Deprecated32BitAslrBase;
-                out->aslr_size = Deprecated32BitAslrSize;
+            if (out->heap_base < AslrBase64BitDeprecated || out->alias_base < AslrBase64BitDeprecated) {
+                out->aslr_base = AslrBase32Bit;
+                out->aslr_size = AslrSize32Bit;
             } else {
-                out->aslr_base = Deprecated64BitAslrBase;
-                out->aslr_size = Deprecated64BitAslrSize;
+                out->aslr_base = AslrBase64BitDeprecated;
+                out->aslr_size = AslrSize64BitDeprecated;
             }
         }
 

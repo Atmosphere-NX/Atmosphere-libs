@@ -8,6 +8,7 @@
 #include <switch/result.h>
 
 #ifdef __cplusplus
+#include <cstdlib>
 extern "C" {
 #endif
 
