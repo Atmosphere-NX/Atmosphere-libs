@@ -81,9 +81,9 @@ namespace sts::patcher {
 
         inline bool IsIpsTail(bool is_ips32, u8 *buffer) {
             if (is_ips32) {
-                return std::memcmp(buffer, Ips32TailMagic, sizeof(Ips32TailMagic));
+                return std::memcmp(buffer, Ips32TailMagic, sizeof(Ips32TailMagic)) == 0;
             } else {
-                return std::memcmp(buffer, IpsTailMagic, sizeof(IpsTailMagic));
+                return std::memcmp(buffer, IpsTailMagic, sizeof(IpsTailMagic)) == 0;
             }
         }
 
