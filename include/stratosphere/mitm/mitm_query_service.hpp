@@ -18,11 +18,6 @@
 #include <switch.h>
 #include <stratosphere.hpp>
 
-enum MitmQueryServiceCommand {
-    MQS_Cmd_ShouldMitm = 65000,
-    MQS_Cmd_AssociatePidTid = 65001
-};
-
 namespace MitmQueryUtils {
     Result GetAssociatedTidForPid(u64 pid, u64 *tid);
 
@@ -31,6 +26,11 @@ namespace MitmQueryUtils {
 
 template <typename T>
 class MitmQueryService : public IServiceObject {
+    private:
+        enum class CommandId {
+            ShouldMitm      = 65000,
+            AssociatePidToTid = 65001,
+        };
     protected:
         void ShouldMitm(Out<bool> should_mitm, u64 pid) {
             should_mitm.SetValue(false);
@@ -44,7 +44,7 @@ class MitmQueryService : public IServiceObject {
         }
     public:
         DEFINE_SERVICE_DISPATCH_TABLE {
-            MakeServiceCommandMeta<MQS_Cmd_ShouldMitm, &MitmQueryService<T>::ShouldMitm>(),
-            MakeServiceCommandMeta<MQS_Cmd_AssociatePidTid, &MitmQueryService<T>::AssociatePidToTid>(),
+            MAKE_SERVICE_COMMAND_META(MitmQueryService<T>, ShouldMitm),
+            MAKE_SERVICE_COMMAND_META(MitmQueryService<T>, AssociatePidToTid),
         };
 };

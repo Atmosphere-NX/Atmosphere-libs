@@ -221,6 +221,14 @@ class MitmSession final : public ServiceSession {
     public:
         class IMitmHipcControlService : public IServiceObject {
             private:
+                enum class CommandId {
+                    ConvertCurrentObjectToDomain = 0,
+                    CopyFromCurrentDomain        = 1,
+                    CloneCurrentObject           = 2,
+                    QueryPointerBufferSize       = 3,
+                    CloneCurrentObjectEx         = 4,
+                };
+            private:
                 MitmSession *session;
             public:
                 explicit IMitmHipcControlService(MitmSession *s) : session(s) {
@@ -324,11 +332,11 @@ class MitmSession final : public ServiceSession {
 
             public:
                 DEFINE_SERVICE_DISPATCH_TABLE {
-                    MakeServiceCommandMeta<HipcControlCommand_ConvertCurrentObjectToDomain, &MitmSession::IMitmHipcControlService::ConvertCurrentObjectToDomain>(),
-                    MakeServiceCommandMeta<HipcControlCommand_CopyFromCurrentDomain, &MitmSession::IMitmHipcControlService::CopyFromCurrentDomain>(),
-                    MakeServiceCommandMeta<HipcControlCommand_CloneCurrentObject, &MitmSession::IMitmHipcControlService::CloneCurrentObject>(),
-                    MakeServiceCommandMeta<HipcControlCommand_QueryPointerBufferSize, &MitmSession::IMitmHipcControlService::QueryPointerBufferSize>(),
-                    MakeServiceCommandMeta<HipcControlCommand_CloneCurrentObjectEx, &MitmSession::IMitmHipcControlService::CloneCurrentObjectEx>(),
+                    MAKE_SERVICE_COMMAND_META(MitmSession::IMitmHipcControlService, ConvertCurrentObjectToDomain),
+                    MAKE_SERVICE_COMMAND_META(MitmSession::IMitmHipcControlService, CopyFromCurrentDomain),
+                    MAKE_SERVICE_COMMAND_META(MitmSession::IMitmHipcControlService, CloneCurrentObject),
+                    MAKE_SERVICE_COMMAND_META(MitmSession::IMitmHipcControlService, QueryPointerBufferSize),
+                    MAKE_SERVICE_COMMAND_META(MitmSession::IMitmHipcControlService, CloneCurrentObjectEx),
                 };
         };
 };

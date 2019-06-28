@@ -649,25 +649,16 @@ constexpr Result WrapIpcCommandImpl(IpcResponseContext *ctx) {
     return ResultSuccess;
 }
 
-
-template <auto c, auto CommandImpl, FirmwareVersion l = FirmwareVersion_Min, FirmwareVersion h = FirmwareVersion_Max>
+template <auto CommandId, auto CommandImpl, typename OverrideClassType, FirmwareVersion Low = FirmwareVersion_Min, FirmwareVersion High = FirmwareVersion_Max>
 inline static constexpr ServiceCommandMeta MakeServiceCommandMeta() {
     return {
-        .fw_low = l,
-        .fw_high = h,
-        .cmd_id = static_cast<u32>(c),
-        .handler = WrapIpcCommandImpl<CommandImpl>,
-    };
-};
-
-template <auto c, auto CommandImpl, typename OverrideClassType, FirmwareVersion l = FirmwareVersion_Min, FirmwareVersion h = FirmwareVersion_Max>
-inline static constexpr ServiceCommandMeta MakeServiceCommandMetaEx() {
-    return {
-        .fw_low = l,
-        .fw_high = h,
-        .cmd_id = static_cast<u32>(c),
+        .fw_low = Low,
+        .fw_high = High,
+        .cmd_id = static_cast<u32>(CommandId),
         .handler = WrapIpcCommandImpl<CommandImpl, OverrideClassType>,
     };
 };
+
+#define MAKE_SERVICE_COMMAND_META(class, name, ...) MakeServiceCommandMeta<CommandId::name, &class::name, class, ##__VA_ARGS__>()
 
 #pragma GCC diagnostic pop

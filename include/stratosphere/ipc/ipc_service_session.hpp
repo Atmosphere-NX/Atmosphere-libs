@@ -22,14 +22,6 @@
 #include "ipc_service_object.hpp"
 #include "ipc_serialization.hpp"
 
-enum HipcControlCommand : u32 {
-    HipcControlCommand_ConvertCurrentObjectToDomain = 0,
-    HipcControlCommand_CopyFromCurrentDomain = 1,
-    HipcControlCommand_CloneCurrentObject = 2,
-    HipcControlCommand_QueryPointerBufferSize = 3,
-    HipcControlCommand_CloneCurrentObjectEx = 4
-};
-
 class ServiceSession : public IWaitable
 {
     protected:
@@ -269,6 +261,14 @@ class ServiceSession : public IWaitable
     public:
         class IHipcControlService : public IServiceObject  {
             private:
+                enum class CommandId {
+                    ConvertCurrentObjectToDomain = 0,
+                    CopyFromCurrentDomain        = 1,
+                    CloneCurrentObject           = 2,
+                    QueryPointerBufferSize       = 3,
+                    CloneCurrentObjectEx         = 4,
+                };
+            private:
                 ServiceSession *session;
             public:
                 explicit IHipcControlService(ServiceSession *s) : session(s) {
@@ -334,11 +334,11 @@ class ServiceSession : public IWaitable
 
             public:
                 DEFINE_SERVICE_DISPATCH_TABLE {
-                    MakeServiceCommandMeta<HipcControlCommand_ConvertCurrentObjectToDomain, &ServiceSession::IHipcControlService::ConvertCurrentObjectToDomain>(),
-                    MakeServiceCommandMeta<HipcControlCommand_CopyFromCurrentDomain, &ServiceSession::IHipcControlService::CopyFromCurrentDomain>(),
-                    MakeServiceCommandMeta<HipcControlCommand_CloneCurrentObject, &ServiceSession::IHipcControlService::CloneCurrentObject>(),
-                    MakeServiceCommandMeta<HipcControlCommand_QueryPointerBufferSize, &ServiceSession::IHipcControlService::QueryPointerBufferSize>(),
-                    MakeServiceCommandMeta<HipcControlCommand_CloneCurrentObjectEx, &ServiceSession::IHipcControlService::CloneCurrentObjectEx>(),
+                    MAKE_SERVICE_COMMAND_META(ServiceSession::IHipcControlService, ConvertCurrentObjectToDomain),
+                    MAKE_SERVICE_COMMAND_META(ServiceSession::IHipcControlService, CopyFromCurrentDomain),
+                    MAKE_SERVICE_COMMAND_META(ServiceSession::IHipcControlService, CloneCurrentObject),
+                    MAKE_SERVICE_COMMAND_META(ServiceSession::IHipcControlService, QueryPointerBufferSize),
+                    MAKE_SERVICE_COMMAND_META(ServiceSession::IHipcControlService, CloneCurrentObjectEx),
                 };
         };
 };
