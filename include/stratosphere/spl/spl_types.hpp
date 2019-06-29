@@ -107,6 +107,20 @@ namespace sts::spl {
         Iowa = 3,
     };
 
+    enum MemoryArrangement {
+        MemoryArrangement_Standard             = 0,
+        MemoryArrangement_StandardForAppletDev = 1,
+        MemoryArrangement_StandardForSystemDev = 2,
+        MemoryArrangement_Expanded             = 3,
+        MemoryArrangement_ExpandedForAppletDev = 4,
+
+        /* Note: MemoryArrangement_Dynamic is not official. */
+        /* Atmosphere uses it to maintain compatibility with firmwares prior to 6.0.0, */
+        /* which removed the explicit retrieval of memory arrangement from PM. */
+        MemoryArrangement_Dynamic              = 5,
+        MemoryArrangement_Count,
+    };
+
     struct BootReasonValue {
         union {
             struct {

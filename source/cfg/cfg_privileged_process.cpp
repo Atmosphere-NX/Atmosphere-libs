@@ -28,8 +28,9 @@ namespace sts::cfg {
 
         /* Privileged process globals. */
         HosMutex g_lock;
-        bool g_detected_privileged_process = false;
-        bool g_is_privileged_process = false;
+        bool g_got_privileged_process_status = false;
+        u64 g_min_initial_process_id = 0, g_max_initial_process_id = 0;
+        u64 g_cur_process_id = 0;
 
         /* SD card helpers. */
         void GetPrivilegedProcessIdRange(u64 *out_min, u64 *out_max) {
@@ -58,28 +59,37 @@ namespace sts::cfg {
             return process_id;
         }
 
-        void DetectIsPrivilegedProcess() {
-            u64 min = 0, max = 0, cur = 0;
-            GetPrivilegedProcessIdRange(&min, &max);
-            cur = GetCurrentProcessId();
-            g_is_privileged_process = min <= cur && cur <= max;
-            g_detected_privileged_process = true;
+        void GetPrivilegedProcessStatus() {
+            GetPrivilegedProcessIdRange(&g_min_initial_process_id, &g_max_initial_process_id);
+            g_cur_process_id = GetCurrentProcessId();
+            g_got_privileged_process_status = true;
         }
-
 
     }
 
-    /* SD card utilities. */
-    bool IsPrivilegedProcess() {
+    /* Privileged Process utilities. */
+    bool IsInitialProcess() {
         std::scoped_lock<HosMutex> lk(g_lock);
 
-        /* If we've already detected, return cached result. */
-        if (!g_detected_privileged_process) {
-            DetectIsPrivilegedProcess();
+        /* If we've not detected, do detection. */
+        if (!g_got_privileged_process_status) {
+            GetPrivilegedProcessStatus();
         }
 
         /* Determine if we're privileged, and return. */
-        return g_is_privileged_process;
+        return g_min_initial_process_id <= g_cur_process_id && g_cur_process_id <= g_max_initial_process_id;
+    }
+
+    void GetInitialProcessRange(u64 *out_min, u64 *out_max) {
+        std::scoped_lock<HosMutex> lk(g_lock);
+
+        /* If we've not detected, do detection. */
+        if (!g_got_privileged_process_status) {
+            GetPrivilegedProcessStatus();
+        }
+
+        *out_min = g_min_initial_process_id;
+        *out_max = g_max_initial_process_id;
     }
 
 }

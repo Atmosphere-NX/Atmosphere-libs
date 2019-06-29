@@ -31,37 +31,37 @@ namespace sts::pm::info {
     }
 
     /* Information API. */
-    Result GetTitleId(u64 *out_title_id, u64 process_id) {
+    Result GetTitleId(ncm::TitleId *out_title_id, u64 process_id) {
         std::scoped_lock<HosMutex> lk(g_info_lock);
 
-        return pminfoGetTitleId(out_title_id, process_id);
+        return pminfoGetTitleId(reinterpret_cast<u64 *>(out_title_id), process_id);
     }
 
-    Result GetProcessId(u64 *out_process_id, u64 title_id) {
+    Result GetProcessId(u64 *out_process_id, ncm::TitleId title_id) {
         std::scoped_lock<HosMutex> lk(g_info_lock);
 
-        return pminfoAtmosphereGetProcessId(out_process_id, title_id);
+        return pminfoAtmosphereGetProcessId(out_process_id, static_cast<u64>(title_id));
     }
 
-    Result __attribute__((weak)) HasLaunchedTitle(bool *out, u64 title_id) {
+    Result WEAK HasLaunchedTitle(bool *out, ncm::TitleId title_id) {
         std::scoped_lock<HosMutex> lk(g_info_lock);
 
-        if (g_cached_launched_titles.find(title_id) != g_cached_launched_titles.end()) {
+        if (g_cached_launched_titles.find(static_cast<u64>(title_id)) != g_cached_launched_titles.end()) {
             *out = true;
             return ResultSuccess;
         }
 
         bool has_launched = false;
-        R_TRY(pminfoAtmosphereHasLaunchedTitle(&has_launched, title_id));
+        R_TRY(pminfoAtmosphereHasLaunchedTitle(&has_launched, static_cast<u64>(title_id)));
         if (has_launched) {
-            g_cached_launched_titles.insert(title_id);
+            g_cached_launched_titles.insert(static_cast<u64>(title_id));
         }
 
         *out = has_launched;
         return ResultSuccess;
     }
 
-    bool HasLaunchedTitle(u64 title_id) {
+    bool HasLaunchedTitle(ncm::TitleId title_id) {
         bool has_launched = false;
         R_ASSERT(HasLaunchedTitle(&has_launched, title_id));
         return has_launched;

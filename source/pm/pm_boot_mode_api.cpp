@@ -13,19 +13,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include <switch.h>
+#include <stratosphere.hpp>
+#include <stratosphere/pm.hpp>
 
-#pragma once
+namespace sts::pm::bm {
 
-#include "pm_types.hpp"
+    /* Boot Mode API. */
+    /* Both functions should be weakly linked, so that they can be overridden by sts::boot2 as needed. */
+    BootMode WEAK GetBootMode() {
+        PmBootMode boot_mode = PmBootMode_Normal;
+        R_ASSERT(pmbmGetBootMode(&boot_mode));
+        return static_cast<BootMode>(boot_mode);
+    }
 
-namespace sts::pm::info {
-
-    /* Information API. */
-    Result GetTitleId(ncm::TitleId *out_title_id, u64 process_id);
-    Result GetProcessId(u64 *out_process_id, ncm::TitleId title_id);
-    Result HasLaunchedTitle(bool *out, ncm::TitleId title_id);
-
-    /* Information convenience API. */
-    bool HasLaunchedTitle(ncm::TitleId title_id);
+    void WEAK SetMaintenanceBoot() {
+        R_ASSERT(pmbmSetMaintenanceBoot());
+    }
 
 }

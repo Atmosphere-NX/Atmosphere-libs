@@ -15,17 +15,29 @@
  */
 
 #pragma once
+#include <switch.h>
 
-#include "pm_types.hpp"
+namespace sts::pm {
 
-namespace sts::pm::info {
+    enum class BootMode {
+        Normal      = 0,
+        Maintenance = 1,
+        SafeMode    = 2,
+    };
 
-    /* Information API. */
-    Result GetTitleId(ncm::TitleId *out_title_id, u64 process_id);
-    Result GetProcessId(u64 *out_process_id, ncm::TitleId title_id);
-    Result HasLaunchedTitle(bool *out, ncm::TitleId title_id);
+    enum ResourceLimitGroup {
+        ResourceLimitGroup_System      = 0,
+        ResourceLimitGroup_Application = 1,
+        ResourceLimitGroup_Applet      = 2,
+        ResourceLimitGroup_Count,
+    };
 
-    /* Information convenience API. */
-    bool HasLaunchedTitle(ncm::TitleId title_id);
+    using LimitableResource = ::LimitableResource;
+
+    struct ProcessEventInfo {
+        u32 event;
+        u64 process_id;
+    };
+    static_assert(sizeof(ProcessEventInfo) == 0x10 && std::is_pod<ProcessEventInfo>::value, "ProcessEventInfo definition!");
 
 }

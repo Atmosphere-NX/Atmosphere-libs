@@ -219,7 +219,7 @@ namespace sts::cfg {
         }
 
         /* For system modules and anything launched before the home menu, always override. */
-        if (static_cast<u64>(title_id) < TitleId_AppletStart || !pm::info::HasLaunchedTitle(TitleId_AppletQlaunch)) {
+        if (static_cast<u64>(title_id) < TitleId_AppletStart || !pm::info::HasLaunchedTitle(ncm::TitleId{TitleId_AppletQlaunch})) {
             return true;
         }
 
@@ -237,7 +237,7 @@ namespace sts::cfg {
         }
 
         /* For system modules and anything launched before the home menu, always override. */
-        if (static_cast<u64>(title_id) < TitleId_AppletStart || !pm::info::HasLaunchedTitle(TitleId_AppletQlaunch)) {
+        if (static_cast<u64>(title_id) < TitleId_AppletStart || !pm::info::HasLaunchedTitle(ncm::TitleId{TitleId_AppletQlaunch})) {
             return true;
         }
 
@@ -258,7 +258,7 @@ namespace sts::cfg {
         }
 
         /* For system modules and anything launched before the home menu, always override. */
-        if (static_cast<u64>(title_id) < TitleId_AppletStart || !pm::info::HasLaunchedTitle(TitleId_AppletQlaunch)) {
+        if (static_cast<u64>(title_id) < TitleId_AppletStart || !pm::info::HasLaunchedTitle(ncm::TitleId{TitleId_AppletQlaunch})) {
             *out_hbl = false;
             *out_title = true;
             return;

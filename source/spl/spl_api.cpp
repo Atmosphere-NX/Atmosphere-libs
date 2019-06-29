@@ -25,6 +25,24 @@ namespace sts::spl {
         return static_cast<HardwareType>(out_val);
     }
 
+    MemoryArrangement GetMemoryArrangement() {
+        u64 arrange = 0;
+        R_ASSERT(splGetConfig(SplConfigItem_MemoryArrange, &arrange));
+        arrange &= 0x3F;
+        switch (arrange) {
+            case 2:
+                return MemoryArrangement_StandardForAppletDev;
+            case 3:
+                return MemoryArrangement_StandardForSystemDev;
+            case 17:
+                return MemoryArrangement_Expanded;
+            case 18:
+                return MemoryArrangement_ExpandedForAppletDev;
+            default:
+                return MemoryArrangement_Standard;
+        }
+    }
+
     bool IsDevelopmentHardware() {
         bool is_dev_hardware;
         R_ASSERT(splIsDevelopment(&is_dev_hardware));

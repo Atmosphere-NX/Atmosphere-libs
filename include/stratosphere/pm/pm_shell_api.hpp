@@ -16,16 +16,12 @@
 
 #pragma once
 
+#include "../ldr.hpp"
 #include "pm_types.hpp"
 
-namespace sts::pm::info {
+namespace sts::pm::shell {
 
-    /* Information API. */
-    Result GetTitleId(ncm::TitleId *out_title_id, u64 process_id);
-    Result GetProcessId(u64 *out_process_id, ncm::TitleId title_id);
-    Result HasLaunchedTitle(bool *out, ncm::TitleId title_id);
-
-    /* Information convenience API. */
-    bool HasLaunchedTitle(ncm::TitleId title_id);
+    /* Shell API. */
+    Result LaunchTitle(u64 *out_process_id, const ncm::TitleLocation &loc, u32 launch_flags);
 
 }

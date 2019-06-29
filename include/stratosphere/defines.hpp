@@ -25,3 +25,6 @@
 #define NON_MOVEABLE(cls) \
     cls(cls&&) = delete; \
     cls& operator=(cls&&) = delete
+
+#define ALIGNED(algn) __attribute__((aligned(algn)))
+#define WEAK          __attribute__((weak))

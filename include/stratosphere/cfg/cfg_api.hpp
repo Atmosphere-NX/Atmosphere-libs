@@ -20,8 +20,9 @@
 
 namespace sts::cfg {
 
-    /* Is the current proces privileged? */
+    /* Privileged Process configuration. */
     bool IsInitialProcess();
+    void GetInitialProcessRange(u64 *out_min, u64 *out_max);
 
     /* SD card configuration. */
     bool IsSdCardInitialized();

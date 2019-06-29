@@ -21,6 +21,7 @@
 namespace sts::spl {
 
     HardwareType GetHardwareType();
+    MemoryArrangement GetMemoryArrangement();
     bool IsDevelopmentHardware();
     bool IsDevelopmentFunctionEnabled();
     bool IsMariko();

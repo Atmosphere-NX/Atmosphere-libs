@@ -14,18 +14,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#include <switch.h>
+#include <stratosphere.hpp>
+#include <stratosphere/pm.hpp>
 
-#include "pm_types.hpp"
+namespace sts::pm::shell {
 
-namespace sts::pm::info {
-
-    /* Information API. */
-    Result GetTitleId(ncm::TitleId *out_title_id, u64 process_id);
-    Result GetProcessId(u64 *out_process_id, ncm::TitleId title_id);
-    Result HasLaunchedTitle(bool *out, ncm::TitleId title_id);
-
-    /* Information convenience API. */
-    bool HasLaunchedTitle(ncm::TitleId title_id);
+    /* Shell API. */
+    Result WEAK LaunchTitle(u64 *out_process_id, const ncm::TitleLocation &loc, u32 launch_flags) {
+        return pmshellLaunchProcess(launch_flags, static_cast<u64>(loc.title_id), loc.storage_id, out_process_id);
+    }
 
 }
