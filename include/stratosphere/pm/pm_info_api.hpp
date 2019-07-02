@@ -17,6 +17,7 @@
 #pragma once
 
 #include "pm_types.hpp"
+#include "../ncm/ncm_types.hpp"
 
 namespace sts::pm::info {
 
