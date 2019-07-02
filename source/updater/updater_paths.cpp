@@ -67,12 +67,12 @@ namespace sts::updater {
             case BootImageUpdateType::Erista:
                 {
                     constexpr const char *candidates[] = {BctPathNx};
-                    return ChooseCandidatePath(candidates, sizeof(candidates) / sizeof(candidates[0]));
+                    return ChooseCandidatePath(candidates, util::size(candidates));
                 }
             case BootImageUpdateType::Mariko:
                 {
                     constexpr const char *candidates[] = {BctPathA, BctPathNx};
-                    return ChooseCandidatePath(candidates, sizeof(candidates) / sizeof(candidates[0]));
+                    return ChooseCandidatePath(candidates, util::size(candidates));
                 }
             default:
                 std::abort();
@@ -84,12 +84,12 @@ namespace sts::updater {
             case BootImageUpdateType::Erista:
                 {
                     constexpr const char *candidates[] = {Package1PathNx};
-                    return ChooseCandidatePath(candidates, sizeof(candidates) / sizeof(candidates[0]));
+                    return ChooseCandidatePath(candidates, util::size(candidates));
                 }
             case BootImageUpdateType::Mariko:
                 {
                     constexpr const char *candidates[] = {Package1PathA, Package1PathNx};
-                    return ChooseCandidatePath(candidates, sizeof(candidates) / sizeof(candidates[0]));
+                    return ChooseCandidatePath(candidates, util::size(candidates));
                 }
             default:
                 std::abort();
@@ -101,12 +101,12 @@ namespace sts::updater {
             case BootImageUpdateType::Erista:
                 {
                     constexpr const char *candidates[] = {Package2PathNx};
-                    return ChooseCandidatePath(candidates, sizeof(candidates) / sizeof(candidates[0]));
+                    return ChooseCandidatePath(candidates, util::size(candidates));
                 }
             case BootImageUpdateType::Mariko:
                 {
                     constexpr const char *candidates[] = {Package2PathA, Package2PathNx};
-                    return ChooseCandidatePath(candidates, sizeof(candidates) / sizeof(candidates[0]));
+                    return ChooseCandidatePath(candidates, util::size(candidates));
                 }
             default:
                 std::abort();

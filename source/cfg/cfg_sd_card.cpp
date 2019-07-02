@@ -30,7 +30,7 @@ namespace sts::cfg {
             sm::ServiceName::Encode("pinmux"),
             sm::ServiceName::Encode("psc:c")
         };
-        constexpr size_t NumRequiredServicesForSdCardAccess = sizeof(RequiredServicesForSdCardAccess) / sizeof(RequiredServicesForSdCardAccess[0]);
+        constexpr size_t NumRequiredServicesForSdCardAccess = util::size(RequiredServicesForSdCardAccess);
 
         /* SD card globals. */
         HosMutex g_sd_card_lock;
