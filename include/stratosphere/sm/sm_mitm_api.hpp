@@ -26,5 +26,6 @@ namespace sts::sm::mitm {
     Result AssociateProcessIdAndTitleId(u64 process_id, u64 title_id);
     Result AcknowledgeSession(Service *out_service, u64 *out_pid, ServiceName name);
     Result HasMitm(bool *out, ServiceName name);
+    Result WaitMitm(ServiceName name);
 
 }

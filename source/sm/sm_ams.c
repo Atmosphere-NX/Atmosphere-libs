@@ -60,6 +60,40 @@ Result smAtmosphereHasService(bool *out, const char *name) {
     return rc;
 }
 
+Result smAtmosphereWaitService(const char *name) {
+    IpcCommand c;
+    ipcInitialize(&c);
+    Service *srv = smGetServiceSession();
+
+    struct {
+        u64 magic;
+        u64 cmd_id;
+        u64 service_name;
+    } *raw;
+
+    raw = serviceIpcPrepareHeader(srv, &c, sizeof(*raw));
+    raw->magic = SFCI_MAGIC;
+    raw->cmd_id = 65101;
+    raw->service_name = smEncodeName(name);
+
+    Result rc = serviceIpcDispatch(srv);
+
+    if (R_SUCCEEDED(rc)) {
+        IpcParsedCommand r;
+        struct {
+            u64 magic;
+            u64 result;
+        } *resp;
+
+        serviceIpcParse(srv, &r, sizeof(*resp));
+        resp = r.Raw;
+
+        rc = resp->result;
+    }
+
+    return rc;
+}
+
 Result smAtmosphereHasMitm(bool *out, const char *name) {
     IpcCommand c;
     ipcInitialize(&c);
@@ -94,6 +128,40 @@ Result smAtmosphereHasMitm(bool *out, const char *name) {
         if (R_SUCCEEDED(rc)) {
             *out = resp->has_mitm != 0;
         }
+    }
+
+    return rc;
+}
+
+Result smAtmosphereWaitMitm(const char *name) {
+    IpcCommand c;
+    ipcInitialize(&c);
+    Service *srv = smGetServiceSession();
+
+    struct {
+        u64 magic;
+        u64 cmd_id;
+        u64 service_name;
+    } *raw;
+
+    raw = serviceIpcPrepareHeader(srv, &c, sizeof(*raw));
+    raw->magic = SFCI_MAGIC;
+    raw->cmd_id = 65005;
+    raw->service_name = smEncodeName(name);
+
+    Result rc = serviceIpcDispatch(srv);
+
+    if (R_SUCCEEDED(rc)) {
+        IpcParsedCommand r;
+        struct {
+            u64 magic;
+            u64 result;
+        } *resp;
+
+        serviceIpcParse(srv, &r, sizeof(*resp));
+        resp = r.Raw;
+
+        rc = resp->result;
     }
 
     return rc;

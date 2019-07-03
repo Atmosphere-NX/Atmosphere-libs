@@ -27,5 +27,6 @@ namespace sts::sm {
 
     /* Atmosphere extensions. */
     Result HasService(bool *out, ServiceName name);
+    Result WaitService(ServiceName name);
 
 }

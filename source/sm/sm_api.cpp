@@ -49,4 +49,10 @@ namespace sts::sm {
         });
     }
 
+    Result WaitService(ServiceName name) {
+        return impl::DoWithUserSession([&]() {
+            return smAtmosphereWaitService(name.name);
+        });
+    }
+
 }

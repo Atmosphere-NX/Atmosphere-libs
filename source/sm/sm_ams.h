@@ -12,7 +12,9 @@ extern "C" {
 #endif
 
 Result smAtmosphereHasService(bool *out, const char *name);
+Result smAtmosphereWaitService(const char *name);
 Result smAtmosphereHasMitm(bool *out, const char *name);
+Result smAtmosphereWaitMitm(const char *name);
 
 Result smAtmosphereMitmInitialize(void);
 void smAtmosphereMitmExit(void);

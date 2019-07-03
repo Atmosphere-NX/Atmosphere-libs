@@ -54,4 +54,10 @@ namespace sts::sm::mitm {
         });
     }
 
+    Result WaitMitm(ServiceName name) {
+        return impl::DoWithUserSession([&]() {
+            return smAtmosphereWaitMitm(name.name);
+        });
+    }
+
 }

@@ -17,6 +17,8 @@
 #pragma once
 #include <cstring>
 #include <switch.h>
+#include "../defines.hpp"
+#include "../results.hpp"
 
 namespace sts::sm {
 
@@ -68,5 +70,72 @@ namespace sts::sm {
 
     /* For process validation. */
     static constexpr u64 InvalidProcessId = static_cast<u64>(-1ull);
+
+    /* Utility, for scoped access to libnx services. */
+    template<Result Initializer(), void Finalizer()>
+    class ScopedServiceHolder {
+        NON_COPYABLE(ScopedServiceHolder);
+        private:
+            Result result;
+            bool has_initialized;
+        public:
+            ScopedServiceHolder(bool initialize = true) : result(ResultSuccess), has_initialized(false) {
+                if (initialize) {
+                    this->Initialize();
+                }
+            }
+
+            ~ScopedServiceHolder() {
+                if (this->has_initialized) {
+                    this->Finalize();
+                }
+            }
+
+            ScopedServiceHolder(ScopedServiceHolder&& rhs) {
+                this->result = rhs.result;
+                this->has_initialized = rhs.has_initialized;
+                rhs.result = ResultSuccess;
+                rhs.has_initialized = false;
+            }
+
+            ScopedServiceHolder& operator=(ScopedServiceHolder&& rhs) {
+                rhs.Swap(*this);
+                return *this;
+            }
+
+            void Swap(ScopedServiceHolder& rhs) {
+                std::swap(this->result, rhs.result);
+                std::swap(this->has_initialized, rhs.has_initialized);
+            }
+
+            explicit operator bool() const {
+                return this->has_initialized;
+            }
+
+            Result Initialize() {
+                if (this->has_initialized) {
+                    std::abort();
+                }
+
+                DoWithSmSession([&]() {
+                    this->result = Initializer();
+                });
+
+                this->has_initialized = R_SUCCEEDED(this->result);
+                return this->result;
+            }
+
+            void Finalize() {
+                if (!this->has_initialized) {
+                    std::abort();
+                }
+                Finalizer();
+                this->has_initialized = false;
+            }
+
+            Result GetResult() const {
+                return this->result;
+            }
+    };
 
 }

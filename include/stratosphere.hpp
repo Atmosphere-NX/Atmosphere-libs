@@ -48,4 +48,5 @@
 #include "stratosphere/ncm.hpp"
 #include "stratosphere/pm.hpp"
 #include "stratosphere/rnd.hpp"
+#include "stratosphere/sm.hpp"
 #include "stratosphere/util.hpp"
