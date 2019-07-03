@@ -19,23 +19,24 @@
 #include <atomic>
 
 #include <stratosphere.hpp>
+#include "../ncm.hpp"
 #include "mitm_query_service.hpp"
 
 class IMitmServiceObject : public IServiceObject {
     protected:
         std::shared_ptr<Service> forward_service;
         u64 process_id = 0;
-        u64 title_id = 0;
+        sts::ncm::TitleId title_id = sts::ncm::TitleId::Invalid;
     public:
         IMitmServiceObject(std::shared_ptr<Service> s, u64 pid) : forward_service(s), process_id(pid) {
             MitmQueryUtils::GetAssociatedTidForPid(this->process_id, &this->title_id);
         }
 
-        virtual u64 GetTitleId() {
+        virtual sts::ncm::TitleId GetTitleId() const {
             return this->title_id;
         }
 
-        virtual u64 GetProcessId() {
+        virtual u64 GetProcessId() const {
             return this->process_id;
         }
 

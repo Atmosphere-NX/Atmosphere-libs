@@ -59,7 +59,7 @@ namespace sts::cfg {
                 .key_combination = KEY_R,
                 .override_by_default = false,
             },
-            .title_id = {TitleId_AppletPhotoViewer},
+            .title_id = ncm::TitleId::AppletPhotoViewer,
             .override_any_app = true,
         };
 
@@ -219,7 +219,7 @@ namespace sts::cfg {
         }
 
         /* For system modules and anything launched before the home menu, always override. */
-        if (static_cast<u64>(title_id) < TitleId_AppletStart || !pm::info::HasLaunchedTitle(ncm::TitleId{TitleId_AppletQlaunch})) {
+        if (title_id < ncm::TitleId::AppletStart || !pm::info::HasLaunchedTitle(ncm::TitleId::AppletQlaunch)) {
             return true;
         }
 
@@ -237,7 +237,7 @@ namespace sts::cfg {
         }
 
         /* For system modules and anything launched before the home menu, always override. */
-        if (static_cast<u64>(title_id) < TitleId_AppletStart || !pm::info::HasLaunchedTitle(ncm::TitleId{TitleId_AppletQlaunch})) {
+        if (title_id < ncm::TitleId::AppletStart || !pm::info::HasLaunchedTitle(ncm::TitleId::AppletQlaunch)) {
             return true;
         }
 
@@ -258,7 +258,7 @@ namespace sts::cfg {
         }
 
         /* For system modules and anything launched before the home menu, always override. */
-        if (static_cast<u64>(title_id) < TitleId_AppletStart || !pm::info::HasLaunchedTitle(ncm::TitleId{TitleId_AppletQlaunch})) {
+        if (title_id < ncm::TitleId::AppletStart || !pm::info::HasLaunchedTitle(ncm::TitleId::AppletQlaunch)) {
             *out_hbl = false;
             *out_title = true;
             return;
@@ -292,12 +292,11 @@ namespace sts::cfg {
 
     /* HBL Configuration utilities. */
     bool IsHblTitleId(ncm::TitleId title_id) {
-        return (g_hbl_override_config.override_any_app && TitleIdIsApplication(static_cast<u64>(title_id))) || (title_id == g_hbl_override_config.title_id);
+        return (g_hbl_override_config.override_any_app && ncm::IsApplicationTitleId(title_id)) || (title_id == g_hbl_override_config.title_id);
     }
 
     const char *GetHblPath() {
         return g_hbl_sd_path;
     }
-
 
 }

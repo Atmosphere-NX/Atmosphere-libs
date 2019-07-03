@@ -17,11 +17,12 @@
 #pragma once
 #include <switch.h>
 #include <stratosphere.hpp>
+#include "../ncm.hpp"
 
 namespace MitmQueryUtils {
-    Result GetAssociatedTidForPid(u64 pid, u64 *tid);
+    Result GetAssociatedTidForPid(u64 pid, sts::ncm::TitleId *tid);
 
-    void AssociatePidToTid(u64 pid, u64 tid);
+    void AssociatePidToTid(u64 pid, sts::ncm::TitleId tid);
 }
 
 template <typename T>
@@ -34,12 +35,12 @@ class MitmQueryService : public IServiceObject {
     protected:
         void ShouldMitm(Out<bool> should_mitm, u64 pid) {
             should_mitm.SetValue(false);
-            u64 tid = 0;
+            sts::ncm::TitleId tid = sts::ncm::TitleId::Invalid;
             if (R_SUCCEEDED(MitmQueryUtils::GetAssociatedTidForPid(pid, &tid))) {
                 should_mitm.SetValue(T::ShouldMitm(pid, tid));
             }
         }
-        void AssociatePidToTid(u64 pid, u64 tid) {
+        void AssociatePidToTid(u64 pid, sts::ncm::TitleId tid) {
             MitmQueryUtils::AssociatePidToTid(pid, tid);
         }
     public:

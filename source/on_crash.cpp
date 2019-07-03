@@ -18,9 +18,10 @@
 #include <switch.h>
 #include <stratosphere.hpp>
 
+WEAK sts::ncm::TitleId __stratosphere_title_id = sts::ncm::TitleId::Invalid;
+
 extern "C" {
-    __attribute__((weak)) u64 __stratosphere_title_id = 0;
-    void __attribute__((weak)) __libstratosphere_exception_handler(AtmosphereFatalErrorContext *ctx);
+    void WEAK __libstratosphere_exception_handler(AtmosphereFatalErrorContext *ctx);
 
     /* Redefine abort, so that it triggers these handlers. */
     void abort();
@@ -43,7 +44,7 @@ void StratosphereCrashHandler(ThreadExceptionDump *ctx) {
     {
         ams_ctx.magic = AtmosphereFatalErrorMagic;
         ams_ctx.error_desc = ctx->error_desc;
-        ams_ctx.title_id = __stratosphere_title_id;
+        ams_ctx.title_id = static_cast<u64>(__stratosphere_title_id);
         for (size_t i = 0; i < AtmosphereFatalErrorNumGprs; i++) {
             ams_ctx.gprs[i] = ctx->cpu_gprs[i].x;
         }
@@ -119,7 +120,7 @@ void StratosphereCrashHandler(ThreadExceptionDump *ctx) {
 }
 
 /* Default exception handler behavior. */
-void __attribute__((weak)) __libstratosphere_exception_handler(AtmosphereFatalErrorContext *ctx) {
+void WEAK __libstratosphere_exception_handler(AtmosphereFatalErrorContext *ctx) {
     R_ASSERT(bpcAmsInitialize());
     R_ASSERT(bpcAmsRebootToFatalError(ctx));
     bpcAmsExit();

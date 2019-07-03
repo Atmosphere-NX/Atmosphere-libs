@@ -41,12 +41,11 @@
 
 #include "stratosphere/results.hpp"
 
-#include "stratosphere/title_ids.hpp"
-
 #include "stratosphere/on_crash.hpp"
 
 #include "stratosphere/cfg.hpp"
 #include "stratosphere/hid.hpp"
+#include "stratosphere/ncm.hpp"
 #include "stratosphere/pm.hpp"
 #include "stratosphere/rnd.hpp"
 #include "stratosphere/util.hpp"

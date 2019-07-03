@@ -22,12 +22,12 @@ static std::vector<u64> g_known_pids;
 static std::vector<u64> g_known_tids;
 static HosMutex g_pid_tid_mutex;
 
-Result MitmQueryUtils::GetAssociatedTidForPid(u64 pid, u64 *tid) {
+Result MitmQueryUtils::GetAssociatedTidForPid(u64 pid, sts::ncm::TitleId *tid) {
     std::scoped_lock lk(g_pid_tid_mutex);
 
     for (unsigned int i = 0; i < g_known_pids.size(); i++) {
         if (g_known_pids[i] == pid) {
-            *tid = g_known_tids[i];
+            *tid = sts::ncm::TitleId{g_known_tids[i]};
             return ResultSuccess;
         }
     }
@@ -35,9 +35,9 @@ Result MitmQueryUtils::GetAssociatedTidForPid(u64 pid, u64 *tid) {
     return ResultAtmosphereMitmProcessNotAssociated;
 }
 
-void MitmQueryUtils::AssociatePidToTid(u64 pid, u64 tid) {
+void MitmQueryUtils::AssociatePidToTid(u64 pid, sts::ncm::TitleId tid) {
     std::scoped_lock lk(g_pid_tid_mutex);
 
     g_known_pids.push_back(pid);
-    g_known_tids.push_back(tid);
+    g_known_tids.push_back(static_cast<u64>(tid));
 }

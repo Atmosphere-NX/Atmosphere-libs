@@ -39,7 +39,7 @@ namespace sts::hid {
         Result EnsureHidInitialized() {
             if (!g_initialized_hid) {
                 if (!serviceIsActive(hidGetSessionService())) {
-                    if (!pm::info::HasLaunchedTitle(ncm::TitleId{TitleId_Hid})) {
+                    if (!pm::info::HasLaunchedTitle(ncm::TitleId::Hid)) {
                         return MAKERESULT(Module_Libnx, LibnxError_InitFail_HID);
                     }
                     InitializeHid();
