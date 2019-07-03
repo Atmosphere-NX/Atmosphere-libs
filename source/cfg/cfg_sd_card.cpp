@@ -53,9 +53,7 @@ namespace sts::cfg {
 
         void InitializeSdCard() {
             for (size_t i = 0; i < NumRequiredServicesForSdCardAccess; i++) {
-                Service tmp;
-                R_ASSERT(sm::GetService(&tmp, RequiredServicesForSdCardAccess[i]));
-                serviceClose(&tmp);
+                R_ASSERT(sm::WaitService(RequiredServicesForSdCardAccess[i]));
             }
             R_ASSERT(fsMountSdcard(&g_sd_card_filesystem));
             g_sd_card_initialized = true;
