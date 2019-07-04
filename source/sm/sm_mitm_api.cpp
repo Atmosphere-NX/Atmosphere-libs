@@ -36,9 +36,9 @@ namespace sts::sm::mitm {
         });
     }
 
-    Result AssociateProcessIdAndTitleId(u64 process_id, u64 title_id) {
+    Result DeclareFutureMitm(ServiceName name) {
         return impl::DoWithMitmSession([&]() {
-            return smAtmosphereMitmAssociateProcessIdAndTitleId(process_id, title_id);
+            return smAtmosphereMitmDeclareFuture(name.name);
         });
     }
 

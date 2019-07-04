@@ -301,7 +301,7 @@ Result smAtmosphereMitmUninstall(const char *name) {
     return rc;
 }
 
-Result smAtmosphereMitmAssociateProcessIdAndTitleId(u64 pid, u64 tid) {
+Result smAtmosphereMitmDeclareFuture(const char *name) {
     IpcCommand c;
     ipcInitialize(&c);
     Service *srv = &g_smMitmSrv;
@@ -309,15 +309,13 @@ Result smAtmosphereMitmAssociateProcessIdAndTitleId(u64 pid, u64 tid) {
     struct {
         u64 magic;
         u64 cmd_id;
-        u64 pid;
-        u64 tid;
+        u64 service_name;
     } *raw;
 
     raw = serviceIpcPrepareHeader(srv, &c, sizeof(*raw));
     raw->magic = SFCI_MAGIC;
-    raw->cmd_id = 65002;
-    raw->pid = pid;
-    raw->tid = tid;
+    raw->cmd_id = 65006;
+    raw->service_name = smEncodeName(name);
 
     Result rc = serviceIpcDispatch(srv);
 
@@ -330,7 +328,6 @@ Result smAtmosphereMitmAssociateProcessIdAndTitleId(u64 pid, u64 tid) {
 
         serviceIpcParse(srv, &r, sizeof(*resp));
         resp = r.Raw;
-
         rc = resp->result;
     }
 

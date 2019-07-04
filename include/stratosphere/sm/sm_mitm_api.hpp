@@ -24,7 +24,7 @@ namespace sts::sm::mitm {
     /* Mitm API. */
     Result InstallMitm(Handle *out_port, Handle *out_query, ServiceName name);
     Result UninstallMitm(ServiceName name);
-    Result AssociateProcessIdAndTitleId(u64 process_id, u64 title_id);
+    Result DeclareFutureMitm(ServiceName name);
     Result AcknowledgeSession(Service *out_service, u64 *out_pid, ncm::TitleId *out_tid, ServiceName name);
     Result HasMitm(bool *out, ServiceName name);
     Result WaitMitm(ServiceName name);
