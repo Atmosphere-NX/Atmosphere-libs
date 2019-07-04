@@ -24,8 +24,8 @@
 namespace sts::sm::manager {
 
     /* Manager API. */
-    Result RegisterProcess(u64 process_id, const void *acid, size_t acid_size, const void *aci, size_t aci_size) {
-        return smManagerRegisterProcess(process_id, acid, acid_size, aci, aci_size);
+    Result RegisterProcess(u64 process_id, ncm::TitleId title_id, const void *acid, size_t acid_size, const void *aci, size_t aci_size) {
+        return smManagerAtmosphereRegisterProcess(process_id, static_cast<u64>(title_id), acid, acid_size, aci, aci_size);
     }
 
     Result UnregisterProcess(u64 process_id) {

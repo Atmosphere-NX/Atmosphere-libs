@@ -22,7 +22,7 @@ void smAtmosphereMitmExit(void);
 Result smAtmosphereMitmInstall(Handle *handle_out, Handle *query_out, const char *name);
 Result smAtmosphereMitmUninstall(const char *name);
 Result smAtmosphereMitmAssociateProcessIdAndTitleId(u64 pid, u64 tid);
-Result smAtmosphereMitmAcknowledgeSession(Service *srv_out, u64 *pid_out, const char *name);
+Result smAtmosphereMitmAcknowledgeSession(Service *srv_out, u64 *pid_out, u64 *tid_out, const char *name);
 
 #ifdef __cplusplus
 }

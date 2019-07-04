@@ -51,6 +51,44 @@ Result smManagerAtmosphereEndInitialDefers(void) {
 
 }
 
+Result smManagerAtmosphereRegisterProcess(u64 pid, u64 tid, const void *acid_sac, size_t acid_sac_size, const void *aci_sac, size_t aci_sac_size) {
+    IpcCommand c;
+    ipcInitialize(&c);
+    ipcAddSendBuffer(&c, acid_sac, acid_sac_size, BufferType_Normal);
+    ipcAddSendBuffer(&c, aci_sac,  aci_sac_size,  BufferType_Normal);
+    Service *srv = smManagerGetServiceSession();
+
+    struct {
+        u64 magic;
+        u64 cmd_id;
+        u64 pid;
+        u64 tid;
+    } *raw;
+
+    raw = serviceIpcPrepareHeader(srv, &c, sizeof(*raw));
+    raw->magic = SFCI_MAGIC;
+    raw->cmd_id = 65002;
+    raw->pid = pid;
+    raw->tid = tid;
+
+    Result rc = serviceIpcDispatch(srv);
+
+    if (R_SUCCEEDED(rc)) {
+        IpcParsedCommand r;
+        struct {
+            u64 magic;
+            u64 result;
+        } *resp;
+
+        serviceIpcParse(srv, &r, sizeof(*resp));
+        resp = r.Raw;
+
+        rc = resp->result;
+    }
+
+    return rc;
+}
+
 Result smManagerAtmosphereHasMitm(bool *out, const char* name) {
     IpcCommand c;
     ipcInitialize(&c);

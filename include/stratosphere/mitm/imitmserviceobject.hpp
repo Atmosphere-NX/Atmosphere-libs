@@ -25,12 +25,10 @@
 class IMitmServiceObject : public IServiceObject {
     protected:
         std::shared_ptr<Service> forward_service;
-        u64 process_id = 0;
-        sts::ncm::TitleId title_id = sts::ncm::TitleId::Invalid;
+        u64 process_id;
+        sts::ncm::TitleId title_id;
     public:
-        IMitmServiceObject(std::shared_ptr<Service> s, u64 pid) : forward_service(s), process_id(pid) {
-            MitmQueryUtils::GetAssociatedTidForPid(this->process_id, &this->title_id);
-        }
+        IMitmServiceObject(std::shared_ptr<Service> s, u64 pid, sts::ncm::TitleId tid) : forward_service(s), process_id(pid), title_id(tid) { /* ... */ }
 
         virtual sts::ncm::TitleId GetTitleId() const {
             return this->title_id;
@@ -42,7 +40,7 @@ class IMitmServiceObject : public IServiceObject {
 
         virtual bool IsMitmObject() const override { return true; }
 
-        static bool ShouldMitm(u64 pid, u64 tid);
+        static bool ShouldMitm(u64 pid, sts::ncm::TitleId tid);
 
     protected:
         virtual ~IMitmServiceObject() = default;

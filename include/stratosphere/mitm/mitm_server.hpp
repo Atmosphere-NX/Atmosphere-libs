@@ -68,9 +68,10 @@ class MitmServer : public IWaitable {
             });
 
             u64 client_pid;
-            R_ASSERT(sts::sm::mitm::AcknowledgeSession(forward_service.get(), &client_pid, this->mitm_name));
+            sts::ncm::TitleId client_tid;
+            R_ASSERT(sts::sm::mitm::AcknowledgeSession(forward_service.get(), &client_pid, &client_tid, this->mitm_name));
 
-            this->GetSessionManager()->AddWaitable(new MitmSession(session_h, client_pid, forward_service, MakeShared(forward_service, client_pid)));
+            this->GetSessionManager()->AddWaitable(new MitmSession(session_h, client_pid, forward_service, MakeShared(forward_service, client_pid, client_tid)));
             return ResultSuccess;
         }
 
@@ -78,8 +79,8 @@ class MitmServer : public IWaitable {
 
 template<typename T>
 struct MakeSharedMitmHelper {
-    static constexpr std::shared_ptr<T> Make(std::shared_ptr<Service> forward_srv, u64 client_pid) {
-        return std::make_shared<T>(forward_srv, client_pid);
+    static constexpr std::shared_ptr<T> Make(std::shared_ptr<Service> forward_srv, u64 client_pid, sts::ncm::TitleId client_tid) {
+        return std::make_shared<T>(forward_srv, client_pid, client_tid);
     }
 };
 

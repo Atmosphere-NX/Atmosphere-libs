@@ -337,7 +337,7 @@ Result smAtmosphereMitmAssociateProcessIdAndTitleId(u64 pid, u64 tid) {
     return rc;
 }
 
-Result smAtmosphereMitmAcknowledgeSession(Service *srv_out, u64 *pid_out, const char *name) {
+Result smAtmosphereMitmAcknowledgeSession(Service *srv_out, u64 *pid_out, u64 *tid_out, const char *name) {
     IpcCommand c;
     ipcInitialize(&c);
     Service *srv = &g_smMitmSrv;
@@ -361,6 +361,7 @@ Result smAtmosphereMitmAcknowledgeSession(Service *srv_out, u64 *pid_out, const 
             u64 magic;
             u64 result;
             u64 pid;
+            u64 tid;
         } *resp;
 
         serviceIpcParse(srv, &r, sizeof(*resp));
@@ -369,6 +370,7 @@ Result smAtmosphereMitmAcknowledgeSession(Service *srv_out, u64 *pid_out, const 
         rc = resp->result;
         if (R_SUCCEEDED(rc)) {
             *pid_out = resp->pid;
+            *tid_out = resp->tid;
             serviceCreate(srv_out, r.Handles[0]);
         }
     }

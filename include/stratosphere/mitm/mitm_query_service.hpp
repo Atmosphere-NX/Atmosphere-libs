@@ -19,33 +19,18 @@
 #include <stratosphere.hpp>
 #include "../ncm.hpp"
 
-namespace MitmQueryUtils {
-    Result GetAssociatedTidForPid(u64 pid, sts::ncm::TitleId *tid);
-
-    void AssociatePidToTid(u64 pid, sts::ncm::TitleId tid);
-}
-
 template <typename T>
 class MitmQueryService : public IServiceObject {
     private:
         enum class CommandId {
             ShouldMitm      = 65000,
-            AssociatePidToTid = 65001,
         };
     protected:
-        void ShouldMitm(Out<bool> should_mitm, u64 pid) {
-            should_mitm.SetValue(false);
-            sts::ncm::TitleId tid = sts::ncm::TitleId::Invalid;
-            if (R_SUCCEEDED(MitmQueryUtils::GetAssociatedTidForPid(pid, &tid))) {
-                should_mitm.SetValue(T::ShouldMitm(pid, tid));
-            }
-        }
-        void AssociatePidToTid(u64 pid, sts::ncm::TitleId tid) {
-            MitmQueryUtils::AssociatePidToTid(pid, tid);
+        void ShouldMitm(Out<bool> should_mitm, u64 process_id, sts::ncm::TitleId title_id) {
+            should_mitm.SetValue(T::ShouldMitm(process_id, title_id));
         }
     public:
         DEFINE_SERVICE_DISPATCH_TABLE {
             MAKE_SERVICE_COMMAND_META(MitmQueryService<T>, ShouldMitm),
-            MAKE_SERVICE_COMMAND_META(MitmQueryService<T>, AssociatePidToTid),
         };
 };
