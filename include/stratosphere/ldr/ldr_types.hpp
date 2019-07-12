@@ -18,6 +18,7 @@
 
 #include <type_traits>
 #include <switch.h>
+#include "../svc/svc_types.hpp"
 #include "../ncm/ncm_types.hpp"
 
 namespace sts::ldr {
@@ -176,10 +177,10 @@ namespace sts::ldr {
         };
 
         enum PoolPartition {
-            PoolPartition_Application     = 0,
-            PoolPartition_Applet          = 1,
-            PoolPartition_System          = 2,
-            PoolPartition_SystemNonSecure = 3,
+            PoolPartition_Application     = (svc::CreateProcessFlag_PoolPartitionApplication     >> svc::CreateProcessFlag_PoolPartitionShift),
+            PoolPartition_Applet          = (svc::CreateProcessFlag_PoolPartitionApplet          >> svc::CreateProcessFlag_PoolPartitionShift),
+            PoolPartition_System          = (svc::CreateProcessFlag_PoolPartitionSystem          >> svc::CreateProcessFlag_PoolPartitionShift),
+            PoolPartition_SystemNonSecure = (svc::CreateProcessFlag_PoolPartitionSystemNonSecure >> svc::CreateProcessFlag_PoolPartitionShift),
         };
 
         u8 signature[0x100];
@@ -214,10 +215,10 @@ namespace sts::ldr {
         };
 
         enum AddressSpaceType {
-            AddressSpaceType_32Bit              = 0,
-            AddressSpaceType_64BitDeprecated    = 1,
-            AddressSpaceType_32BitWithoutAlias  = 2,
-            AddressSpaceType_64Bit              = 3,
+            AddressSpaceType_32Bit              = (svc::CreateProcessFlag_AddressSpace32Bit             >> svc::CreateProcessFlag_AddressSpaceShift),
+            AddressSpaceType_64BitDeprecated    = (svc::CreateProcessFlag_AddressSpace64BitDeprecated   >> svc::CreateProcessFlag_AddressSpaceShift),
+            AddressSpaceType_32BitWithoutAlias  = (svc::CreateProcessFlag_AddressSpace32BitWithoutAlias >> svc::CreateProcessFlag_AddressSpaceShift),
+            AddressSpaceType_64Bit              = (svc::CreateProcessFlag_AddressSpace64Bit             >> svc::CreateProcessFlag_AddressSpaceShift),
         };
 
         u32 magic;

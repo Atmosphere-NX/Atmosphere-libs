@@ -43,6 +43,7 @@
 
 #include "stratosphere/on_crash.hpp"
 
+#include "stratosphere/svc.hpp"
 #include "stratosphere/cfg.hpp"
 #include "stratosphere/hid.hpp"
 #include "stratosphere/ncm.hpp"

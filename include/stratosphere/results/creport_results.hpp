@@ -27,7 +27,7 @@ static constexpr Result ResultCreportDebuggerAttached     = MAKERESULT(Module_Cr
 static constexpr Result ResultCreportBreakPoint           = MAKERESULT(Module_Creport, 5);
 static constexpr Result ResultCreportUserBreak            = MAKERESULT(Module_Creport, 6);
 static constexpr Result ResultCreportDebuggerBreak        = MAKERESULT(Module_Creport, 7);
-static constexpr Result ResultCreportBadSvc               = MAKERESULT(Module_Creport, 8);
+static constexpr Result ResultCreportUndefinedSystemCall  = MAKERESULT(Module_Creport, 8);
 static constexpr Result ResultCreportSystemMemoryError    = MAKERESULT(Module_Creport, 9);
 
 static constexpr Result ResultCreportIncompleteReport     = MAKERESULT(Module_Creport, 99);
