@@ -19,8 +19,11 @@
 
 static constexpr u32 Module_Kvdb = 20;
 
-static constexpr Result ResultKvdbTooManyKeys        = MAKERESULT(Module_Kvdb, 1);
-static constexpr Result ResultKvdbKeyNotFound        = MAKERESULT(Module_Kvdb, 2);
-static constexpr Result ResultKvdbAllocationFailed   = MAKERESULT(Module_Kvdb, 4);
-static constexpr Result ResultKvdbInvalidKeyValue    = MAKERESULT(Module_Kvdb, 5);
-static constexpr Result ResultKvdbBufferInsufficient = MAKERESULT(Module_Kvdb, 6);
+static constexpr Result ResultKvdbKeyCapacityInsufficient = MAKERESULT(Module_Kvdb, 1);
+static constexpr Result ResultKvdbKeyNotFound             = MAKERESULT(Module_Kvdb, 2);
+static constexpr Result ResultKvdbAllocationFailed        = MAKERESULT(Module_Kvdb, 4);
+static constexpr Result ResultKvdbInvalidKeyValue         = MAKERESULT(Module_Kvdb, 5);
+static constexpr Result ResultKvdbBufferInsufficient      = MAKERESULT(Module_Kvdb, 6);
+
+static constexpr Result ResultKvdbInvalidFilesystemState  = MAKERESULT(Module_Kvdb, 8);
+static constexpr Result ResultKvdbNotCreated              = MAKERESULT(Module_Kvdb, 9);

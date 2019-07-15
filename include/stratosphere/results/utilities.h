@@ -37,40 +37,48 @@ extern "C" {
     })
 
 /// Helpers for pattern-matching on a result expression, if the result would fail.
+#define R_TRY_CATCH_RESULT _tmp_r_try_catch_rc
+
 #define R_TRY_CATCH(res_expr) \
     ({ \
-        const Result _tmp_r_try_catch_rc = res_expr; \
-        if (R_FAILED(_tmp_r_try_catch_rc)) { \
+        const Result R_TRY_CATCH_RESULT = res_expr; \
+        if (R_FAILED(R_TRY_CATCH_RESULT)) { \
             if (false)
 
 #define R_CATCH(catch_result) \
-            } else if (_tmp_r_try_catch_rc == catch_result) { \
+            } else if (R_TRY_CATCH_RESULT == catch_result) { \
                 _Static_assert(R_FAILED(catch_result), "Catch result must be constexpr error Result!"); \
                 if (false) { } \
                 else
 
-#define R_CATCH_RANGE(catch_result_start, catch_result_end) \
-            } else if (catch_result_start <= _tmp_r_try_catch_rc && _tmp_r_try_catch_rc <= catch_result_end) { \
+#define R_GET_CATCH_RANGE_IMPL(_1, _2, NAME, ...) NAME
+
+#define R_CATCH_RANGE_IMPL_2(catch_result_start, catch_result_end) \
+            } else if (catch_result_start <= R_TRY_CATCH_RESULT && R_TRY_CATCH_RESULT <= catch_result_end) { \
                 _Static_assert(R_FAILED(catch_result_start), "Catch start result must be constexpr error Result!"); \
                 _Static_assert(R_FAILED(catch_result_end), "Catch end result must be constexpr error Result!");  \
                 _Static_assert(R_MODULE(catch_result_start) == R_MODULE(catch_result_end), "Catch range modules must be equal!"); \
                 if (false) { } \
                 else
 
+#define R_CATCH_RANGE_IMPL_1(catch_result) R_CATCH_RANGE_IMPL_2(catch_result##RangeStart, catch_result##RangeEnd)
+
+#define R_CATCH_RANGE(...) R_GET_CATCH_RANGE_IMPL(__VA_ARGS__, R_CATCH_RANGE_IMPL_2, R_CATCH_RANGE_IMPL_1)(__VA_ARGS__)
+
 #define R_CATCH_MODULE(module) \
-            } else if (R_MODULE(_tmp_r_try_catch_rc) == module) { \
+            } else if (R_MODULE(R_TRY_CATCH_RESULT) == module) { \
                 _Static_assert(module != 0, "Catch module must be error!"); \
                 if (false) { } \
                 else
 
 #define R_CATCH_ALL() \
-            } else if (R_FAILED(_tmp_r_try_catch_rc)) { \
+            } else if (R_FAILED(R_TRY_CATCH_RESULT)) { \
                 if (false) { } \
                 else
 
 #define R_END_TRY_CATCH \
-            else if (R_FAILED(_tmp_r_try_catch_rc)) { \
-                return _tmp_r_try_catch_rc; \
+            else if (R_FAILED(R_TRY_CATCH_RESULT)) { \
+                return R_TRY_CATCH_RESULT; \
             } \
         } \
     })

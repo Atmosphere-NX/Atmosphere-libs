@@ -24,14 +24,19 @@ namespace sts::kvdb {
     class AutoBuffer {
         NON_COPYABLE(AutoBuffer);
         private:
-            std::unique_ptr<u8[]> buffer;
+            u8 *buffer;
             size_t size;
         public:
-            AutoBuffer() : size(0) { /* ... */ }
+            AutoBuffer() : buffer(nullptr), size(0) { /* ... */ }
+
+            ~AutoBuffer() {
+                this->Reset();
+            }
 
             AutoBuffer(AutoBuffer &&rhs) {
-                this->buffer = std::move(rhs.buffer);
+                this->buffer = rhs.buffer;
                 this->size = rhs.size;
+                rhs.buffer = nullptr;
                 rhs.size = 0;
             }
 
@@ -46,12 +51,15 @@ namespace sts::kvdb {
             }
 
             void Reset() {
-                this->buffer.reset();
-                this->size = 0;
+                if (this->buffer != nullptr) {
+                    std::free(this->buffer);
+                    this->buffer = nullptr;
+                    this->size = 0;
+                }
             }
 
             u8 *Get() const {
-                return this->buffer.get();
+                return this->buffer;
             }
 
             size_t GetSize() const {
@@ -65,12 +73,10 @@ namespace sts::kvdb {
                 }
 
                 /* Allocate a buffer. */
-                auto mem = new (std::nothrow) u8[size];
-                if (mem == nullptr) {
+                this->buffer = static_cast<u8 *>(std::malloc(size));
+                if (this->buffer == nullptr) {
                     return ResultKvdbAllocationFailed;
                 }
-
-                this->buffer.reset(mem);
                 this->size = size;
                 return ResultSuccess;
             }
@@ -80,7 +86,7 @@ namespace sts::kvdb {
                 R_TRY(this->Initialize(size));
 
                 /* Copy the input data in. */
-                std::memcpy(this->buffer.get(), buf, size);
+                std::memcpy(this->buffer, buf, size);
 
                 return ResultSuccess;
             }

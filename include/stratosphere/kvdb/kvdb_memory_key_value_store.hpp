@@ -150,7 +150,7 @@ namespace sts::kvdb {
                             /* We need to add a new entry. Check we have room, move future keys forward. */
                             if (this->count >= this->capacity) {
                                 std::free(new_value);
-                                return ResultKvdbTooManyKeys;
+                                return ResultKvdbKeyCapacityInsufficient;
                             }
                             std::memmove(it + 1, it, sizeof(*it) * (this->end() - it));
                             this->count++;
@@ -163,7 +163,7 @@ namespace sts::kvdb {
 
                     Result AddUnsafe(const Key &key, void *value, size_t value_size) {
                         if (this->count >= this->capacity) {
-                            return ResultKvdbTooManyKeys;
+                            return ResultKvdbKeyCapacityInsufficient;
                         }
 
                         this->entries[this->count++] = Entry(key, value, value_size);
@@ -506,9 +506,12 @@ namespace sts::kvdb {
                 /* Try to delete temporary archive, but allow deletion failure (it may not exist). */
                 std::remove(this->temp_path.Get());
 
+                /* Create new temporary archive. */
+                R_TRY(fsdevCreateFile(this->temp_path.Get(), buffer.GetSize(), 0));
+
                 /* Write data to the temporary archive. */
                 {
-                    FILE *f = fopen(this->temp_path, "wb");
+                    FILE *f = fopen(this->temp_path, "r+b");
                     if (f == nullptr) {
                         return fsdevGetLastResult();
                     }

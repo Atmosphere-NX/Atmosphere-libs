@@ -38,20 +38,20 @@ namespace sts::kvdb {
             }
         public:
             /* Constructors. */
-            BoundedString() {
+            constexpr BoundedString() {
                 buffer[0] = 0;
             }
 
-            explicit BoundedString(const char *s) {
+            explicit constexpr BoundedString(const char *s) {
                 this->Set(s);
             }
 
             /* Static constructors. */
-            static BoundedString<N> Make(const char *s) {
+            static constexpr BoundedString<N> Make(const char *s) {
                 return BoundedString<N>(s);
             }
 
-            static BoundedString<N> MakeFormat(const char *format, ...) __attribute__((format (printf, 1, 2)))  {
+            static constexpr BoundedString<N> MakeFormat(const char *format, ...) __attribute__((format (printf, 1, 2)))  {
                 BoundedString<N> string;
 
                 std::va_list args;
@@ -142,7 +142,7 @@ namespace sts::kvdb {
                 return std::strncmp(this->buffer + offset, s, N - offset) == 0;
             }
 
-            bool EndsWith(const char *s) {
+            bool EndsWith(const char *s) const {
                 const size_t suffix_length = strnlen(s, N);
                 const size_t length = GetLength();
                 return suffix_length <= length && EndsWith(s, length - suffix_length);
