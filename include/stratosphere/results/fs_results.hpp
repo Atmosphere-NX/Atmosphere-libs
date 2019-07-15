@@ -25,6 +25,16 @@ static constexpr Result ResultFsPathAlreadyExists  = MAKERESULT(Module_Fs, 2);
 static constexpr Result ResultFsTargetLocked       = MAKERESULT(Module_Fs, 7);
 static constexpr Result ResultFsDirectoryNotEmpty  = MAKERESULT(Module_Fs, 8);
 
+static constexpr Result ResultFsNotEnoughFreeSpaceRangeStart             = MAKERESULT(Module_Fs, 30);
+    static constexpr Result ResultFsNotEnoughFreeSpaceBisRangeStart      = MAKERESULT(Module_Fs, 34);
+        static constexpr Result ResultFsNotEnoughFreeSpaceBisCalibration = MAKERESULT(Module_Fs, 35);
+        static constexpr Result ResultFsNotEnoughFreeSpaceBisSafe        = MAKERESULT(Module_Fs, 36);
+        static constexpr Result ResultFsNotEnoughFreeSpaceBisUser        = MAKERESULT(Module_Fs, 37);
+        static constexpr Result ResultFsNotEnoughFreeSpaceBisSystem      = MAKERESULT(Module_Fs, 38);
+    static constexpr Result ResultFsNotEnoughFreeSpaceBisRangeEnd        = MAKERESULT(Module_Fs, 39);
+    static constexpr Result ResultFsNotEnoughFreeSpaceSdCard             = MAKERESULT(Module_Fs, 39);
+static constexpr Result ResultFsNotEnoughFreeSpaceRangeEnd               = MAKERESULT(Module_Fs, 45);
+
 static constexpr Result ResultFsMountNameAlreadyExists = MAKERESULT(Module_Fs, 60);
 
 static constexpr Result ResultFsTargetNotFound   = MAKERESULT(Module_Fs, 1002);
