@@ -19,3 +19,5 @@
 
 #include "util/util_compression.hpp"
 #include "util/util_ini.hpp"
+#include "util/util_intrusive_list.hpp"
+#include "util/util_intrusive_red_black_tree.hpp"
