@@ -19,7 +19,6 @@
 #include <cstdlib>
 #include <cstring>
 #include <tuple>
-#include <boost/callable_traits.hpp>
 #include <type_traits>
 #include <memory>
 
@@ -35,16 +34,6 @@
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-but-set-variable"
-
-template<typename Tuple>
-struct PopFront;
-
-template<typename Head, typename... Tail>
-struct PopFront<std::tuple<Head, Tail...>> {
-    using type = std::tuple<Tail...>;
-};
-
-template <typename ...> struct WhichType;
 
 template <typename...>
 struct TypeList{};
@@ -560,12 +549,31 @@ struct Encoder<MetaInfo, std::tuple<Args...>> {
 
 /* ================================================================================= */
 
-template<auto IpcCommandImpl, typename ClassType = boost::callable_traits::class_of_t<decltype(IpcCommandImpl)>>
+template<auto MemberFunction>
+struct MemberFunctionTraits {
+    private:
+        template<typename R, typename C, typename... A>
+        static R GetReturnTypeImpl(R(C::*)(A...));
+
+        template<typename R, typename C, typename... A>
+        static C GetClassTypeImpl(R(C::*)(A...));
+
+        template<typename R, typename C, typename... A>
+        static std::tuple<A...> GetArgsImpl(R(C::*)(A...));
+    public:
+        using ReturnType = decltype(GetReturnTypeImpl(MemberFunction));
+        using ClassType  = decltype(GetClassTypeImpl(MemberFunction));
+        using ArgsType   = decltype(GetArgsImpl(MemberFunction));
+};
+
+template<auto IpcCommandImpl, typename ClassType = typename MemberFunctionTraits<IpcCommandImpl>::ClassType>
 constexpr Result WrapIpcCommandImpl(IpcResponseContext *ctx) {
-    using InArgs = typename PopFront<typename boost::callable_traits::args_t<decltype(IpcCommandImpl)>>::type;
-    using OutArgs = typename boost::callable_traits::return_type_t<decltype(IpcCommandImpl)>;
-    static_assert(std::is_base_of_v<boost::callable_traits::class_of_t<decltype(IpcCommandImpl)>, ClassType>, "Override class type incorrect");
-    using CommandMetaData = CommandMetaInfo<InArgs, OutArgs>;
+    using Traits        = MemberFunctionTraits<IpcCommandImpl>;
+    using ArgsType      = typename Traits::ArgsType;
+    using ReturnType    = typename Traits::ReturnType;
+    using BaseClassType = typename Traits::ClassType;
+    static_assert(std::is_base_of_v<BaseClassType, ClassType>, "Override class type incorrect");
+    using CommandMetaData = CommandMetaInfo<ArgsType, ReturnType>;
 
     static_assert(CommandMetaData::ReturnsResult || CommandMetaData::ReturnsVoid, "IpcCommandImpls must return Result or void");
 
