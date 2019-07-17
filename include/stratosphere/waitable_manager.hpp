@@ -18,8 +18,7 @@
 
 #include <switch.h>
 #include <memory>
-
-#include "../meta_tools.hpp"
+#include <functional>
 
 #include "results.hpp"
 #include "waitable_manager_base.hpp"
