@@ -15,10 +15,18 @@
  */
 
 #pragma once
-#include <switch.h>
 
-#include "pm/pm_types.hpp"
-#include "pm/pm_boot_mode_api.hpp"
-#include "pm/pm_info_api.hpp"
-#include "pm/pm_shell_api.hpp"
-#include "pm/pm_dmnt_api.hpp"
+#include "../ldr.hpp"
+#include "pm_types.hpp"
+
+namespace sts::pm::dmnt {
+
+    /* Debug Monitor API. */
+    Result StartProcess(u64 process_id);
+    Result GetProcessId(u64 *out_process_id, const ncm::TitleId title_id);
+    Result GetApplicationProcessId(u64 *out_process_id);
+    Result HookToCreateApplicationProcess(Handle *out_handle);
+    Result AtmosphereGetProcessInfo(Handle *out_handle, ncm::TitleLocation *out_loc, u64 process_id);
+    Result AtmosphereGetCurrentLimitInfo(u64 *out_current_value, u64 *out_limit_value, ResourceLimitGroup group, LimitableResource resource);
+
+}
