@@ -17,16 +17,21 @@
 #pragma once
 #include <switch.h>
 
-#include "os/os_common_types.hpp"
-#include "os/os_managed_handle.hpp"
-#include "os/os_mutex.hpp"
-#include "os/os_condvar.hpp"
-#include "os/os_semaphore.hpp"
-#include "os/os_timeout_helper.hpp"
-#include "os/os_event.hpp"
-#include "os/os_system_event.hpp"
-#include "os/os_interrupt_event.hpp"
-#include "os/os_thread.hpp"
-#include "os/os_message_queue.hpp"
-#include "os/os_waitable_holder.hpp"
-#include "os/os_waitable_manager.hpp"
+namespace sts::util {
+
+    /* std::size() does not support zero-size C arrays. We're fixing that. */
+    template<class C>
+    constexpr auto size(const C& c) -> decltype(c.size()) {
+        return std::size(c);
+    }
+
+    template<class C>
+    constexpr std::size_t size(const C& c) {
+        if constexpr (sizeof(C) == 0) {
+            return 0;
+        } else {
+            return std::size(c);
+        }
+    }
+
+}

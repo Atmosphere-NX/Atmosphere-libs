@@ -13,20 +13,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 #pragma once
-#include <switch.h>
+#include "os_waitable_holder_base.hpp"
 
-#include "os/os_common_types.hpp"
-#include "os/os_managed_handle.hpp"
-#include "os/os_mutex.hpp"
-#include "os/os_condvar.hpp"
-#include "os/os_semaphore.hpp"
-#include "os/os_timeout_helper.hpp"
-#include "os/os_event.hpp"
-#include "os/os_system_event.hpp"
-#include "os/os_interrupt_event.hpp"
-#include "os/os_thread.hpp"
-#include "os/os_message_queue.hpp"
-#include "os/os_waitable_holder.hpp"
-#include "os/os_waitable_manager.hpp"
+namespace sts::os::impl {
+
+    class WaitableHolderOfHandle : public WaitableHolderOfKernelObject {
+        private:
+            Handle handle;
+        public:
+            explicit WaitableHolderOfHandle(Handle h) : handle(h) { /* ... */ }
+
+            /* IsSignaled, GetHandle both implemented. */
+            virtual TriBool IsSignaled() const override {
+                return TriBool::Undefined;
+            }
+
+            virtual Handle GetHandle() const override {
+                return this->handle;
+            }
+    };
+
+}

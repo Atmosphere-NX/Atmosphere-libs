@@ -17,16 +17,7 @@
 #pragma once
 #include <switch.h>
 
-#include "os/os_common_types.hpp"
-#include "os/os_managed_handle.hpp"
-#include "os/os_mutex.hpp"
-#include "os/os_condvar.hpp"
-#include "os/os_semaphore.hpp"
-#include "os/os_timeout_helper.hpp"
-#include "os/os_event.hpp"
-#include "os/os_system_event.hpp"
-#include "os/os_interrupt_event.hpp"
-#include "os/os_thread.hpp"
-#include "os/os_message_queue.hpp"
-#include "os/os_waitable_holder.hpp"
-#include "os/os_waitable_manager.hpp"
+static constexpr u32 Module_Os = 3;
+
+static constexpr Result ResultOsOutOfMemory       = MAKERESULT(Module_Os, 8);
+static constexpr Result ResultOsResourceExhausted = MAKERESULT(Module_Os, 9);

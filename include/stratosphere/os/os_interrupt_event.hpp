@@ -15,35 +15,32 @@
  */
 
 #pragma once
-#include "os_mutex.hpp"
-#include "os_condvar.hpp"
-#include "os_timeout_helper.hpp"
+#include "os_common_types.hpp"
+#include "os_managed_handle.hpp"
 
 namespace sts::os {
 
     namespace impl {
 
-        class WaitableObjectList;
-        class WaitableHolderOfEvent;
+        class WaitableHolderOfInterruptEvent;
 
     }
 
-    class Event {
-        friend class impl::WaitableHolderOfEvent;
-        NON_COPYABLE(Event);
-        NON_MOVEABLE(Event);
+    class InterruptEvent {
+        friend class impl::WaitableHolderOfInterruptEvent;
+        NON_COPYABLE(InterruptEvent);
+        NON_MOVEABLE(InterruptEvent);
         private:
-            util::TypedStorage<impl::WaitableObjectList, sizeof(util::IntrusiveListNode), alignof(util::IntrusiveListNode)> waitable_object_list_storage;
-            Mutex lock;
-            ConditionVariable cv;
-            u64 counter = 0;
+            ManagedHandle handle;
             bool auto_clear;
-            bool signaled;
+            bool is_initialized;
         public:
-            Event(bool a = true, bool s = false);
-            ~Event();
+            InterruptEvent() : auto_clear(true), is_initialized(false) { }
+            InterruptEvent(u32 interrupt_id, bool autoclear = true);
 
-            void Signal();
+            Result Initialize(u32 interrupt_id, bool autoclear = true);
+            void Finalize();
+
             void Reset();
             void Wait();
             bool TryWait();
