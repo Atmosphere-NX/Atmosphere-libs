@@ -15,6 +15,14 @@
  */
 
 #pragma once
+#include <switch.h>
 
-#include "ams/ams_types.hpp"
-#include "ams/ams_hos_version_api.hpp"
+#include "sf/sf_common.hpp"
+#include "sf/sf_service_object.hpp"
+#include "sf/hipc/sf_hipc_server_session_manager.hpp"
+
+#include "sf/sf_out.hpp"
+#include "sf/sf_buffers.hpp"
+#include "sf/impl/sf_impl_command_serialization.hpp"
+
+#include "sf/hipc/sf_hipc_server_manager.hpp"

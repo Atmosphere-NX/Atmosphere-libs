@@ -15,6 +15,11 @@
  */
 
 #pragma once
+#include "ams_types.hpp"
 
-#include "ams/ams_types.hpp"
-#include "ams/ams_hos_version_api.hpp"
+namespace sts::hos {
+
+    sts::hos::Version GetVersion();
+    void SetVersionForLibnx();
+
+}

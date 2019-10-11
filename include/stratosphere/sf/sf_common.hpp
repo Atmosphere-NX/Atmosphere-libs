@@ -15,6 +15,11 @@
  */
 
 #pragma once
-
-#include "ams/ams_types.hpp"
-#include "ams/ams_hos_version_api.hpp"
+#include <type_traits>
+#include <memory>
+#include "../defines.hpp"
+#include "../results.hpp"
+#include "../util.hpp"
+#include "../svc.hpp"
+#include "../ams.hpp"
+#include "../os.hpp"

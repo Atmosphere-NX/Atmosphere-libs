@@ -13,8 +13,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include <functional>
+#include <stratosphere.hpp>
 
-#pragma once
+namespace sts::sf::cmif {
 
-#include "ams/ams_types.hpp"
-#include "ams/ams_hos_version_api.hpp"
+    Result ServiceObjectHolder::ProcessMessage(ServiceDispatchContext &ctx, const cmif::PointerAndSize &in_raw_data) const {
+        const auto ProcessHandler = this->dispatch_meta->ProcessHandler;
+        const auto *DispatchTable = this->dispatch_meta->DispatchTable;
+        return (DispatchTable->*ProcessHandler)(ctx, in_raw_data);
+    }
+
+}
