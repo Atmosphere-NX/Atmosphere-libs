@@ -15,18 +15,26 @@
  */
 
 #pragma once
+#include <switch.h>
+#include "../defines.hpp"
+#include "../results.hpp"
 
-#include "../ldr.hpp"
-#include "pm_types.hpp"
+namespace ams::hos {
 
-namespace ams::pm::dmnt {
-
-    /* Debug Monitor API. */
-    Result StartProcess(os::ProcessId process_id);
-    Result GetProcessId(os::ProcessId *out_process_id, const ncm::TitleId title_id);
-    Result GetApplicationProcessId(os::ProcessId *out_process_id);
-    Result HookToCreateApplicationProcess(Handle *out_handle);
-    Result AtmosphereGetProcessInfo(Handle *out_handle, ncm::TitleLocation *out_loc, os::ProcessId process_id);
-    Result AtmosphereGetCurrentLimitInfo(u64 *out_current_value, u64 *out_limit_value, ResourceLimitGroup group, LimitableResource resource);
+    enum Version : u16 {
+        Version_Min = 0,
+        Version_100 = Version_Min,
+        Version_200 = 1,
+        Version_300 = 2,
+        Version_400 = 3,
+        Version_500 = 4,
+        Version_600 = 5,
+        Version_700 = 6,
+        Version_800 = 7,
+        Version_810 = 8,
+        Version_900 = 9,
+        Version_Current = Version_900,
+        Version_Max = 32,
+    };
 
 }

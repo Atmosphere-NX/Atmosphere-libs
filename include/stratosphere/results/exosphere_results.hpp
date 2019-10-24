@@ -15,18 +15,16 @@
  */
 
 #pragma once
+#include "results_common.hpp"
 
-#include "../ldr.hpp"
-#include "pm_types.hpp"
+namespace ams::exosphere {
 
-namespace ams::pm::dmnt {
+    /* Please note: These results are all custom, and not official. */
+    R_DEFINE_NAMESPACE_RESULT_MODULE(444);
 
-    /* Debug Monitor API. */
-    Result StartProcess(os::ProcessId process_id);
-    Result GetProcessId(os::ProcessId *out_process_id, const ncm::TitleId title_id);
-    Result GetApplicationProcessId(os::ProcessId *out_process_id);
-    Result HookToCreateApplicationProcess(Handle *out_handle);
-    Result AtmosphereGetProcessInfo(Handle *out_handle, ncm::TitleLocation *out_loc, os::ProcessId process_id);
-    Result AtmosphereGetCurrentLimitInfo(u64 *out_current_value, u64 *out_limit_value, ResourceLimitGroup group, LimitableResource resource);
+
+    /* Result 1-1000 reserved for Atmosphere. */
+    R_DEFINE_ERROR_RESULT(NotPresent,       1);
+    R_DEFINE_ERROR_RESULT(VersionMismatch,  2);
 
 }
