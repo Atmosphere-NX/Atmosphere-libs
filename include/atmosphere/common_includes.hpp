@@ -16,16 +16,37 @@
 
 #pragma once
 
-#include "os/os_common_types.hpp"
-#include "os/os_managed_handle.hpp"
-#include "os/os_mutex.hpp"
-#include "os/os_condvar.hpp"
-#include "os/os_semaphore.hpp"
-#include "os/os_timeout_helper.hpp"
-#include "os/os_event.hpp"
-#include "os/os_system_event.hpp"
-#include "os/os_interrupt_event.hpp"
-#include "os/os_thread.hpp"
-#include "os/os_message_queue.hpp"
-#include "os/os_waitable_holder.hpp"
-#include "os/os_waitable_manager.hpp"
+/* C headers. */
+#include <cstdint>
+#include <cstdarg>
+#include <cstdlib>
+#include <cstddef>
+#include <cstdio>
+#include <cstring>
+#include <climits>
+#include <cctype>
+
+/* C++ headers. */
+#include <type_traits>
+#include <limits>
+#include <atomic>
+#include <utility>
+#include <iterator>
+#include <optional>
+#include <memory>
+#include <mutex>
+#include <algorithm>
+#include <functional>
+#include <tuple>
+#include <array>
+#include <map>
+#include <unordered_map>
+#include <set>
+
+/* Libnx. */
+#include <switch.h>
+
+/* Atmosphere meta. */
+#if __has_include(<atmosphere.h>)
+#include <atmosphere.h>
+#endif
