@@ -25,3 +25,5 @@
 #include "sf/impl/sf_impl_command_serialization.hpp"
 
 #include "sf/hipc/sf_hipc_server_manager.hpp"
+
+#include "sf/sf_mitm_dispatch.h"
