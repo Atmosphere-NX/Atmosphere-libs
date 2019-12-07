@@ -19,3 +19,4 @@
 #include "fssystem/fssystem_path_tool.hpp"
 #include "fssystem/fssystem_subdirectory_filesystem.hpp"
 #include "fssystem/fssystem_directory_redirection_filesystem.hpp"
+#include "fssystem/fssystem_directory_savedata_filesystem.hpp"
