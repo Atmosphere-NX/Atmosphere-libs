@@ -26,17 +26,23 @@
 #include <climits>
 #include <cctype>
 
-/* C++ headers. */
+
 #include <type_traits>
+#include <algorithm>
+#include <iterator>
 #include <limits>
+#include <random>
+
+/* Stratosphere wants stdlib headers, others do not.. */
+#ifdef ATMOSPHERE_IS_STRATOSPHERE
+
+/* C++ headers. */
 #include <atomic>
 #include <utility>
-#include <iterator>
 #include <optional>
 #include <memory>
 #include <mutex>
 #include <shared_mutex>
-#include <algorithm>
 #include <functional>
 #include <tuple>
 #include <array>
@@ -44,8 +50,18 @@
 #include <unordered_map>
 #include <set>
 
+#endif /* ATMOSPHERE_IS_STRATOSPHERE */
+
+#ifdef ATMOSPHERE_BOARD_NINTENDO_SWITCH
+
 /* Libnx. */
 #include <switch.h>
+
+#else
+
+#error "Unsupported board"
+
+#endif /* ATMOSPHERE_BOARD_NINTENDO_SWITCH */
 
 /* Atmosphere meta. */
 #if __has_include(<atmosphere.h>)

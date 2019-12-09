@@ -16,8 +16,8 @@
 
 #pragma once
 
-/* Pulls in util, svc. */
-#include "atmosphere/common.hpp"
+/* libvapours (pulls in util, svc, results). */
+#include <vapours.hpp>
 
 /* Critical modules with no dependencies. */
 #include "stratosphere/ams.hpp"

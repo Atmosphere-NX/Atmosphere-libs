@@ -15,7 +15,7 @@
  */
 
 #pragma once
-#include <atmosphere/common.hpp>
+#include <vapours.hpp>
 #include "settings_fwdbg_types.hpp"
 
 namespace ams::settings::fwdbg {

@@ -15,7 +15,7 @@
  */
 
 #pragma once
-#include <atmosphere/common.hpp>
+#include <vapours.hpp>
 #include "../ams.hpp"
 #include "../os.hpp"
 #include "../sm/sm_types.hpp"

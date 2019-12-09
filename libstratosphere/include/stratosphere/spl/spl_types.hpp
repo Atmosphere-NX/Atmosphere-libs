@@ -15,7 +15,7 @@
  */
 
 #pragma once
-#include <atmosphere/common.hpp>
+#include <vapours.hpp>
 
 namespace ams::spl {
 

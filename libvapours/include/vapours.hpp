@@ -15,8 +15,9 @@
  */
 
 #pragma once
-#include "common_includes.hpp"
-#include "defines.hpp"
-#include "util.hpp"
-#include "results.hpp"
-#include "svc.hpp"
+#include "vapours/includes.hpp"
+#include "vapours/defines.hpp"
+
+#include "vapours/util.hpp"
+#include "vapours/results.hpp"
+#include "vapours/svc.hpp"

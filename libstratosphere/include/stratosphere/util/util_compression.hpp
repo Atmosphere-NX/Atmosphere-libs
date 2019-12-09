@@ -15,17 +15,14 @@
  */
 
 #pragma once
-#include "../defines.hpp"
+#include <vapours.hpp>
 
-namespace ams::util::ini {
+namespace ams::util {
 
-    /* Ini handler type. */
-    using Handler = int (*)(void *user_ctx, const char *section, const char *name, const char *value);
+    /* Compression utilities. */
+    int CompressLZ4(void *dst, size_t dst_size, const void *src, size_t src_size);
 
-    /* Utilities for dealing with INI file configuration. */
-    int ParseString(const char *ini_str, void *user_ctx, Handler h);
-    int ParseFile(FILE *f, void *user_ctx, Handler h);
-    int ParseFile(FsFile *f, void *user_ctx, Handler h);
-    int ParseFile(const char *path, void *user_ctx, Handler h);
+    /* Decompression utilities. */
+    int DecompressLZ4(void *dst, size_t dst_size, const void *src, size_t src_size);
 
 }

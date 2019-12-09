@@ -15,14 +15,11 @@
  */
 
 #pragma once
-#include "../defines.hpp"
+#include "defines.hpp"
 
-namespace ams::util {
-
-    /* Compression utilities. */
-    int CompressLZ4(void *dst, size_t dst_size, const void *src, size_t src_size);
-
-    /* Decompression utilities. */
-    int DecompressLZ4(void *dst, size_t dst_size, const void *src, size_t src_size);
-
-}
+#include "util/util_alignment.hpp"
+#include "util/util_size.hpp"
+#include "util/util_scope_guard.hpp"
+#include "util/util_typed_storage.hpp"
+#include "util/util_intrusive_list.hpp"
+#include "util/util_intrusive_red_black_tree.hpp"

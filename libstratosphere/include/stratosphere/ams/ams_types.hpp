@@ -15,7 +15,7 @@
  */
 
 #pragma once
-#include <atmosphere/common.hpp>
+#include <vapours.hpp>
 #include "../sf/sf_buffer_tags.hpp"
 #include "../hos.hpp"
 
