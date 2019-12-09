@@ -21,41 +21,22 @@
 
 namespace ams::exosphere {
 
+    #define AMS_DEFINE_TARGET_FIRMWARE_ENUM(n) TargetFirmware_##n = ATMOSPHERE_TARGET_FIRMWARE_##n
     enum TargetFirmware : u32 {
-        TargetFirmware_100 = 1,
-        TargetFirmware_200 = 2,
-        TargetFirmware_300 = 3,
-        TargetFirmware_400 = 4,
-        TargetFirmware_500 = 5,
-        TargetFirmware_600 = 6,
-        TargetFirmware_620 = 7,
-        TargetFirmware_700 = 8,
-        TargetFirmware_800 = 9,
-        TargetFirmware_810 = 10,
-        TargetFirmware_900 = 11,
-        TargetFirmware_910 = 12,
+        AMS_DEFINE_TARGET_FIRMWARE_ENUM(100),
+        AMS_DEFINE_TARGET_FIRMWARE_ENUM(200),
+        AMS_DEFINE_TARGET_FIRMWARE_ENUM(300),
+        AMS_DEFINE_TARGET_FIRMWARE_ENUM(400),
+        AMS_DEFINE_TARGET_FIRMWARE_ENUM(500),
+        AMS_DEFINE_TARGET_FIRMWARE_ENUM(600),
+        AMS_DEFINE_TARGET_FIRMWARE_ENUM(620),
+        AMS_DEFINE_TARGET_FIRMWARE_ENUM(700),
+        AMS_DEFINE_TARGET_FIRMWARE_ENUM(800),
+        AMS_DEFINE_TARGET_FIRMWARE_ENUM(810),
+        AMS_DEFINE_TARGET_FIRMWARE_ENUM(900),
+        AMS_DEFINE_TARGET_FIRMWARE_ENUM(910),
     };
-
-#ifdef ATMOSPHERE_H
-/* #ifdef __has_include(<atmosphere.h>) */
-
-#define AMS_VALIDATE_TARGET_FIRMWARE_ENUM(n) static_assert(TargetFirmware_##n == ATMOSPHERE_TARGET_FIRMWARE_##n)
-
-        AMS_VALIDATE_TARGET_FIRMWARE_ENUM(100);
-        AMS_VALIDATE_TARGET_FIRMWARE_ENUM(200);
-        AMS_VALIDATE_TARGET_FIRMWARE_ENUM(300);
-        AMS_VALIDATE_TARGET_FIRMWARE_ENUM(400);
-        AMS_VALIDATE_TARGET_FIRMWARE_ENUM(500);
-        AMS_VALIDATE_TARGET_FIRMWARE_ENUM(620);
-        AMS_VALIDATE_TARGET_FIRMWARE_ENUM(700);
-        AMS_VALIDATE_TARGET_FIRMWARE_ENUM(800);
-        AMS_VALIDATE_TARGET_FIRMWARE_ENUM(810);
-        AMS_VALIDATE_TARGET_FIRMWARE_ENUM(900);
-        AMS_VALIDATE_TARGET_FIRMWARE_ENUM(910);
-
-#undef AMS_VALIDATE_TARGET_FIRMWARE_ENUM
-
-#endif
+    #undef AMS_DEFINE_TARGET_FIRMWARE_ENUM
 
     constexpr inline u32 GetVersion(u32 major, u32 minor, u32 micro) {
         return (major << 16) | (minor << 8) | (micro);
@@ -130,9 +111,9 @@ namespace ams {
     }
 #endif
 
-#ifdef ATMOSPHERE_GIT_REV
+#ifdef ATMOSPHERE_GIT_REVISION
     NX_CONSTEXPR const char *GetGitRevision() {
-        return ATMOSPHERE_GIT_REV;
+        return ATMOSPHERE_GIT_REVISION;
     }
 #endif
 

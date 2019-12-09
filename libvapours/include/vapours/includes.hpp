@@ -64,6 +64,4 @@
 #endif /* ATMOSPHERE_BOARD_NINTENDO_SWITCH */
 
 /* Atmosphere meta. */
-#if __has_include(<atmosphere.h>)
-#include <atmosphere.h>
-#endif
+#include "ams_version.h"

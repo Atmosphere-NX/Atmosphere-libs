@@ -19,6 +19,9 @@
 /* libvapours (pulls in util, svc, results). */
 #include <vapours.hpp>
 
+/* Libstratosphere-only utility. */
+#include "stratosphere/util.hpp"
+
 /* Critical modules with no dependencies. */
 #include "stratosphere/ams.hpp"
 #include "stratosphere/os.hpp"

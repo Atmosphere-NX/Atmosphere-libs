@@ -35,10 +35,6 @@ namespace ams::exosphere {
 namespace ams {
 
     /* Version checking utility. */
-#ifdef ATMOSPHERE_RELEASE_VERSION_MAJOR
-
-#define ATMOSPHERE_RELEASE_VERSION ATMOSPHERE_RELEASE_VERSION_MAJOR, ATMOSPHERE_RELEASE_VERSION_MINOR, ATMOSPHERE_RELEASE_VERSION_MICRO
-
     inline void CheckApiVersion() {
         const u32 runtime_version = exosphere::GetApiInfo().GetVersion();
         const u32 build_version   = exosphere::GetVersion(ATMOSPHERE_RELEASE_VERSION);
@@ -47,7 +43,5 @@ namespace ams {
             R_ASSERT(exosphere::ResultVersionMismatch());
         }
     }
-
-#endif
 
 }

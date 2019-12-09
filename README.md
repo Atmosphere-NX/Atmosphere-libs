@@ -22,7 +22,9 @@ In addition to those credited in [Atmosphère's credits](https://github.com/Atmo
 * @[devkitPro](https://github.com/devkitPro)
 * @[yellows8](https://github.com/yellows8)
 * @[qlutoo](https://github.com/plutooo)
+* @[hedgeberg](https://github.com/hedgeberg)
 * @[Nintendo](https://github.com/Nintendo)
 * @[NVidia](https://github.com/NVidia)
+* @[Kaphotics](https://github.com/kwsch)
 
 Additional credits may be found in the README.md for specific libraries.
