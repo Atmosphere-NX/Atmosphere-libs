@@ -21,6 +21,10 @@ namespace ams::kern {
     class KSystemControl {
         public:
 
+            /* Initialization. */
+            static KPhysicalAddress GetKernelPhysicalBaseAddress(uintptr_t base_address);
+            static bool ShouldIncreaseResourceRegionSize();
+
             /* Panic. */
             static NORETURN void StopSystem();
     };
