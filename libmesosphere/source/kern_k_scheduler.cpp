@@ -13,30 +13,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#pragma once
-#include <vapours.hpp>
-#include "kern_panic.hpp"
+#include <mesosphere.hpp>
 
 namespace ams::kern {
 
-    /* TODO: Actually select between architecture-specific interrupt code. */
-
-
-    /* Enable or disable interrupts for the lifetime of an object. */
-    class KScopedInterruptDisable {
-        NON_COPYABLE(KScopedInterruptDisable);
-        NON_MOVEABLE(KScopedInterruptDisable);
-        public:
-            KScopedInterruptDisable();
-            ~KScopedInterruptDisable();
-    };
-
-    class KScopedInterruptEnable {
-        NON_COPYABLE(KScopedInterruptEnable);
-        NON_MOVEABLE(KScopedInterruptEnable);
-        public:
-            KScopedInterruptEnable();
-            ~KScopedInterruptEnable();
-    };
+    KScheduler::KScheduler()
+        : is_active(false), core_id(0), prev_thread(nullptr), last_context_switch_time(0), idle_thread(nullptr)
+    {
+        this->state.needs_scheduling = true;
+        this->state.interrupt_task_thread_runnable = false;
+        this->state.should_count_idle = false;
+        this->state.idle_count = 0;
+        this->state.idle_thread_stack = nullptr;
+        this->state.highest_priority_thread = nullptr;
+    }
 
 }
