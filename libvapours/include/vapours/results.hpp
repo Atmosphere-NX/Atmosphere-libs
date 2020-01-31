@@ -23,6 +23,7 @@
 
 /* Official. */
 #include "results/cal_results.hpp"
+#include "results/capsrv_results.hpp"
 #include "results/creport_results.hpp"
 #include "results/debug_results.hpp"
 #include "results/dmnt_results.hpp"
