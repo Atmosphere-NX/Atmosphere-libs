@@ -13,17 +13,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#pragma once
-#include <mesosphere/kern_common.hpp>
-#include <mesosphere/arch/arm64/kern_k_page_table.hpp>
+#include <mesosphere.hpp>
 
-namespace ams::kern::arch::arm64 {
+namespace ams::kern {
 
-    class KProcessPageTable {
-        private:
-            KPageTable page_table;
-        public:
-            constexpr KProcessPageTable() : page_table() { /* ... */ }
-    };
+    void KWaitObject::OnTimer() {
+        MESOSPHERE_TODO_IMPLEMENT();
+    }
 
 }

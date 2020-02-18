@@ -15,15 +15,23 @@
  */
 #pragma once
 #include <mesosphere/kern_common.hpp>
-#include <mesosphere/arch/arm64/kern_k_page_table.hpp>
+#include <mesosphere/kern_k_timer_task.hpp>
+#include <mesosphere/kern_k_thread.hpp>
 
-namespace ams::kern::arch::arm64 {
+namespace ams::kern {
 
-    class KProcessPageTable {
+    class KWaitObject : public KTimerTask {
         private:
-            KPageTable page_table;
+            using Entry = KThread::QueueEntry;
+        private:
+            Entry root;
+            bool  uses_timer;
         public:
-            constexpr KProcessPageTable() : page_table() { /* ... */ }
+            constexpr KWaitObject() : root(), uses_timer() { /* ... */ }
+
+            virtual void OnTimer() override;
+
+            /* TODO: Member functions */
     };
 
 }
