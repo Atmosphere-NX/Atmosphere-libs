@@ -13,14 +13,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 #pragma once
+#include "fs_common.hpp"
 
-#include <stratosphere/ro/ro_types.hpp>
+namespace ams::fs {
 
-namespace ams::patcher {
-
-    /* Helper for applying to code binaries. */
-    void LocateAndApplyIpsPatchesToModule(const char *mount_name, const char *patch_dir, size_t protected_size, size_t offset, const ro::ModuleId *module_id, u8 *mapped_module, size_t mapped_size);
+    Result MountApplicationPackage(const char *name, const char *common_path);
 
 }
