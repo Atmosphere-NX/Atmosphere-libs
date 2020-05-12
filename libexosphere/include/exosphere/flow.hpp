@@ -16,24 +16,10 @@
 #pragma once
 #include <vapours.hpp>
 
-#include <exosphere/common.hpp>
-#include <exosphere/reg.hpp>
-#include <exosphere/hw.hpp>
-#include <exosphere/util.hpp>
-#include <exosphere/mmu.hpp>
-#include <exosphere/gic.hpp>
-#include <exosphere/wdt.hpp>
-#include <exosphere/pkg1.hpp>
-#include <exosphere/tsec.hpp>
-#include <exosphere/se.hpp>
-#include <exosphere/flow.hpp>
-#include <exosphere/fuse.hpp>
-#include <exosphere/i2c.hpp>
-#include <exosphere/uart.hpp>
-#include <exosphere/pmic.hpp>
-#include <exosphere/log.hpp>
-#include <exosphere/clkrst.hpp>
-#include <exosphere/actmon.hpp>
-#include <exosphere/pmc.hpp>
-#include <exosphere/secmon.hpp>
-#include <exosphere/tegra.hpp>
+namespace ams::flow {
+
+    void SetRegisterAddress(uintptr_t address);
+
+    void ResetCpuRegisters(int core);
+
+}
