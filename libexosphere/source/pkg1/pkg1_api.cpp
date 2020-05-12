@@ -13,11 +13,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#pragma once
-#include <vapours.hpp>
-#include <exosphere/pkg1/pkg1_bootloader_parameters.hpp>
-#include <exosphere/pkg1/pkg1_boot_config.hpp>
-#include <exosphere/pkg1/pkg1_error_types.hpp>
-#include <exosphere/pkg1/pkg1_key_generation.hpp>
-#include <exosphere/pkg1/pkg1_se_key_slots.hpp>
-#include <exosphere/pkg1/pkg1_api.hpp>
+#include <exosphere.hpp>
+
+namespace ams::pkg1 {
+
+    namespace {
+
+        bool IsProductionImpl() {
+            return fuse::GetHardwareState() != fuse::HardwareState_Development;
+        }
+
+    }
+
+    bool IsProduction() {
+        return IsProductionImpl();
+    }
+
+    bool IsProductionForVersionCheck() {
+        return IsProductionImpl();
+    }
+
+    bool IsProductionForPublicKey() {
+        return IsProductionImpl();
+    }
+
+}

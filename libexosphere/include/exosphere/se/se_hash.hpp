@@ -15,9 +15,16 @@
  */
 #pragma once
 #include <vapours.hpp>
-#include <exosphere/pkg1/pkg1_bootloader_parameters.hpp>
-#include <exosphere/pkg1/pkg1_boot_config.hpp>
-#include <exosphere/pkg1/pkg1_error_types.hpp>
-#include <exosphere/pkg1/pkg1_key_generation.hpp>
-#include <exosphere/pkg1/pkg1_se_key_slots.hpp>
-#include <exosphere/pkg1/pkg1_api.hpp>
+
+namespace ams::se {
+
+    constexpr inline int Sha256HashSize = crypto::Sha256Generator::HashSize;
+
+    union Sha256Hash {
+        u8  bytes[Sha256HashSize / sizeof( u8)];
+        u32 words[Sha256HashSize / sizeof(u32)];
+    };
+
+    void CalculateSha256(Sha256Hash *dst, const void *src, size_t src_size);
+
+}

@@ -15,9 +15,11 @@
  */
 #pragma once
 #include <vapours.hpp>
-#include <exosphere/pkg1/pkg1_bootloader_parameters.hpp>
-#include <exosphere/pkg1/pkg1_boot_config.hpp>
-#include <exosphere/pkg1/pkg1_error_types.hpp>
-#include <exosphere/pkg1/pkg1_key_generation.hpp>
-#include <exosphere/pkg1/pkg1_se_key_slots.hpp>
-#include <exosphere/pkg1/pkg1_api.hpp>
+
+namespace ams::pkg1 {
+
+    bool IsProduction();
+    bool IsProductionForVersionCheck();
+    bool IsProductionForPublicKey();
+
+}

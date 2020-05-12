@@ -15,9 +15,16 @@
  */
 #pragma once
 #include <vapours.hpp>
-#include <exosphere/pkg1/pkg1_bootloader_parameters.hpp>
-#include <exosphere/pkg1/pkg1_boot_config.hpp>
-#include <exosphere/pkg1/pkg1_error_types.hpp>
-#include <exosphere/pkg1/pkg1_key_generation.hpp>
-#include <exosphere/pkg1/pkg1_se_key_slots.hpp>
-#include <exosphere/pkg1/pkg1_api.hpp>
+
+#include <exosphere/br/impl/br_erista_types.hpp>
+#include <exosphere/br/impl/br_mariko_types.hpp>
+
+namespace ams::br {
+
+    struct BootEcid {
+        u32 ecid[4];
+    };
+    static_assert(util::is_pod<BootEcid>::value);
+    static_assert(sizeof(BootEcid) == 0x10);
+
+}
