@@ -16,4 +16,13 @@
 #pragma once
 #include <vapours.hpp>
 
-#define EVP_CPU_RESET_VECTOR (0x100)
+#define EVP_CPU_RESET_VECTOR          (0x100)
+
+#define EVP_COP_RESET_VECTOR          (0x200)
+#define EVP_COP_UNDEF_VECTOR          (0x204)
+#define EVP_COP_SWI_VECTOR            (0x208)
+#define EVP_COP_PREFETCH_ABORT_VECTOR (0x20C)
+#define EVP_COP_DATA_ABORT_VECTOR     (0x210)
+#define EVP_COP_RSVD_VECTOR           (0x214)
+#define EVP_COP_IRQ_VECTOR            (0x218)
+#define EVP_COP_FIQ_VECTOR            (0x21C)
