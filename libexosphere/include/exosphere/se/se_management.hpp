@@ -30,4 +30,6 @@ namespace ams::se {
 
     void HandleInterrupt();
 
+    void ValidateAesOperationResult();
+
 }
