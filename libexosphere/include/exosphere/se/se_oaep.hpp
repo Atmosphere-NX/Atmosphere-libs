@@ -16,11 +16,8 @@
 #pragma once
 #include <vapours.hpp>
 
-#include <exosphere/se/se_common.hpp>
-#include <exosphere/se/se_management.hpp>
-#include <exosphere/se/se_aes.hpp>
-#include <exosphere/se/se_hash.hpp>
-#include <exosphere/se/se_oaep.hpp>
-#include <exosphere/se/se_rsa.hpp>
-#include <exosphere/se/se_rng.hpp>
-#include <exosphere/se/se_suspend.hpp>
+namespace ams::se {
+
+    size_t DecodeRsaOaepSha256(void *dst, size_t dst_size, void *src, size_t src_size, const void *label_digest, size_t label_digest_size);
+
+}
