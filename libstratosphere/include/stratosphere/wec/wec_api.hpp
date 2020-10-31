@@ -13,11 +13,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 #pragma once
-#include <stratosphere/gpio/gpio_types.hpp>
-#include <stratosphere/gpio/sf/gpio_sf_i_pad_session.hpp>
-#include <stratosphere/gpio/sf/gpio_sf_i_manager.hpp>
-#include <stratosphere/gpio/gpio_api.hpp>
-#include <stratosphere/gpio/gpio_pad_api.hpp>
-#include <stratosphere/gpio/driver/gpio_select_driver_api.hpp>
+#include <vapours.hpp>
+#include <stratosphere/wec/wec_types.hpp>
+
+namespace ams::wec {
+
+    void Initialize();
+    void ClearWakeEvents();
+
+    void WecRestoreForExitSuspend();
+
+    void SetWakeEventLevel(wec::WakeEvent event, wec::WakeEventLevel level);
+    void SetWakeEventEnabled(wec::WakeEvent event, bool en);
+
+}

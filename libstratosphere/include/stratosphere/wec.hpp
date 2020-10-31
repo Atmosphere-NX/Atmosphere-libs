@@ -15,9 +15,5 @@
  */
 
 #pragma once
-#include <stratosphere/gpio/gpio_types.hpp>
-#include <stratosphere/gpio/sf/gpio_sf_i_pad_session.hpp>
-#include <stratosphere/gpio/sf/gpio_sf_i_manager.hpp>
-#include <stratosphere/gpio/gpio_api.hpp>
-#include <stratosphere/gpio/gpio_pad_api.hpp>
-#include <stratosphere/gpio/driver/gpio_select_driver_api.hpp>
+#include <stratosphere/wec/wec_types.hpp>
+#include <stratosphere/wec/wec_api.hpp>

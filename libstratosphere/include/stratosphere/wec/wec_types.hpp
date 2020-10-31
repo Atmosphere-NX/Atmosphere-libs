@@ -13,11 +13,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 #pragma once
-#include <stratosphere/gpio/gpio_types.hpp>
-#include <stratosphere/gpio/sf/gpio_sf_i_pad_session.hpp>
-#include <stratosphere/gpio/sf/gpio_sf_i_manager.hpp>
-#include <stratosphere/gpio/gpio_api.hpp>
-#include <stratosphere/gpio/gpio_pad_api.hpp>
-#include <stratosphere/gpio/driver/gpio_select_driver_api.hpp>
+#include <vapours.hpp>
+
+#if defined(ATMOSPHERE_BOARD_NINTENDO_NX)
+
+    #include <stratosphere/wec/wec_wake_event.board.nintendo_nx.hpp>
+
+#else
+
+    #error "Unknown board for ams::wec::WakeEvent"
+
+#endif
+
+namespace ams::wec {
+
+    enum WakeEventLevel {
+        WakeEventLevel_Low  = 0,
+        WakeEventLevel_High = 1,
+        WakeEventLevel_Auto = 2,
+    };
+
+}
