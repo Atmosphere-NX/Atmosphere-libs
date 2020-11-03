@@ -14,23 +14,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #pragma once
-#include <vapours.hpp>
-#include <stratosphere/pwm/pwm_types.hpp>
-#include <stratosphere/ddsf.hpp>
+#include <stratosphere.hpp>
+#include "powctl_i_power_control_driver.hpp"
 
-namespace ams::pwm::driver {
+namespace ams::powctl::impl {
 
-    class IPwmDevice : public ::ams::ddsf::IDevice {
-        NON_COPYABLE(IPwmDevice);
-        NON_MOVEABLE(IPwmDevice);
-        AMS_DDSF_CASTABLE_TRAITS(ams::pwm::driver::IPwmDevice, ::ams::ddsf::IDevice);
-        private:
-            int channel_index;
-        public:
-            IPwmDevice(int id) : IDevice(false), channel_index(id) { /* ... */ }
-            virtual ~IPwmDevice() { /* ... */ }
+    void InitializeDrivers();
+    void FinalizeDrivers();
 
-            constexpr int GetChannelIndex() const { return this->channel_index; }
-    };
+    void RegisterDriver(IPowerControlDriver *driver);
+    void UnregisterDriver(IPowerControlDriver *driver);
+
+    Result RegisterDeviceCode(DeviceCode device_code, IDevice *device);
+    bool UnregisterDeviceCode(DeviceCode device_code);
+
+    void RegisterInterruptHandler(ddsf::IEventHandler *handler);
+    void UnregisterInterruptHandler(ddsf::IEventHandler *handler);
+
+    Result FindDevice(IDevice **out, DeviceCode device_code);
 
 }

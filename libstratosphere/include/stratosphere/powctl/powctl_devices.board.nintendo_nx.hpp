@@ -15,22 +15,15 @@
  */
 #pragma once
 #include <vapours.hpp>
-#include <stratosphere/pwm/pwm_types.hpp>
-#include <stratosphere/ddsf.hpp>
+#include <stratosphere/i2c.hpp>
+#include <stratosphere/powctl/powctl_types.hpp>
 
-namespace ams::pwm::driver {
+namespace ams::powctl {
 
-    class IPwmDevice : public ::ams::ddsf::IDevice {
-        NON_COPYABLE(IPwmDevice);
-        NON_MOVEABLE(IPwmDevice);
-        AMS_DDSF_CASTABLE_TRAITS(ams::pwm::driver::IPwmDevice, ::ams::ddsf::IDevice);
-        private:
-            int channel_index;
-        public:
-            IPwmDevice(int id) : IDevice(false), channel_index(id) { /* ... */ }
-            virtual ~IPwmDevice() { /* ... */ }
+    /* Fuel Gauge. */
+    constexpr inline const DeviceCode DeviceCode_Max17050 = i2c::DeviceCode_Max17050;
 
-            constexpr int GetChannelIndex() const { return this->channel_index; }
-    };
+    /* Charger. */
+    constexpr inline const DeviceCode DeviceCode_Bq24193  = i2c::DeviceCode_Bq24193;
 
 }

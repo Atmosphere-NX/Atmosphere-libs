@@ -15,22 +15,27 @@
  */
 #pragma once
 #include <vapours.hpp>
-#include <stratosphere/pwm/pwm_types.hpp>
-#include <stratosphere/ddsf.hpp>
 
-namespace ams::pwm::driver {
+namespace ams::powctl {
 
-    class IPwmDevice : public ::ams::ddsf::IDevice {
-        NON_COPYABLE(IPwmDevice);
-        NON_MOVEABLE(IPwmDevice);
-        AMS_DDSF_CASTABLE_TRAITS(ams::pwm::driver::IPwmDevice, ::ams::ddsf::IDevice);
-        private:
-            int channel_index;
-        public:
-            IPwmDevice(int id) : IDevice(false), channel_index(id) { /* ... */ }
-            virtual ~IPwmDevice() { /* ... */ }
+    /* Charger types. */
+    enum ChargerStatus {
+        ChargerStatus_Charging              = 1,
 
-            constexpr int GetChannelIndex() const { return this->channel_index; }
+        ChargerStatus_NotCharging           = 3,
+        ChargerStatus_ChargeTerminationDone = 4,
+    };
+
+    enum ChargerConfiguration {
+        ChargerConfiguration_ChargeDisable = 0,
+        ChargerConfiguration_ChargeBattery = 1,
+        ChargerConfiguration_Otg           = 2,
+    };
+
+    enum ChargeCurrentState {
+        ChargeCurrentState_NotCharging            = 0x1,
+        ChargeCurrentState_ChargingForce20Percent = 0x2,
+        ChargeCurrentState_Charging               = 0x3,
     };
 
 }

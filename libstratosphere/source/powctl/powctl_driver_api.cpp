@@ -13,24 +13,27 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#pragma once
-#include <vapours.hpp>
-#include <stratosphere/pwm/pwm_types.hpp>
-#include <stratosphere/ddsf.hpp>
+#include <stratosphere.hpp>
+#include "impl/powctl_select_board_driver.hpp"
+#include "impl/powctl_device_management.hpp"
 
-namespace ams::pwm::driver {
+namespace ams::powctl {
 
-    class IPwmDevice : public ::ams::ddsf::IDevice {
-        NON_COPYABLE(IPwmDevice);
-        NON_MOVEABLE(IPwmDevice);
-        AMS_DDSF_CASTABLE_TRAITS(ams::pwm::driver::IPwmDevice, ::ams::ddsf::IDevice);
-        private:
-            int channel_index;
-        public:
-            IPwmDevice(int id) : IDevice(false), channel_index(id) { /* ... */ }
-            virtual ~IPwmDevice() { /* ... */ }
+    void Initialize(bool enable_interrupt_handlers) {
+        /* Initialize the board driver. */
+        impl::board::Initialize(enable_interrupt_handlers);
 
-            constexpr int GetChannelIndex() const { return this->channel_index; }
-    };
+        /* Initialize drivers. */
+        impl::InitializeDrivers();
+
+    }
+
+    void Finalize() {
+        /* Finalize drivers. */
+        impl::FinalizeDrivers();
+
+        /* Finalize the board driver. */
+        impl::board::Finalize();
+    }
 
 }

@@ -13,24 +13,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 #pragma once
-#include <vapours.hpp>
-#include <stratosphere/pwm/pwm_types.hpp>
-#include <stratosphere/ddsf.hpp>
-
-namespace ams::pwm::driver {
-
-    class IPwmDevice : public ::ams::ddsf::IDevice {
-        NON_COPYABLE(IPwmDevice);
-        NON_MOVEABLE(IPwmDevice);
-        AMS_DDSF_CASTABLE_TRAITS(ams::pwm::driver::IPwmDevice, ::ams::ddsf::IDevice);
-        private:
-            int channel_index;
-        public:
-            IPwmDevice(int id) : IDevice(false), channel_index(id) { /* ... */ }
-            virtual ~IPwmDevice() { /* ... */ }
-
-            constexpr int GetChannelIndex() const { return this->channel_index; }
-    };
-
-}
+#include <stratosphere/powctl/powctl_types.hpp>
+#include <stratosphere/powctl/powctl_select_devices.hpp>
+#include <stratosphere/powctl/powctl_session_api.hpp>
+#include <stratosphere/powctl/powctl_battery_api.hpp>
+#include <stratosphere/powctl/powctl_charger_api.hpp>
+#include <stratosphere/powctl/driver/powctl_driver_api.hpp>

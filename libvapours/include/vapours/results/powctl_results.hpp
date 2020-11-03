@@ -13,24 +13,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 #pragma once
-#include <vapours.hpp>
-#include <stratosphere/pwm/pwm_types.hpp>
-#include <stratosphere/ddsf.hpp>
+#include <vapours/results/results_common.hpp>
 
-namespace ams::pwm::driver {
+namespace ams::powctl {
 
-    class IPwmDevice : public ::ams::ddsf::IDevice {
-        NON_COPYABLE(IPwmDevice);
-        NON_MOVEABLE(IPwmDevice);
-        AMS_DDSF_CASTABLE_TRAITS(ams::pwm::driver::IPwmDevice, ::ams::ddsf::IDevice);
-        private:
-            int channel_index;
-        public:
-            IPwmDevice(int id) : IDevice(false), channel_index(id) { /* ... */ }
-            virtual ~IPwmDevice() { /* ... */ }
+    R_DEFINE_NAMESPACE_RESULT_MODULE(198);
 
-            constexpr int GetChannelIndex() const { return this->channel_index; }
-    };
+    R_DEFINE_ERROR_RESULT(NotSupported,    1);
+    R_DEFINE_ERROR_RESULT(InvalidArgument, 2);
+    R_DEFINE_ERROR_RESULT(NotAvailable,    3);
 
 }

@@ -15,22 +15,11 @@
  */
 #pragma once
 #include <vapours.hpp>
-#include <stratosphere/pwm/pwm_types.hpp>
-#include <stratosphere/ddsf.hpp>
+#include <stratosphere/powctl/powctl_types.hpp>
 
-namespace ams::pwm::driver {
+namespace ams::powctl {
 
-    class IPwmDevice : public ::ams::ddsf::IDevice {
-        NON_COPYABLE(IPwmDevice);
-        NON_MOVEABLE(IPwmDevice);
-        AMS_DDSF_CASTABLE_TRAITS(ams::pwm::driver::IPwmDevice, ::ams::ddsf::IDevice);
-        private:
-            int channel_index;
-        public:
-            IPwmDevice(int id) : IDevice(false), channel_index(id) { /* ... */ }
-            virtual ~IPwmDevice() { /* ... */ }
-
-            constexpr int GetChannelIndex() const { return this->channel_index; }
-    };
+    void Initialize(bool enable_interrupt_handlers);
+    void Finalize();
 
 }

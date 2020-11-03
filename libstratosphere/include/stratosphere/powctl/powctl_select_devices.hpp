@@ -15,22 +15,10 @@
  */
 #pragma once
 #include <vapours.hpp>
-#include <stratosphere/pwm/pwm_types.hpp>
-#include <stratosphere/ddsf.hpp>
+#include <stratosphere/powctl/powctl_types.hpp>
 
-namespace ams::pwm::driver {
-
-    class IPwmDevice : public ::ams::ddsf::IDevice {
-        NON_COPYABLE(IPwmDevice);
-        NON_MOVEABLE(IPwmDevice);
-        AMS_DDSF_CASTABLE_TRAITS(ams::pwm::driver::IPwmDevice, ::ams::ddsf::IDevice);
-        private:
-            int channel_index;
-        public:
-            IPwmDevice(int id) : IDevice(false), channel_index(id) { /* ... */ }
-            virtual ~IPwmDevice() { /* ... */ }
-
-            constexpr int GetChannelIndex() const { return this->channel_index; }
-    };
-
-}
+#if defined(ATMOSPHERE_BOARD_NINTENDO_NX)
+    #include <stratosphere/powctl/powctl_devices.board.nintendo_nx.hpp>
+#else
+    /* Error? */
+#endif
