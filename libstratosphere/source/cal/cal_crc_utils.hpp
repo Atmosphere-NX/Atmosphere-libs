@@ -13,14 +13,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 #pragma once
-#include <stratosphere/powctl/powctl_types.hpp>
-#include <stratosphere/powctl/powctl_select_devices.hpp>
-#include <stratosphere/powctl/powctl_session_api.hpp>
-#include <stratosphere/powctl/powctl_battery_api.hpp>
-#include <stratosphere/powctl/powctl_charger_api.hpp>
-#include <stratosphere/powctl/impl/powctl_battery_charge_percentage.hpp>
-#include <stratosphere/powctl/driver/powctl_driver_api.hpp>
-#include <stratosphere/powctl/driver/impl/powctl_select_charger_parameters.hpp>
-#include <stratosphere/powctl/driver/impl/powctl_charge_arbiter.hpp>
+#include <stratosphere.hpp>
+
+namespace ams::cal::impl {
+
+    u16 CalculateCrc16(const void *data, size_t size);
+    Result ValidateCalibrationCrc(const void *data, size_t size);
+
+}
