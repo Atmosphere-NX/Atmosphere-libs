@@ -22,4 +22,7 @@ namespace ams::kern::KDumpObject {
     void DumpThread();
     void DumpThread(u64 thread_id);
 
+    void DumpThreadCallStack();
+    void DumpThreadCallStack(u64 thread_id);
+
 }
