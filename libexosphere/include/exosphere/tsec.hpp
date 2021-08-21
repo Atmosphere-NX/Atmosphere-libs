@@ -18,6 +18,8 @@
 
 namespace ams::tsec {
 
+    bool RunTsecFirmware(const void *fw, size_t fw_size);
+
     void Lock();
 
 }
