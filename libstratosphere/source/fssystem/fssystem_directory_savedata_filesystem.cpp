@@ -225,13 +225,13 @@ namespace ams::fssystem {
         const auto RenameSynchronizingDir = [&]() { return m_base_fs->RenameDirectory(SynchronizingDirectoryPath, CommittedDirectoryPath); };
 
         /* Rename Committed -> Synchronizing. */
-        R_TRY(fssystem::RetryFinitelyForTargetLocked(std::move(RenameCommitedDir)));
+        R_TRY(fssystem::RetryFinitelyForTargetLocked(RenameCommitedDir));
 
         /* - Synchronize Working -> Synchronizing (deleting Synchronizing). */
-        R_TRY(fssystem::RetryFinitelyForTargetLocked(std::move(SynchronizeWorkingDir)));
+        R_TRY(fssystem::RetryFinitelyForTargetLocked(SynchronizeWorkingDir));
 
         /* - Rename Synchronizing -> Committed. */
-        R_TRY(fssystem::RetryFinitelyForTargetLocked(std::move(RenameSynchronizingDir)));
+        R_TRY(fssystem::RetryFinitelyForTargetLocked(RenameSynchronizingDir));
 
         /* TODO: Should I call m_base_fs->Commit()? Nintendo does not. */
         return ResultSuccess();
