@@ -388,7 +388,7 @@
                 }
 
                 ALWAYS_INLINE Result GetDebugEvent(::ams::svc::UserPointer< ::ams::svc::lp64::DebugEventInfo *> out_info, ::ams::svc::Handle debug_handle) {
-                    R_RETURN(::svcGetDebugEvent(out_info.GetPointerUnsafe(), debug_handle));
+                    R_RETURN(::svcGetDebugEvent(reinterpret_cast<::DebugEventInfo *>(out_info.GetPointerUnsafe()), debug_handle));
                 }
 
                 ALWAYS_INLINE Result ContinueDebugEvent(::ams::svc::Handle debug_handle, uint32_t flags, ::ams::svc::UserPointer<const uint64_t *> thread_ids, int32_t num_thread_ids) {
